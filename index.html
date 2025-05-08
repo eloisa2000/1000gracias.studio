@@ -14,12 +14,19 @@
 
     body {
       margin: 0;
-      background: #f5e8bb;
+      padding: 0;
+      font-family: Helvetica, sans-serif;
+    }
+
+    .hero-section {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 133px;
-      height: 100vh;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 134px;
+      height: 1024px;
+      width: 1440px;
+      background: #FAF6F6;
       box-sizing: border-box;
     }
 
@@ -28,85 +35,154 @@
       flex-direction: row;
       align-items: center;
       gap: 18px;
+      width: 1172.41px;
+      height: 307px;
     }
 
     .logo-text {
       position: relative;
       width: 784.47px;
-      height: 307px;
+      height: 101.37px;
     }
 
     .logo-text svg {
       position: absolute;
-    }
-
-    .svg-1000 {
-      top: 103px;
       left: 0;
-    }
-
-    .svg-g {
-      top: 152px;
-      left: 222.58px;
+      top: 0;
     }
 
     .gracias-text {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
       position: absolute;
-      top: 103.2px;
-      left: 332.97px;
+      top: 103.19px;
+      left: 235.8px;
+      gap: 4px;
+      height: 101px;
+    }
+
+    .gracias-text svg {
+      width: 93.24px;
+      height: 74.59px;
+    }
+
+    .racias {
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
-      font-size: 68px;
+      font-size: 67.9px;
       line-height: 79px;
-      font-weight: normal;
-      color: #000;
+      color: #1A1937;
     }
 
     .studio-text {
       position: absolute;
-      top: 103.2px;
+      top: 103.19px;
       left: 566.47px;
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
-      font-size: 68px;
+      font-size: 67.9px;
       line-height: 79px;
-      font-weight: normal;
-      color: #000;
+      color: #1A1937;
     }
 
     .iso-logo svg {
       width: 371px;
       height: 307px;
     }
+
+    .links-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 1172px;
+      height: 86px;
+      gap: 260px;
+    }
+
+    .link-secondary,
+    .link-primary {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .latest-work {
+      font-size: 50.7px;
+      line-height: 58px;
+      color: #1A1937;
+      text-decoration: none;
+    }
+
+    .latest-work:hover {
+      text-decoration: underline;
+    }
+
+    .link-primary {
+      background: #1A1937;
+      border-radius: 83px;
+      padding: 14px 21px;
+      width: 253px;
+      height: 86px;
+    }
+
+    .contact {
+      font-size: 50.7px;
+      line-height: 58px;
+      color: #FAF6F6;
+      text-decoration: none;
+    }
+
+    .contact:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
-  <div class="logo-container">
-    <div class="logo-text">
-      <!-- 1000 SVG -->
-      <svg class="svg-1000" width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="black" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="108.542" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
-        <circle cx="181.745" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
-        <circle cx="254.949" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
-      </svg>
-      <!-- g SVG -->
-      <svg class="svg-g" width="104" height="85" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="black" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <div class="gracias-text">racias</div>
-      <div class="studio-text">studio</div>
+  <section class="hero-section">
+    <div class="logo-container">
+      <div class="logo-text">
+        <!-- 1000 SVG -->
+        <svg width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="#1A1937" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="108.542" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+          <circle cx="181.745" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+          <circle cx="254.949" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+        </svg>
+
+        <!-- gracias -->
+        <div class="gracias-text">
+          <!-- g SVG -->
+          <svg width="104" height="85" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="#1A1937" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="racias">racias</div>
+        </div>
+
+        <!-- studio -->
+        <div class="studio-text">studio</div>
+      </div>
+
+      <div class="iso-logo">
+        <!-- iso-logo SVG -->
+        <svg width="371" height="307" viewBox="0 0 371 307" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M286.055 98.2874C297.091 109.323 293.457 123.583 282.421 134.619C271.385 145.655 257.126 149.288 246.09 138.252C235.054 127.216 239.141 113.411 250.177 102.375C261.213 91.3387 275.019 87.2514 286.055 98.2874Z" fill="#D71B1B"/>
+          <path d="M69.8346 221.312C65.7951 236.387 51.6293 240.371 36.5538 236.331C21.4784 232.292 11.2021 221.759 15.2416 206.684C19.281 191.608 33.2806 188.245 48.3561 192.285C63.4315 196.324 73.874 206.237 69.8346 221.312Z" fill="#D71B1B"/>
+          <circle cx="153.766" cy="153.5" r="145.793" stroke="#1A1937" stroke-width="15.4142"/>
+          <path d="M60.6379 183.686L81.8947 125.883L130.002 169.235" stroke="#1A1937" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="183.31" cy="121.387" r="32.7552" stroke="#1A1937" stroke-width="15.4142"/>
+          <circle cx="329.745" cy="93.1276" r="32.7552" stroke="#1A1937" stroke-width="15.4142"/>
+          <path d="M82.4749 239.062C111.548 246.758 172.7 247.159 224.414 204.052C237.437 193.198 249.86 179.584 261.023 162.634C249.89 151.865 176.245 143.366 212.211 213.327" stroke="#1A1937" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </div>
-    <div class="iso-logo">
-      <!-- ISO-LOGO SVG -->
-      <svg width="371" height="307" viewBox="0 0 371 307" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M286.055 98.2874C297.091 109.323 293.457 123.583 282.421 134.619C271.385 145.655 257.126 149.288 246.09 138.252C235.054 127.216 239.141 113.411 250.177 102.375C261.213 91.3387 275.019 87.2514 286.055 98.2874Z" fill="#D71B1B"/>
-        <path d="M69.8346 221.312C65.7951 236.387 51.6293 240.371 36.5538 236.331C21.4784 232.292 11.2021 221.759 15.2416 206.684C19.281 191.608 33.2806 188.245 48.3561 192.285C63.4315 196.324 73.874 206.237 69.8346 221.312Z" fill="#D71B1B"/>
-        <circle cx="153.766" cy="153.5" r="145.793" stroke="black" stroke-width="15.4142"/>
-        <path d="M60.6379 183.686L81.8947 125.883L130.002 169.235" stroke="black" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="183.31" cy="121.387" r="32.7552" stroke="black" stroke-width="15.4142"/>
-        <circle cx="329.745" cy="93.1276" r="32.7552" stroke="black" stroke-width="15.4142"/>
-        <path d="M82.4749 239.062C111.548 246.758 172.7 247.159 224.414 204.052C237.437 193.198 249.86 179.584 261.023 162.634C249.89 151.865 176.245 143.366 212.211 213.327" stroke="black" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+
+    <div class="links-container">
+      <div class="link-secondary">
+        <a href="https://www.casonacompania.cl" target="_blank" rel="noopener noreferrer" class="latest-work">latest work</a>
+      </div>
+      <div class="link-primary">
+        <a href="mailto:hello@1000gracias.studio" class="contact">contact</a>
+      </div>
     </div>
-  </div>
+  </section>
 </body>
 </html>
