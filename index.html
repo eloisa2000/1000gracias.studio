@@ -117,18 +117,32 @@
     }
 
     .link-secondary {
-      font-size: 28px;
-      text-decoration: none;
-      color: #1A1937;
-    }
+  font-size: 28px;
+  text-decoration: none;
+  color: #1A1937;
+  transition: all 0.2s ease;
+}
 
-    .link-primary {
-      background: #1A1937;
-      color: #FAF6F6;
-      padding: 20px 40px;
-      border-radius: 83px;
-      font-size: 28px;
-      text-decoration: none;
+.link-secondary:hover {
+  color: #000000;
+  text-decoration: underline;
+}
+
+.link-primary {
+  background: #1A1937;
+  color: #FAF6F6;
+  padding: 20px 40px;
+  border-radius: 83px;
+  font-size: 28px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.link-primary:hover {
+  background: #2E2C54;
+  transform: scale(1.03);
+}
     }
   </style>
 </head>
