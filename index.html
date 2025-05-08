@@ -12,22 +12,27 @@
       font-style: normal;
     }
 
-    body {
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
+      background: #F5E8BB;
       font-family: Helvetica, sans-serif;
+      color: #1A1937;
     }
 
     .hero-section {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      padding: 40px 134px;
-      height: 1024px;
-      width: 1440px;
-      background: #FAF6F6;
-      box-sizing: border-box;
+      height: 100vh;
+      width: 100%;
+      position: relative;
     }
 
     .logo-container {
@@ -35,14 +40,13 @@
       flex-direction: row;
       align-items: center;
       gap: 18px;
-      width: 1172.41px;
-      height: 307px;
+      max-width: 1172px;
     }
 
     .logo-text {
       position: relative;
-      width: 784.47px;
-      height: 101.37px;
+      width: 784px;
+      height: 150px;
     }
 
     .logo-text svg {
@@ -56,30 +60,29 @@
       flex-direction: row;
       align-items: flex-end;
       position: absolute;
-      top: 103.19px;
-      left: 235.8px;
+      top: 100px;
+      left: 236px;
       gap: 4px;
-      height: 101px;
     }
 
     .gracias-text svg {
-      width: 93.24px;
-      height: 74.59px;
+      width: 93px;
+      height: 74px;
     }
 
     .racias {
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
-      font-size: 67.9px;
+      font-size: 68px;
       line-height: 79px;
       color: #1A1937;
     }
 
     .studio-text {
       position: absolute;
-      top: 103.19px;
-      left: 566.47px;
+      top: 100px;
+      left: 570px;
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
-      font-size: 67.9px;
+      font-size: 68px;
       line-height: 79px;
       color: #1A1937;
     }
@@ -89,50 +92,57 @@
       height: 307px;
     }
 
-    .links-container {
+    .bottom-links {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      right: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 1172px;
-      height: 86px;
-      gap: 260px;
-    }
-
-    .link-secondary,
-    .link-primary {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      max-width: 1172px;
+      margin: 0 auto;
+      padding: 0 20px;
     }
 
     .latest-work {
-      font-size: 50.7px;
-      line-height: 58px;
-      color: #1A1937;
+      font-size: 50px;
       text-decoration: none;
+      color: #1A1937;
     }
 
     .latest-work:hover {
       text-decoration: underline;
     }
 
-    .link-primary {
+    .contact-button {
       background: #1A1937;
       border-radius: 83px;
       padding: 14px 21px;
-      width: 253px;
-      height: 86px;
-    }
-
-    .contact {
-      font-size: 50.7px;
-      line-height: 58px;
-      color: #FAF6F6;
       text-decoration: none;
+      font-size: 50px;
+      color: #F5E8BB;
     }
 
-    .contact:hover {
-      text-decoration: underline;
+    .contact-button:hover {
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .logo-container {
+        flex-direction: column;
+        gap: 40px;
+      }
+
+      .bottom-links {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .studio-text {
+        left: 50%;
+        transform: translateX(-50%);
+      }
     }
   </style>
 </head>
@@ -162,7 +172,6 @@
       </div>
 
       <div class="iso-logo">
-        <!-- iso-logo SVG -->
         <svg width="371" height="307" viewBox="0 0 371 307" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M286.055 98.2874C297.091 109.323 293.457 123.583 282.421 134.619C271.385 145.655 257.126 149.288 246.09 138.252C235.054 127.216 239.141 113.411 250.177 102.375C261.213 91.3387 275.019 87.2514 286.055 98.2874Z" fill="#D71B1B"/>
           <path d="M69.8346 221.312C65.7951 236.387 51.6293 240.371 36.5538 236.331C21.4784 232.292 11.2021 221.759 15.2416 206.684C19.281 191.608 33.2806 188.245 48.3561 192.285C63.4315 196.324 73.874 206.237 69.8346 221.312Z" fill="#D71B1B"/>
@@ -175,13 +184,9 @@
       </div>
     </div>
 
-    <div class="links-container">
-      <div class="link-secondary">
-        <a href="https://www.casonacompania.cl" target="_blank" rel="noopener noreferrer" class="latest-work">latest work</a>
-      </div>
-      <div class="link-primary">
-        <a href="mailto:hello@1000gracias.studio" class="contact">contact</a>
-      </div>
+    <div class="bottom-links">
+      <a class="latest-work" href="https://www.casonacompania.cl" target="_blank" rel="noopener noreferrer">latest work</a>
+      <a class="contact-button" href="mailto:hello@1000gracias.studio">contact</a>
     </div>
   </section>
 </body>
