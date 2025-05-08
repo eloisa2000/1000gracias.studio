@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1000gracias studio</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>1000gracias studio | We love designing interfaces</title>
+  <link rel="icon" type="image/png" href="./favicon.png" />
+
   <style>
     @font-face {
       font-family: 'UD Digi Kyokasho NK-B';
@@ -13,72 +14,66 @@
       font-style: normal;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
       background: #FAF6F6;
       font-family: 'Helvetica', sans-serif;
-      color: #1A1937;
       height: 100vh;
-      overflow: hidden;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 134px;
+      box-sizing: border-box;
+    }
+
+    .logo-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+      max-width: 1215.68px;
+      margin: 40px auto 0;
     }
 
     .logo-container {
-      position: absolute;
-      top: 40px;
-      left: 50%;
-      transform: translateX(-50%);
+      flex: 1 1 600px;
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 18px;
-      width: 1215.68px;
-      height: 307px;
+      align-items: flex-start;
     }
 
     .logo-text {
       display: flex;
       flex-direction: row;
-      align-items: flex-start;
+      align-items: center;
       gap: 16px;
-      height: 70.2px;
     }
 
-    .number-1000 {
+    .one-zero-zero-zero {
       position: relative;
       width: 279.74px;
       height: 70.2px;
     }
 
-    .number-1000 svg {
+    .one-zero-zero-zero svg {
       position: absolute;
       top: 0;
       left: 0;
     }
 
-    .gracias {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 16px;
-      height: 68px;
-    }
-
     .gracias-text {
       display: flex;
       flex-direction: row;
+      justify-content: center;
       align-items: center;
       gap: 4px;
+      height: 68px;
     }
 
     .g-container {
-      height: 30px;
       display: flex;
-      align-items: flex-start;
+      align-items: flex-end;
+      height: 30px;
     }
 
     .g-container svg {
@@ -89,13 +84,24 @@
     .racias {
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
       font-size: 67.9px;
-      line-height: 1;
+      font-weight: 700;
+      line-height: 100%;
+      color: #1A1937;
     }
 
     .studio {
       font-family: 'UD Digi Kyokasho NK-B', sans-serif;
       font-size: 67.9px;
-      line-height: 1;
+      font-weight: 700;
+      line-height: 100%;
+      color: #1A1937;
+    }
+
+    .iso-logo {
+      flex: 1 1 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .iso-logo svg {
@@ -103,53 +109,73 @@
       height: 307px;
     }
 
-    .footer-links {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 1172px;
+    .links-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0 40px;
+      width: 100%;
+      max-width: 1172px;
+      height: 86px;
     }
 
-    .link-secondary {
-      font-size: 28px;
-      text-decoration: none;
-      color: #1A1937;
-    }
-
+    .link-secondary,
     .link-primary {
-      background: #1A1937;
-      color: #FAF6F6;
-      padding: 20px 40px;
-      border-radius: 83px;
-      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 86px;
+    }
+
+    .link-secondary a {
+      font-size: 50.7px;
+      color: #1A1937;
       text-decoration: none;
+    }
+
+    .link-primary a {
+      background: #1A1937;
+      border-radius: 83px;
+      padding: 18px 36px;
+      font-size: 50.7px;
+      color: #FAF6F6;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .logo-container,
+      .iso-logo {
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+
+      .logo-text {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .links-container {
+        flex-direction: column;
+        gap: 20px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <div class="logo-container">
-    <div class="logo-text">
-      <div class="number-1000">
-        <!-- 1000 SVG -->
-        <svg width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="#1A1937" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="108.542" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
-          <circle cx="181.745" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
-          <circle cx="254.949" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
-        </svg>
-      </div>
-      <div class="gracias">
+  <div class="logo-wrapper">
+    <div class="logo-container">
+      <div class="logo-text">
+        <div class="one-zero-zero-zero">
+          <svg width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="#1A1937" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="108.542" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+            <circle cx="181.745" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+            <circle cx="254.949" cy="36.8035" r="25.571" stroke="#1A1937" stroke-width="12.0334"/>
+          </svg>
+        </div>
         <div class="gracias-text">
           <div class="g-container">
-            <!-- g-vector -->
-            <svg width="93" height="74" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="104" height="85" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="#1A1937" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
@@ -158,8 +184,8 @@
         <div class="studio">studio</div>
       </div>
     </div>
+
     <div class="iso-logo">
-      <!-- ISO-LOGO SVG -->
       <svg width="371" height="307" viewBox="0 0 371 307" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M286.055 98.2874C297.091 109.323 293.457 123.583 282.421 134.619C271.385 145.655 257.126 149.288 246.09 138.252C235.054 127.216 239.141 113.411 250.177 102.375C261.213 91.3387 275.019 87.2514 286.055 98.2874Z" fill="#D71B1B"/>
         <path d="M69.8346 221.312C65.7951 236.387 51.6293 240.371 36.5538 236.331C21.4784 232.292 11.2021 221.759 15.2416 206.684C19.281 191.608 33.2806 188.245 48.3561 192.285C63.4315 196.324 73.874 206.237 69.8346 221.312Z" fill="#D71B1B"/>
@@ -172,9 +198,13 @@
     </div>
   </div>
 
-  <div class="footer-links">
-    <a class="link-secondary" href="https://www.casonacompania.cl" target="_blank">latest work</a>
-    <a class="link-primary" href="mailto:hello@1000gracias.studio">contact</a>
+  <div class="links-container">
+    <div class="link-secondary">
+      <a href="https://www.casonacompania.cl" target="_blank" rel="noopener noreferrer">latest work</a>
+    </div>
+    <div class="link-primary">
+      <a href="mailto:hello@1000gracias.studio">contact</a>
+    </div>
   </div>
 
 </body>
