@@ -109,19 +109,11 @@
       opacity: 0.6;
     }
 
-    .btn {
-      background-color: #1A1937;
-      color: #FAF6F6;
-      padding: 20px 48px;
+    .footer a.btn {
+      background: var(--text);
+      color: var(--bg);
+      padding: 20px 40px;
       border-radius: 48px;
-      font-family: Helvetica, sans-serif;
-      font-size: 32px;
-      text-decoration: none;
-      transition: background 0.2s ease, opacity 0.2s ease;
-    }
-
-    .btn:hover {
-      opacity: 0.85;
     }
 
     @media (max-width: 900px) {
@@ -140,6 +132,7 @@
       .footer {
         flex-direction: column;
         gap: 20px;
+        text-align: center;
       }
 
       .footer a {
@@ -151,18 +144,17 @@
 <body>
   <div class="logo-container">
     <div class="logo-text">
-      <!-- 1000 -->
       <svg width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="black" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="108.542" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
-        <circle cx="181.745" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
-        <circle cx="254.949" cy="36.8035" r="25.571" stroke="black" stroke-width="12.0334"/>
+        <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="var(--text)" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="108.542" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
+        <circle cx="181.745" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
+        <circle cx="254.949" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
       </svg>
 
       <div class="gracias-group">
         <div class="g-container">
           <svg width="104" height="85" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="black" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="var(--text)" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="racias">racias</div>
