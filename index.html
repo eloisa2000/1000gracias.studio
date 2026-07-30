@@ -1,165 +1,184 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1000gracias — Diseño web para proyectos de bien público</title>
-  <meta name="description" content="Estudio de diseño web para proyectos de bien público: cultura, educación, medio ambiente y causas sociales." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <title>1000gracias studio | In <3 w/ interfaces </title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <style>
+    @font-face {
+      font-family: 'UD Digi Kyokasho NK-B';
+      src: url('./UDDigiKyokashoNK-B-03.ttf') format('truetype');
+    }
+
+    :root {
+      --bg: #FAF6F6;
+      --text: #1A1937;
+      --red: #D71B1B;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: 'UD Digi Kyokasho NK-B', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .logo-container {
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      position: absolute;
+      top: 40px;
+      max-width: 1215px;
+      width: 100%;
+      height: 307px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 16px;
+      flex: 1;
+      position: relative;
+    }
+
+    .logo-text svg {
+      flex-shrink: 0;
+    }
+
+    .gracias-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 4px;
+      height: 68px;
+    }
+
+    .g-container {
+      height: 30px;
+    }
+
+    .racias {
+      font-size: 67.9px;
+      line-height: 100%;
+      color: var(--text);
+    }
+
+    .studio {
+      font-size: 67.9px;
+      line-height: 100%;
+      color: var(--text);
+    }
+
+    .iso-logo svg {
+      width: 370px;
+      height: 307px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1215px;
+      padding-top: 40px;
+      margin-top: auto;
+    }
+
+    .footer a {
+      font-family: Helvetica, sans-serif;
+      font-size: 50px;
+      text-decoration: none;
+      color: var(--text);
+      transition: opacity 0.2s ease;
+    }
+
+    .footer a:hover {
+      opacity: 0.6;
+    }
+
+    .footer a.btn {
+      background: var(--text);
+      color: var(--bg);
+      padding: 20px 40px;
+      border-radius: 48px;
+    }
+
+    @media (max-width: 900px) {
+      .logo-container {
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        height: auto;
+      }
+
+      .logo-text {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+      }
+
+      .footer a {
+        font-size: 32px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <a class="skip" href="#proyectos">Saltar a proyectos</a>
-
-  <!-- ===== HERO ===== -->
-  <main class="hero">
-
-    <!-- Escenario: imagen de archivo que cambia al pasar el mouse por un proyecto -->
-    <section class="stage" id="stage" aria-label="Presentación">
-      <img class="stage__img" id="stage-img" src="assets/hero-default.jpg" alt="" />
-      <div class="stage__scrim"></div>
-
-      <!-- Estrella decorativa -->
-      <svg class="star" viewBox="0 0 100 100" aria-hidden="true">
-        <polygon class="star--back" points="42,10 52,37 82,38 58,56 68,86 42,68 16,86 26,56 2,38 32,37" />
-        <polygon class="star--front" points="50,4 61,35 94,36 68,56 77,87 50,69 23,87 32,56 6,36 39,35" />
+  <div class="logo-container">
+    <div class="logo-text">
+      <svg width="287" height="72" viewBox="0 0 287 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6.7929 32.7429L50.4353 12.5685L53.0601 63.0558" stroke="var(--text)" stroke-width="12.0334" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="108.542" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
+        <circle cx="181.745" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
+        <circle cx="254.949" cy="36.8035" r="25.571" stroke="var(--text)" stroke-width="12.0334"/>
       </svg>
 
-      <div class="stage__title">
-        <p class="eyebrow">Diseño web para proyectos de</p>
-        <h1 class="titular">Bien público,<br />cultura y oficios</h1>
-        <p class="bajada">Trabajamos con organizaciones, colectivos y personas en cultura, educación, medio ambiente y causas sociales.</p>
-      </div>
-    </section>
-
-    <!-- Panel derecho: navegación y lista de proyectos -->
-    <section class="panel" aria-label="Proyectos">
-      <header class="topbar">
-        <a class="wordmark" href="/" aria-label="1000gracias, inicio">
-          <span class="wordmark__dot" aria-hidden="true"></span>1000gracias
-        </a>
-        <button class="btn btn--pill" type="button" data-open-contact>Conversemos</button>
-      </header>
-
-      <div class="panel__body">
-        <h2 class="panel__label" id="proyectos">Proyectos</h2>
-        <ul class="projects">
-          <li>
-            <a class="project" href="#" data-img="assets/casona.jpg">
-              <span class="project__name">Casona Compañía</span>
-            </a>
-          </li>
-          <li>
-            <a class="project" href="#" data-img="assets/la-causa.jpg">
-              <span class="project__name">Cooperativa La Causa</span>
-            </a>
-          </li>
-          <li>
-            <a class="project" href="#" data-img="assets/red-ong.jpg">
-              <span class="project__name">Red ONG</span>
-            </a>
-          </li>
-          <li>
-            <a class="project" href="#" data-img="assets/graz.jpg">
-              <span class="project__name">Graz</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Brandmark -->
-      <svg class="brandmark" viewBox="0 0 108 108" aria-label="1000gracias">
-        <circle cx="54" cy="54" r="52" class="bm-bg" />
-        <circle cx="52" cy="55" r="40" class="bm-line" fill="none" />
-        <path d="M32 54 L41 45 L50 54" class="bm-line" fill="none" />
-        <circle cx="67" cy="49" r="7" class="bm-line" fill="none" />
-        <ellipse cx="30" cy="66" rx="5" ry="4" class="bm-fill" />
-        <ellipse cx="74" cy="61" rx="5" ry="4" class="bm-fill" />
-        <path d="M34 70 Q54 90 78 66" class="bm-line" fill="none" />
-        <circle cx="88" cy="47" r="7" class="bm-line" fill="none" />
-        <circle cx="95" cy="33" r="4" class="bm-line" fill="none" />
-      </svg>
-    </section>
-  </main>
-
-  <!-- ===== CONTACTO (modal) ===== -->
-  <div class="contact" id="contact" aria-hidden="true">
-    <div class="contact__overlay" data-close-contact></div>
-    <div class="contact__dialog" role="dialog" aria-modal="true" aria-labelledby="contact-title">
-
-      <!-- Lado imagen -->
-      <div class="contact__stage">
-        <img class="stage__img" src="assets/contact.jpg" alt="" />
-        <svg class="star" viewBox="0 0 100 100" aria-hidden="true">
-          <polygon class="star--back" points="42,10 52,37 82,38 58,56 68,86 42,68 16,86 26,56 2,38 32,37" />
-          <polygon class="star--front" points="50,4 61,35 94,36 68,56 77,87 50,69 23,87 32,56 6,36 39,35" />
-        </svg>
-        <div class="stage__title">
-          <p class="eyebrow">Diseño web para proyectos de</p>
-          <h2 class="titular">Bien público,<br />cultura y oficios</h2>
-          <p class="bajada">Trabajamos con organizaciones, colectivos y personas en cultura, educación, medio ambiente y causas sociales.</p>
+      <div class="gracias-group">
+        <div class="g-container">
+          <svg width="104" height="85" viewBox="0 0 104 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M78.0574 44.3058C45.7838 8.72192 90.569 2.09538 98.8378 6.68773C94.9324 18.4508 89.7556 28.4448 83.7897 36.906C60.098 70.5072 23.9629 79.9364 5.59668 79.992" stroke="var(--text)" stroke-width="9.41323" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
+        <div class="racias">racias</div>
       </div>
 
-      <!-- Lado formulario -->
-      <div class="contact__form">
-        <header class="topbar">
-          <a class="wordmark" href="/" aria-label="1000gracias, inicio">
-            <span class="wordmark__dot" aria-hidden="true"></span>1000gracias
-          </a>
-          <button class="btn btn--close" type="button" data-close-contact aria-label="Cerrar">×</button>
-        </header>
+      <div class="studio">studio</div>
+    </div>
 
-        <p class="eyebrow eyebrow--navy">Déjanos tu contacto y</p>
-        <h3 class="form-title" id="contact-title">Conversemos</h3>
-
-        <form class="form" novalidate>
-          <div class="field">
-            <label for="f-nombre">Nombre</label>
-            <input id="f-nombre" name="nombre" type="text" autocomplete="name" />
-          </div>
-          <div class="field">
-            <label for="f-correo">Correo</label>
-            <input id="f-correo" name="correo" type="email" autocomplete="email" />
-          </div>
-          <div class="field">
-            <label for="f-tipo">¿Qué tipo de organización?</label>
-            <select id="f-tipo" name="tipo">
-              <option value="">Selecciona</option>
-              <option>Persona</option>
-              <option>Colectivo</option>
-              <option>ONG o fundación</option>
-              <option>Institución</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="f-financiamiento">¿Tiene financiamiento?</label>
-            <select id="f-financiamiento" name="financiamiento">
-              <option value="">Selecciona</option>
-              <option>Presupuesto propio</option>
-              <option>Fondo público / Fondart</option>
-              <option>Postulando a un fondo</option>
-              <option>Aún no sé</option>
-            </select>
-          </div>
-          <div class="field field--full">
-            <label for="f-org">Organización o proyecto</label>
-            <input id="f-org" name="organizacion" type="text" />
-          </div>
-          <div class="field field--full">
-            <label for="f-mensaje">¿Qué tienes en mente?</label>
-            <textarea id="f-mensaje" name="mensaje" rows="4"></textarea>
-          </div>
-          <div class="field field--full">
-            <button class="btn btn--send" type="submit">Enviar</button>
-          </div>
-        </form>
-      </div>
+    <div class="iso-logo">
+      <svg width="371" height="307" viewBox="0 0 371 307" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M286.055 98.2874C297.091 109.323 293.457 123.583 282.421 134.619C271.385 145.655 257.126 149.288 246.09 138.252C235.054 127.216 239.141 113.411 250.177 102.375C261.213 91.3387 275.019 87.2514 286.055 98.2874Z" fill="var(--red)"/>
+        <path d="M69.8346 221.312C65.7951 236.387 51.6293 240.371 36.5538 236.331C21.4784 232.292 11.2021 221.759 15.2416 206.684C19.281 191.608 33.2806 188.245 48.3561 192.285C63.4315 196.324 73.874 206.237 69.8346 221.312Z" fill="var(--red)"/>
+        <circle cx="153.766" cy="153.5" r="145.793" stroke="var(--text)" stroke-width="15.4142"/>
+        <path d="M60.6379 183.686L81.8947 125.883L130.002 169.235" stroke="var(--text)" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="183.31" cy="121.387" r="32.7552" stroke="var(--text)" stroke-width="15.4142"/>
+        <circle cx="329.745" cy="93.1276" r="32.7552" stroke="var(--text)" stroke-width="15.4142"/>
+        <path d="M82.4749 239.062C111.548 246.758 172.7 247.159 224.414 204.052C237.437 193.198 249.86 179.584 261.023 162.634C249.89 151.865 176.245 143.366 212.211 213.327" stroke="var(--text)" stroke-width="15.4142" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <div class="footer">
+    <a href="https://www.casonacompania.cl" target="_blank">latest work</a>
+    <a href="mailto:hello@1000gracias.studio" class="btn">contact</a>
+  </div>
 </body>
 </html>
