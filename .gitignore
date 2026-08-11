@@ -11,6 +11,10 @@ dist/
 # Capturas y notas sueltas en la raíz.
 texto.png
 
+# Duplicados que crea el sincronizador de la carpeta cuando dos procesos
+# escriben el mismo archivo a la vez. Son basura, pero se cuelan al repo.
+*Name clash*
+
 # Los videos originales, sin comprimir. Se quedan en el equipo: lo que se
 # publica son los de public/videos.
 videos-fuente/
