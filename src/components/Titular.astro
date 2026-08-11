@@ -1,0 +1,100 @@
+---
+/*
+  El bloque de título que va sobre el escenario. Es el mismo en la home y en
+  el contacto, así que vive aparte. `tag` permite que sea el h1 de la home y
+  un simple div en el modal (un solo h1 por página).
+*/
+const { tag = 'h1' } = Astro.props;
+const Tag = tag;
+---
+
+<div class="titular">
+  <Tag class="titular__frase">
+    <span class="titular__rotulo">Diseño web para proyectos de</span>
+    <span class="titular__grande">Bien público, cultura y oficios</span>
+  </Tag>
+  <p class="titular__bajada">
+    Trabajamos con organizaciones, colectivos y personas en cultura, educación, medio ambiente y
+    causas sociales.
+  </p>
+</div>
+
+<style>
+  .titular {
+    position: relative;
+    z-index: 2;
+    color: var(--crema);
+  }
+
+  .titular__frase {
+    display: block;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .titular__rotulo {
+    display: block;
+    font-family: var(--tipo-rotulo);
+    font-weight: 500;
+    font-size: calc(50.311 * var(--k));
+    line-height: 0.96;
+    letter-spacing: calc(-4.0249 * var(--k));
+  }
+
+  .titular__grande {
+    display: block;
+    margin-top: calc(8 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-weight: 600;
+    font-size: calc(75.466 * var(--k));
+    line-height: 1;
+    letter-spacing: calc(-4.528 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .titular__bajada {
+    max-width: calc(656 * var(--k));
+    margin-top: calc(8 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(32.702 * var(--k));
+    line-height: 1.17;
+    letter-spacing: calc(-1.3081 * var(--k));
+  }
+
+  /* En móvil la home entra en orden descendente. Estos son los tres primeros
+     pasos; los que siguen están en Nav, ProjectList, ProjectItem y Brandmark. */
+  @media (max-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .titular__rotulo {
+      animation: entra 520ms var(--ease) 0ms both;
+    }
+
+    .titular__grande {
+      animation: entra 520ms var(--ease) 70ms both;
+    }
+
+    .titular__bajada {
+      animation: entra 520ms var(--ease) 140ms both;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .titular__rotulo {
+      font-size: calc(24.961 * var(--k));
+      letter-spacing: calc(-1.9969 * var(--k));
+    }
+
+    .titular__grande {
+      margin-top: calc(3.969 * var(--k));
+      font-size: calc(37.442 * var(--k));
+      letter-spacing: calc(-2.2465 * var(--k));
+    }
+
+    .titular__bajada {
+      max-width: none;
+      margin-top: calc(3.969 * var(--k));
+      font-size: calc(20 * var(--k));
+      letter-spacing: calc(-1.2 * var(--k));
+    }
+  }
+</style>

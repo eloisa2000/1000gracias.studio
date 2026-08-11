@@ -1,0 +1,236 @@
+---
+import Nav from './Nav.astro';
+import Star from './Star.astro';
+import Titular from './Titular.astro';
+import Brandmark from './Brandmark.astro';
+import ProjectList from './ProjectList.astro';
+
+// `inerte` lo usa /conversemos: ahí el hero es solo el fondo del takeover, así
+// que no debe recibir foco ni clics.
+const { ajustes, proyectos, inerte = false } = Astro.props;
+// Un proyecto entra al escenario si trae video o imagen. Si trae las dos, el
+// video manda y la imagen queda de póster (primer cuadro y movimiento reducido).
+const enEscenario = proyectos.filter((p) => p.videoSrc || p.hoverSrc);
+const SIZES = '(max-width: 1024px) 79vw, 41vw';
+---
+
+<section class="hero" inert={inerte}>
+  <div class="escenario" data-escenario>
+    <div class="escenario__marco">
+      <img
+        class="escenario__img is-activa"
+        data-imagen="inicio"
+        src={ajustes.heroSrc}
+        srcset={ajustes.heroSrcset}
+        sizes={SIZES}
+        alt={ajustes.heroAlt}
+        fetchpriority="high"
+      />
+      {
+        enEscenario.map((p) =>
+          p.videoSrc ? (
+            <video
+              class="escenario__img"
+              data-imagen={p.slug}
+              poster={p.hoverSrc}
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-hidden="true"
+            >
+              <source src={p.videoSrc} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              class="escenario__img"
+              data-imagen={p.slug}
+              src={p.hoverSrc}
+              srcset={p.hoverSrcset}
+              sizes={SIZES}
+              alt=""
+              aria-hidden="true"
+            />
+          )
+        )
+      }
+      <div class="escenario__capa escenario__capa--suave"></div>
+      <div class="escenario__capa escenario__capa--degrade"></div>
+      <div class="escenario__capa escenario__capa--pie"></div>
+    </div>
+
+    <Star variante="rellena" x={-17.42} y={-79} box={470.42} movil={{ x: -14, y: -40, box: 209.219 }} />
+    <Star variante="contorno" x={52} y={126} box={218.3} movil={{ x: 16.87, y: 51.18, box: 97.089 }} />
+
+    <Titular tag="h1" />
+  </div>
+
+  <div class="panel">
+    <Nav tono="azul" accion="abrir" />
+    <div class="panel__pie">
+      <div class="panel__proyectos">
+        <ProjectList proyectos={proyectos} />
+      </div>
+      <Brandmark enlace="/contacto/" texto="contacto" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: 51.91% 1fr; /* 897 / 1728 */
+    min-height: 100svh;
+  }
+
+  /* Escenario: bloque azul con la imagen de archivo desplazada a la derecha,
+     igual que en el Figma (la imagen arranca al 22.588% de la columna). */
+  .escenario {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    padding: 0 calc(113 * var(--k)) calc(44 * var(--k)) calc(39 * var(--k));
+    background: var(--azul);
+  }
+
+  /*
+    El marco entero —imagen y capas de tratamiento— aparece junto cuando la
+    imagen termina de cargar. Antes quedaba transparente y se veía el azul del
+    escenario, limpio y parejo con la franja de la izquierda.
+
+    Fundir solo la imagen no servía: las capas se seguían pintando sobre el
+    azul y lo dejaban de otro color mientras tanto.
+
+    `isolation` mantiene el soft-light y el multiply mezclando siempre contra
+    la imagen y no contra lo que haya detrás, así el color no cambia entre el
+    fundido y el reposo.
+  */
+  .escenario__marco {
+    position: absolute;
+    inset: 0 0 0 22.588%;
+    overflow: hidden;
+    isolation: isolate;
+    z-index: 0;
+    transition: opacity var(--swap) var(--ease);
+  }
+
+  /* Solo con JavaScript: sin él el marco se ve apenas llega la imagen. */
+  :global(html.con-js) .escenario__marco:not(.is-cargada) {
+    opacity: 0;
+  }
+
+  .escenario__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+    opacity: 0;
+    /* El texto alternativo se dibuja mientras la imagen no llega. Con el color
+       transparente cumple su función para quien lo necesita, sin verse. */
+    color: transparent;
+    transition: opacity var(--swap) var(--ease);
+  }
+
+  .escenario__img.is-activa {
+    opacity: 1;
+  }
+
+  /*
+    Los videos suben 30 px respecto de la imagen, para que lo que muestran no
+    quede detrás del titular. En el marco de referencia sobran 117 px de alto,
+    así que 30 px son el 26% de esa sobra: 40 + 26 = 66.
+
+    Va en porcentaje y no en píxeles a propósito: así el desplazamiento crece y
+    se encoge con la sobra, y nunca se pasa —un valor fijo podría dejar un
+    hueco si la sobra fuera menor—. El naipe del hero sigue al 40%, que ahí
+    tiene 290 px de sobra y su encuadre ya estaba bien.
+  */
+  video.escenario__img {
+    object-position: 50% 66%;
+  }
+
+
+  .escenario__capa {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .escenario__capa--suave {
+    background: rgba(0, 0, 0, 0.17);
+    mix-blend-mode: soft-light;
+  }
+
+  .escenario__capa--degrade {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(26, 25, 55, 0.36) 78.938%);
+    mix-blend-mode: multiply;
+  }
+
+  /* Añadido al Figma: un velo bajo el titular para que el texto crema siga
+     legible con cualquier imagen que suban al CMS. */
+  .escenario__capa--pie {
+    background: linear-gradient(180deg, rgba(26, 25, 55, 0) 55%, rgba(26, 25, 55, 0.55) 100%);
+  }
+
+  /* Panel derecho */
+  .panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: calc(28 * var(--k)) calc(30 * var(--k)) calc(38 * var(--k)) calc(28 * var(--k));
+  }
+
+  .panel__pie {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+  }
+
+  .panel__proyectos {
+    width: calc(524 * var(--k));
+    max-width: 100%;
+    margin-left: calc(12 * var(--k));
+    margin-bottom: calc(10 * var(--k));
+  }
+
+  @media (max-width: 1024px) {
+    .hero {
+      display: block;
+      min-height: 0;
+    }
+
+    /* Sin barra arriba: el escenario es solo imagen y titular. La marca y
+       «Conversemos» viven en el panel crema, más abajo. */
+    .escenario {
+      min-height: calc(621 * var(--k));
+      padding: calc(19 * var(--k)) calc(16 * var(--k));
+    }
+
+    .escenario__marco {
+      inset: 0 0 0 21.34%; /* 83.86 / 393 */
+    }
+
+    .panel {
+      display: block;
+      padding: calc(19 * var(--k)) calc(16 * var(--k)) calc(40 * var(--k));
+    }
+
+    .panel__pie {
+      flex-direction: column;
+      align-items: flex-end;
+      gap: calc(50 * var(--k));
+      margin-top: calc(28 * var(--k));
+    }
+
+    .panel__proyectos {
+      width: 100%;
+      margin: 0;
+      align-self: stretch;
+    }
+  }
+</style>

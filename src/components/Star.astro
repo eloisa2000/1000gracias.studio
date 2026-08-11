@@ -1,0 +1,127 @@
+---
+/*
+  Estrella decorativa (amarillo, solo forma — nunca texto ni botón).
+
+  Reproduce la geometría del Figma: una caja cuadrada `box` posicionada en
+  (x, y), con la estrella centrada dentro de una caja interior rotada. Los
+  porcentajes de `inset` y la razón caja/interior son los del nodo original y
+  no cambian entre pantallas; lo único que varía es posición y tamaño.
+*/
+const FORMAS = {
+  rellena: {
+    src: '/svg/estrella-rellena.svg',
+    rot: -31,
+    ratio: 0.728756, // 342.821 / 470.42
+    inset: [11.58, 13.19, 17.9, 13.19],
+  },
+  contorno: {
+    src: '/svg/estrella-contorno.svg',
+    rot: -99,
+    ratio: 0.874032, // 190.801 / 218.3
+    inset: [10.52, 12.21, 17.14, 12.21],
+  },
+};
+
+const {
+  variante = 'rellena',
+  x = 0,
+  y = 0,
+  box = 100,
+  movil = null,
+  desde = null,
+  desdeMovil = null,
+  retardo = 0,
+} = Astro.props;
+
+const forma = FORMAS[variante];
+const [t, r, b, l] = forma.inset;
+const m = movil ?? { x, y, box };
+
+/*
+  `desde` es la posición y el tamaño que tiene la misma estrella en otra
+  pantalla. Se traduce a un transform que calza la caja de destino sobre la de
+  origen, así el viaje entre las dos es una sola interpolación y no un salto.
+*/
+const viaje = (dest, orig) =>
+  orig ? [orig.x - dest.x, orig.y - dest.y, orig.box / dest.box] : [0, 0, 1];
+
+const [dx, dy, s] = viaje({ x, y, box }, desde);
+const [dxm, dym, sm] = viaje(m, desdeMovil ?? desde);
+
+const estilo = [
+  `--x:${x}`,
+  `--y:${y}`,
+  `--box:${box}`,
+  `--inner:${(box * forma.ratio).toFixed(3)}`,
+  `--xm:${m.x}`,
+  `--ym:${m.y}`,
+  `--boxm:${m.box}`,
+  `--innerm:${(m.box * forma.ratio).toFixed(3)}`,
+  `--dx:${dx.toFixed(3)}`,
+  `--dy:${dy.toFixed(3)}`,
+  `--s:${s.toFixed(5)}`,
+  `--retardo:${retardo}ms`,
+  `--dxm:${dxm.toFixed(3)}`,
+  `--dym:${dym.toFixed(3)}`,
+  `--sm:${sm.toFixed(5)}`,
+  `--rot:${forma.rot}`,
+  `--t:${t}%`,
+  `--r:${r}%`,
+  `--b:${b}%`,
+  `--l:${l}%`,
+].join(';');
+---
+
+<div class="estrella" style={estilo} aria-hidden="true">
+  <div class="estrella__giro">
+    <img src={forma.src} alt="" />
+  </div>
+</div>
+
+<style>
+  .estrella {
+    position: absolute;
+    z-index: 2;
+    left: calc(var(--x) * var(--k));
+    top: calc(var(--y) * var(--k));
+    width: calc(var(--box) * var(--k));
+    height: calc(var(--box) * var(--k));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .estrella__giro {
+    position: relative;
+    flex: none;
+    width: calc(var(--inner) * var(--k));
+    height: calc(var(--inner) * var(--k));
+    transform: rotate(calc(var(--rot) * 1deg));
+  }
+
+  /* El SVG es un elemento reemplazado: con `inset` solo no se estira, así que
+     el alto y el ancho van explícitos. */
+  .estrella__giro img {
+    position: absolute;
+    left: var(--l);
+    top: var(--t);
+    width: calc(100% - var(--l) - var(--r));
+    height: calc(100% - var(--t) - var(--b));
+    max-width: none;
+  }
+
+  @media (max-width: 1024px) {
+    .estrella {
+      left: calc(var(--xm) * var(--k));
+      top: calc(var(--ym) * var(--k));
+      width: calc(var(--boxm) * var(--k));
+      height: calc(var(--boxm) * var(--k));
+    }
+
+    .estrella__giro {
+      width: calc(var(--innerm) * var(--k));
+      height: calc(var(--innerm) * var(--k));
+    }
+  }
+</style>

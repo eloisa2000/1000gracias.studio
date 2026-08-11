@@ -1,0 +1,27 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Astro 5 pide Node 18.20.8+, 20.3+ o 22+. Fijarlo evita que un cambio de
+  # versión por defecto en Netlify rompa el build sin que nadie tocara nada.
+  NODE_VERSION = "22"
+
+# Todo lo que Astro mete en /_astro/ lleva un hash en el nombre: si cambia el
+# contenido, cambia el nombre. Así que se puede cachear para siempre.
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Los videos y las imágenes no llevan hash, así que se cachean un día y se
+# revalidan: si reemplazas un video, no queda uno viejo pegado por meses.
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"

@@ -1,0 +1,55 @@
+/* Tokens de marca 1000gracias.
+   Fuente de verdad del color y la tipografía (mandan sobre el Figma). */
+
+:root {
+  /* Color */
+  --navy: #1a1937;
+  --crema: #faf6f6;
+  --azul: #1e1a8e;
+  --rojo: #d71b1b;
+  --amarillo: #ffaa0b; /* solo decorativo: nunca en botones ni en texto */
+
+  /* Tipografía */
+  --tipo-titulo: 'Archivo', system-ui, -apple-system, sans-serif;
+  --tipo-rotulo: 'Onest', system-ui, -apple-system, sans-serif;
+
+  /* Escala base 8 */
+  --sp-1: 8px;
+  --sp-2: 16px;
+  --sp-3: 24px;
+  --sp-4: 32px;
+  --sp-5: 40px;
+  --sp-6: 48px;
+  --sp-8: 64px;
+  --sp-10: 80px;
+
+  /* --k es "un píxel del Figma". Todas las medidas del diseño se escriben
+     calc(<medida del Figma> * var(--k)), así el layout mantiene las
+     proporciones exactas del artboard a cualquier ancho.
+     Escritorio: artboard de 1728 × 1117 — la escala se ajusta al alto además
+     del ancho, para que el hero entre completo en pantallas bajas.
+     Móvil: artboard de 393 de ancho, la página se desplaza. */
+  --k: clamp(0.5px, min(100vw / 1728, 100svh / 1117), 1.22px);
+
+  /* Motion */
+  --swap: 260ms; /* cambio de imagen y estados de hover */
+  --entrada: 420ms; /* apertura y cierre del contacto: todo se mueve junto */
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  /* Multiplicador de los retardos escalonados. Vale 0 con movimiento
+     reducido, para que nada quede esperando su turno. */
+  --mueve: 1;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --k: clamp(0.85px, 100vw / 393, 1.35px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --swap: 0ms;
+    --entrada: 0ms;
+    --mueve: 0;
+  }
+}

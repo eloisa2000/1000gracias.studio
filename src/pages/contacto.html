@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contacto — 1000gracias</title>
+<meta name="description" content="Escríbenos. Diseño web para proyectos de bien público, cultura y oficios: sitios autoadministrables, portafolios, ecommerce y blogs. Con cupos solidarios.">
+<link rel="canonical" href="https://1000gracias.studio/contacto/">
+<meta name="theme-color" content="#1e1a8e">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+<meta property="og:site_name" content="1000gracias">
+<meta property="og:title" content="Contacto — 1000gracias">
+<meta property="og:description" content="Escríbenos. Diseño web para proyectos de bien público, cultura y oficios: sitios autoadministrables, portafolios, ecommerce y blogs. Con cupos solidarios.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_CL">
+<meta property="og:url" content="https://1000gracias.studio/contacto/">
+<meta property="og:image" content="https://1000gracias.studio/img/compartir.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://1000gracias.studio/img/compartir.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,600;100,800;100,900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --crema:#FAF6F6;
+    --azul:#1E1A8E;
+    --rojo:#D71B1B;
+
+    --archivo:"Archivo",Helvetica,Arial,sans-serif;
+
+    /*
+      --kf es "un píxel del artboard". El cartel del Figma mide 595 × 842 en plano;
+      con la comba del poste ocupa 595 × 885. Cada medida del diseño se escribe
+      calc(<medida del Figma> * var(--kf)). El tercer límite es el alto: el cartel
+      nunca pasa del 72% de la pantalla, para que siempre quede poste arriba y
+      suelo abajo.
+    */
+    --kf:min(calc(420px / 595), calc(84vw / 595), calc(72svh / 885));
+
+    --tab-h:calc(253.43 * var(--kf));
+
+    /*
+      La luz del poste, medida sobre el poste mismo. Al principio la calculé como un
+      cilindro mate y salía mal por la derecha: un poste galvanizado no es mate, se
+      ilumina en los DOS cantos por reflejo del cielo y se apaga hacia el 60%, donde
+      refleja el suelo. Así que aquí va su perfil real, promediado sobre las filas de
+      poste desnudo que quedan encima y debajo del cartel y suavizado para quedarse
+      con la forma de la luz y no con el grano del metal.
+
+      El cartel tapa 595 de los 643 de ancho del poste, así que su canto no llega al
+      canto del poste y se muestrea en ese tramo. Y como el papel es mate y no
+      reflejaría tanto como el metal, se le baja el contraste a poco menos de la mitad:
+      se toma la forma de la luz, no su fuerza.
+
+      Va en negro transparente y en modo normal: multiplicar por s equivale a poner
+      negro con alfa 1 − s/255, así que el papelito no necesita fusión ninguna.
+    */
+    --cilindro-tab:linear-gradient(90deg,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,.018) 5%,
+      rgba(0,0,0,.035) 10%,
+      rgba(0,0,0,.055) 15%,
+      rgba(0,0,0,.073) 20%,
+      rgba(0,0,0,.089) 25%,
+      rgba(0,0,0,.108) 30%,
+      rgba(0,0,0,.130) 35%,
+      rgba(0,0,0,.145) 40%,
+      rgba(0,0,0,.153) 45%,
+      rgba(0,0,0,.164) 50%,
+      rgba(0,0,0,.175) 55%,
+      rgba(0,0,0,.181) 60%,
+      rgba(0,0,0,.172) 65%,
+      rgba(0,0,0,.157) 70%,
+      rgba(0,0,0,.138) 75%,
+      rgba(0,0,0,.111) 80%,
+      rgba(0,0,0,.084) 85%,
+      rgba(0,0,0,.060) 90%,
+      rgba(0,0,0,.044) 95%,
+      rgba(0,0,0,.021) 100%);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:#fff;color:var(--azul);
+    font-family:var(--archivo);font-variation-settings:"wdth" 100;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .visualmente-oculto{
+    position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+    overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
+  }
+
+  /*
+    Cierre. Esta página vive de dos formas: suelta en /contacto/ y dentro de un
+    modal del sitio. Suelta, la X vuelve al inicio; dentro del modal se
+    esconde, porque ahí la X la pone el modal y habría dos.
+
+    Lo mismo con el botón de reponer: suelto es la única interfaz que tiene la
+    página, y enmarcado lo reemplaza la carita del modal.
+  */
+  .cerrar{
+    position:fixed;top:20px;right:20px;z-index:50;
+    display:inline-flex;align-items:center;justify-content:center;
+    width:46px;height:46px;
+    border:3px solid var(--azul);border-radius:999px;
+    background:var(--crema);color:var(--azul);
+    font:600 18px/1 var(--archivo);text-decoration:none;
+    transition:background-color .26s,color .26s;
+  }
+  .cerrar:hover{background:var(--azul);color:var(--crema)}
+  html.en-marco .cerrar{display:none}
+
+  /* ── el muro: trama de transparencia y el poste, a sangre ── */
+  .muro{
+    position:relative;overflow:hidden;
+    min-height:100svh;
+    background-color:#fff;
+    background-image:
+      linear-gradient(45deg,#cdcdcd 25%,transparent 25% 75%,#cdcdcd 75%),
+      linear-gradient(45deg,#cdcdcd 25%,transparent 25% 75%,#cdcdcd 75%);
+    background-position:0 0,13px 13px;
+    background-size:26px 26px;
+    display:flex;justify-content:center;align-items:flex-start;
+    padding-top:clamp(24px,12svh,120px);
+  }
+  .poste{
+    position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+    width:calc(643 * var(--kf));
+    /* el trozo de poste viene con su espejo pegado abajo: repetido no hace junta */
+    background:url("/img/flyer/poste.webp") center top / 100% auto repeat-y #6f747c;
+    /* la sombra del poste sobre la pared, que la imagen ya no trae */
+    box-shadow:
+      calc(16 * var(--kf)) 0 calc(34 * var(--kf)) rgba(0,0,0,.26),
+      calc(-7 * var(--kf)) 0 calc(20 * var(--kf)) rgba(0,0,0,.12);
+    pointer-events:none;
+  }
+
+  /* pegado un poco torcido, como se pegan los carteles */
+  .cartel{
+    position:relative;align-self:flex-start;flex:none;
+    width:calc(595 * var(--kf));
+    transform:rotate(.7deg);
+  }
+
+  /*
+    ── la comba ──
+    El papel está pegado a un cilindro y el ojo queda a media altura del cartel, así
+    que ninguna horizontal es recta: el centro está más cerca y se abre hacia fuera.
+    Lo que hay por encima del ojo se arquea hacia arriba y lo que hay por debajo,
+    hacia abajo. Midiendo el mockup columna a columna salen parábolas limpias, con
+    amplitud d(y) = −31 + 43,43·y/842: −31 en el canto de arriba y +12,4 en el de
+    abajo. El ojo cae justo en y = 601, donde acaba la banda azul, así que ESA línea
+    —la que enlaza con los papelitos— sale recta. Es a propósito: con cada papelito
+    moviéndose por su cuenta, curvar además el sitio del que cuelgan era demasiado.
+
+    El cartel es un SVG entero justamente por esto: cada línea de texto va montada
+    sobre su propia parábola, con la amplitud que le toca a su altura, así que la
+    tipografía se comba con el papel en vez de quedarse plana encima. El azul de la
+    banda y el contorno del papel usan las mismas curvas.
+  */
+  .papel{
+    display:block;width:100%;height:auto;
+    filter:drop-shadow(calc(4 * var(--kf)) calc(5 * var(--kf)) calc(10 * var(--kf)) rgba(0,0,0,.32));
+  }
+  .t-titulo{
+    font:900 93.819px var(--archivo);letter-spacing:-.08em;fill:var(--azul);
+  }
+  .t-cuerpo{
+    font:800 30.274px var(--archivo);letter-spacing:-.08em;fill:var(--azul);
+  }
+  .t-firma{
+    font:800 84.242px var(--archivo);letter-spacing:-.05em;fill:var(--crema);
+  }
+  .papel image{pointer-events:none}
+  .tex-l{mix-blend-mode:overlay}
+  /* si el navegador no conoce plus-lighter, la textura no se pone: en modo normal
+     taparía el cartel con una imagen oscura */
+  .tex-m{opacity:0}
+  @supports (mix-blend-mode:plus-lighter){
+    .tex-m{opacity:.72;mix-blend-mode:plus-lighter}
+  }
+
+  /* ── papelitos ── */
+  /* cada papelito ocupa su sitio fijo: si uno se va, los demás no se mueven ni cambian de ancho */
+  /* la perspectiva tiene que estar en el padre directo de los papelitos */
+  .franja{
+    position:relative;height:var(--tab-h);touch-action:none;
+    /* la perspectiva solo se enciende cuando algo se mueve de verdad. Encendida
+       siempre mete a los papelitos quietos en un contexto 3D, y ahí el texto se
+       rasteriza una vez y se remuestrea: borroso y tembloroso. */
+    perspective-origin:50% 30%;
+  }
+  .tab{
+    position:absolute;top:0;height:100%;
+    /*
+      preserve-3d obliga al navegador a tratar el papelito como una textura en el
+      espacio, y ahí el texto se rasteriza una vez y se remuestrea. Solo hace falta
+      cuando el papel voltea de verdad —al caer— para que el reverso salga en blanco.
+      Quieto en el muro va plano, y el texto se dibuja limpio en cada repintado.
+    */
+    transform-style:flat;
+    appearance:none;border:0;margin:0;padding:0;
+    /* transparente a la fuerza: el papel lo pinta .fondo, que sí va recortado.
+       Sin esto Firefox le deja al botón su gris de sistema, y como el recorte ya
+       no está en el botón sino en la cara, ese gris asoma como un rectángulo. */
+    background:transparent;color:var(--azul);
+    cursor:grab;touch-action:none;
+    /*
+      El correo va escrito A LO LARGO del papelito, así que el sesgo del viento no lo
+      desplaza: lo cizalla — las letras de arriba se corren distinto que las de abajo.
+      Repintando en cada frame, el navegador tiene que reencajar cada letra en la
+      rejilla de píxeles, y de ahí el temblor de uno a un lado y a otro.
+
+      La única salida es que no se repinte: el papelito se dibuja UNA vez y lo que se
+      mueve después es la capa ya compuesta. Por eso el viento se anima sobre
+      "transform" directamente (ver ventear, en el script), que es lo que los
+      navegadores saben llevarse fuera del hilo principal, y por eso el recorte del
+      papel está una capa más adentro.
+    */
+    will-change:transform;
+  }
+
+  .tab:focus-visible{outline:3px solid var(--rojo);outline-offset:2px;z-index:8}
+  .franja[data-vuela]{perspective:2400px}
+  .tab[data-estado="tirando"],
+  .tab[data-estado="volando"],
+  .tab[data-estado="mano"]{transform-style:preserve-3d}
+  .tab[data-estado="tirando"]{cursor:grabbing}
+  .tab[data-estado="volando"]{cursor:default}
+  .tab[data-estado="mano"]{cursor:pointer;box-shadow:0 22px 40px #1a193759}
+  .tab[data-estado="mano"]:focus-visible{outline:none}   /* en la mano no hace falta: es lo único en pantalla */
+  /* fuera del poste ya no hay cilindro que curve la luz */
+  .tab[data-estado="mano"] .sombra{opacity:0}
+
+  /*
+    ── acabado ──
+    Una sola capa, sin fusiones: la luz del poste. Y es una sola pieza para los 595
+    de ancho del cartel — cada papelito enseña su trozo, que --x le dice cuál—, así
+    que el degradado no se corta al pasar de un papelito al siguiente.
+  */
+  .acabado{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+  .sombra{
+    position:absolute;inset:0;transition:opacity .3s;
+    background-image:var(--cilindro-tab);
+    background-size:var(--ancho-cartel) 100%;
+    background-position:calc(-1 * var(--x)) 0;
+    background-repeat:no-repeat;
+  }
+
+
+  /*
+    El contenido vive en una hoja horizontal grande, rotada −90° y reducida a un tercio.
+    En el muro se lee de abajo hacia arriba, como una tira colgando; cuando el papelito
+    gira +90° en la mano, las dos rotaciones se cancelan y queda derecho.
+
+    Toda la tipografía es proporcional a --L (el largo de la tira). Así, cuando el papelito
+    llega a la mano y cambia de tamaño REAL —en vez de quedar escalado— el texto se
+    remaqueta grande y sale nítido. Reducir siempre se ve bien; ampliar, no.
+
+    --nitidez es de cuánto se maqueta la hoja antes de encogerla. En el muro vale 1:
+    el texto se dibuja al tamaño en que se ve y sale limpio. Solo mientras el papelito
+    viaja a la mano —donde la transformación lo agranda casi tres veces— sube a 3, para
+    que al ampliarlo haya píxeles de sobra. Maquetar siempre a 3 era lo que ponía el
+    texto pastoso: el navegador tenía que remuestrear cada letra a un tercio, y con el
+    viento moviéndolo eso vibra.
+
+    --L es el papel que QUEDA: la comba le come --recorte-arriba y --recorte, así que la
+    hoja mide eso menos y se desplaza para quedar centrada en lo que queda. Como todas
+    las medidas de dentro cuelgan de --L, el contenido se aprieta con el papel en vez de
+    salirse por el canto cortado. En la mano los dos recortes valen cero: el papelito ya
+    no está en el poste, así que se lee recto.
+  */
+  /*
+    El reverso del papel es crema y no lleva nada escrito.
+  */
+  /*
+    El recorte del papel va aquí y no en el papelito. Un clip-path sobre el elemento
+    que se anima le impide al navegador tratarlo como una capa suelta: tiene que
+    recortar en cada frame, y recortar es repintar. Con el recorte una capa más
+    adentro, el papelito de fuera no es más que una caja que se mueve.
+  */
+  .cara{position:absolute;left:0;top:0;width:100%;height:100%;
+        backface-visibility:hidden}
+  .fondo{position:absolute;inset:0;background:var(--crema)}
+  .hoja{
+    --L:calc((var(--h) - var(--recorte, 0px) - var(--recorte-arriba, 0px)) * var(--nitidez, 1));
+    --W:calc(var(--w) * var(--nitidez, 1));
+    position:absolute;left:50%;top:50%;
+    width:var(--L);height:var(--W);
+    margin-left:calc(var(--L) * -.5);
+    margin-top:calc(var(--W) * -.5 + (var(--recorte-arriba, 0px) - var(--recorte, 0px)) / 2);
+    transform:rotate(-90deg) scale(var(--encoge, 1));transform-origin:50% 50%;
+    display:flex;align-items:center;
+    gap:calc(var(--L) * 12.2 / 241);
+    padding:0 calc(var(--L) * 10.2 / 241);
+  }
+
+  /* la marca queda derecha: gira +90° para deshacer el giro de la hoja */
+  .marca{
+    position:relative;flex:none;
+    width:calc(var(--L) * 42.96 / 241);
+    height:calc(var(--W) * 51.85 / 85);
+  }
+  .marca img{
+    position:absolute;left:50%;top:50%;
+    width:calc(var(--W) * 51.85 / 85);
+    height:calc(var(--L) * 42.96 / 241);
+    transform:translate(-50%,-50%) rotate(90deg);
+  }
+
+  .texto{
+    flex:1;min-width:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:calc(var(--L) * 3 / 241);
+  }
+  /* el aviso se cuelga de aquí, así que hace falta el marco de referencia */
+  .principal{
+    position:relative;
+    font:800 calc(var(--L) * 14.57 / 241)/1 var(--archivo);
+    letter-spacing:-.08em;white-space:nowrap;color:var(--azul);
+  }
+  /*
+    Las dos líneas de abajo van juntas, como un pie, y el correo respira por encima.
+    El relleno de arriba baja el bloque un pelo: es el sitio que necesita el aviso
+    para no quedar pegado al canto del papel.
+  */
+  .tab[data-estado="mano"] .texto{padding-top:calc(var(--L) * 4 / 241)}
+  .tab[data-estado="mano"] .principal{margin-bottom:calc(var(--L) * 5 / 241)}
+  /*
+    En el muro va solo el correo; el resto aparece de golpe, sin animación.
+    Los cuerpos salen de medir las cadenas: en el papelito quedan 165.4 unidades
+    útiles después del icono y los márgenes, y el correo a 14.57 ocupa 164 — o sea
+    que va justo al límite, igual que en el cartel impreso. El resto se escala
+    desde ahí con las proporciones del Figma.
+  */
+  .mas,.copia{display:none}
+  .tab[data-estado="mano"] .mas{
+    display:block;
+    font:600 calc(var(--L) * 6.4 / 241)/1.2 var(--archivo);
+    letter-spacing:-.02em;white-space:nowrap;color:var(--azul);
+  }
+  .tab[data-estado="mano"] .mas--glosa{font-size:calc(var(--L) * 5.6 / 241)}
+  .tab[data-estado="mano"] .principal{
+    text-decoration:underline;
+    text-decoration-thickness:.16em;text-underline-offset:.17em;
+  }
+
+  /* ── copiar el correo ── */
+  /* el hueco se reserva siempre, así el bloque no salta al pasar por encima */
+  /*
+    El aviso va fuera del flujo, colgado del correo. En el flujo reservaba su hueco
+    aunque estuviese oculto, y eso empujaba todo el bloque hacia abajo: el contenido
+    visible quedaba descentrado en el papel. Así el bloque se centra por sí solo y el
+    aviso aparece encima sin mover nada.
+  */
+  .tab[data-estado="mano"] .copia{
+    display:block;visibility:hidden;
+    position:absolute;left:50%;bottom:100%;transform:translateX(-50%);
+    margin-bottom:calc(var(--L) * 3 / 241);
+    background:var(--azul);color:var(--crema);
+    padding:calc(var(--L) * 1.8 / 241) calc(var(--L) * 3.6 / 241);
+    font:800 calc(var(--L) * 5.6 / 241)/1.15 var(--archivo);
+    letter-spacing:-.01em;white-space:nowrap;
+  }
+  .tab[data-estado="mano"] .copia::before{content:"copiar correo"}
+  .tab[data-copiado] .copia::before{content:"¡copiado!"}
+  /* el cuadro azul solo asoma al pasar por encima del correo —la línea de abajo,
+     esa sí está siempre—, y vuelve a irse un segundo después de copiar */
+  .tab[data-estado="mano"] .principal:hover .copia,
+  .tab[data-copiado] .copia{visibility:visible}
+
+  .dobles{position:absolute;pointer-events:none;display:none}
+
+  /* ── lo único que queda de interfaz ── */
+  .reponer{
+    position:fixed;right:14px;bottom:14px;z-index:30;
+    appearance:none;cursor:pointer;border:0;
+    background:var(--azul);color:var(--crema);padding:9px 13px;
+    font:800 9.5px/1 var(--archivo);letter-spacing:.13em;text-transform:uppercase;
+  }
+  .reponer:hover{background:var(--crema);color:var(--azul);box-shadow:inset 0 0 0 1px var(--azul)}
+  .reponer:focus-visible{outline:2px solid var(--rojo);outline-offset:2px}
+  html.en-marco .reponer{display:none}
+
+  /* ── el papelito en la mano ── */
+  .velo{
+    position:fixed;inset:0;z-index:40;background:var(--azul);
+    opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;
+  }
+  .velo[data-abierto="si"]{opacity:.82;visibility:visible}
+
+  .mano{position:fixed;inset:0;z-index:41;pointer-events:none}
+  .mano .tab{pointer-events:auto}
+
+  @media (prefers-reduced-motion:reduce){
+    .velo,.sombra{transition:none}
+    .tab{animation:none}
+  }
+</style>
+<script>
+  /* Antes del primer pintado, para que la X del modal no alcance a verse. */
+  if (window.top !== window.self) document.documentElement.classList.add('en-marco');
+</script>
+</head>
+<body>
+
+<a class="cerrar" href="/" data-cerrar-muro aria-label="Volver al inicio">X</a>
+
+<h1 class="visualmente-oculto">Diseño web — 1000gracias</h1>
+<p class="visualmente-oculto">
+  Se hacen todo tipo de páginas web. Proyectos de bien público, cultura y oficios.
+  Educación, medio ambiente, causas sociales. Artistas y trabajadores de la cultura.
+  Sitios autoadministrables y mantención. Portafolios, ecommerce y blogs. Cupos solidarios:
+  no cobro mi trabajo hasta adjudicar el fondo. Escribe a hello@1000gracias.studio.
+</p>
+
+<div class="muro" id="muro">
+  <div class="poste" aria-hidden="true"></div>
+
+  <div class="cartel" id="cartel">
+    <!--
+      viewBox 595 × 632. El cartel plano mide 595 × 601 hasta la franja; aquí va
+      corrido 31 hacia abajo, que es lo que sube el canto de arriba por el centro.
+      Todo lo demás va en medidas del Figma tal cual.
+    -->
+    <svg class="papel" viewBox="0 0 595 632" aria-hidden="true">
+      <defs>
+        <clipPath id="cp-papel">
+          <path d="M0 31 Q297.5 -31 595 31 L595 632 L0 632 Z"/>
+        </clipPath>
+
+      </defs>
+
+      <g clip-path="url(#cp-papel)" style="isolation:isolate">
+        <path d="M0 31 Q297.5 -31 595 31 L595 632 L0 632 Z" fill="#FAF6F6"/>
+        <path d="M0 507 Q297.5 494.1 595 507 L595 632 L0 632 Z" fill="#1E1A8E"/>
+
+        <!-- los dos computadores, que a su altura el papel apenas se comba -->
+        <image href="/img/flyer/pc.webp" x="13" y="347" width="122" height="115.586"
+               transform="translate(0 26.6)" style="mix-blend-mode:darken"/>
+        <image href="/img/flyer/pc.webp" x="-582" y="347" width="122" height="116"
+               transform="translate(0 26.6) scale(-1 1)" style="mix-blend-mode:darken"/>
+
+        <g id="tipos" visibility="hidden">
+        <text class="t-titulo" x="297.5" y="133.74" text-anchor="middle" data-base="133.74" data-comba="-25.7" data-partir>DISEÑO WEB</text>
+        <text class="t-cuerpo" x="297.5" y="180.89" text-anchor="middle" data-base="180.89" data-comba="-23.27" data-partir>Se hacen todo tipo de páginas web</text>
+        <text class="t-cuerpo" x="297.5" y="218.73" text-anchor="middle" data-base="218.73" data-comba="-21.32" data-partir>Proyectos de bien público - cultura y oficios</text>
+        <text class="t-cuerpo" x="297.5" y="256.57" text-anchor="middle" data-base="256.57" data-comba="-19.37" data-partir>Educación medio ambiente causas sociales</text>
+        <text class="t-cuerpo" x="297.5" y="294.42" text-anchor="middle" data-base="294.42" data-comba="-17.41" data-partir>Artistas trabajadores de la cultura</text>
+        <text class="t-cuerpo" x="297.5" y="332.26" text-anchor="middle" data-base="332.26" data-comba="-15.46" data-partir>Sitios autoadministrables y mantención</text>
+        <text class="t-cuerpo" x="297.5" y="370.1" text-anchor="middle" data-base="370.1" data-comba="-13.51" data-partir>Portafolios ecommerce blogs</text>
+        <text class="t-cuerpo" x="297.5" y="407.94" text-anchor="middle" data-base="407.94" data-comba="-11.56" data-partir>Cupos solidarios</text>
+        <text class="t-cuerpo" x="297.5" y="445.79" text-anchor="middle" data-base="445.79" data-comba="-9.6" data-partir>No cobro mi trabajo</text>
+        <text class="t-cuerpo" x="297.5" y="483.63" text-anchor="middle" data-base="483.63" data-comba="-7.65" data-partir>hasta adjudicar el fondo</text>
+        <text class="t-firma" x="297.5" y="599.13" text-anchor="middle" data-base="599.13" data-comba="-1.7" data-partir>1000GRACIAS</text>
+        </g>
+
+        <rect y="-40" width="595" height="720" fill="url(#g-sombra)"/>
+        <!--
+          Las dos texturas de Texturelabs, cada una con su fusión: la 310L en
+          superponer, nivelada a media 128 —el neutro de superponer— para que aporte
+          relieve sin aclarar ni oscurecer; y la 375M en plus-lighter, que es puramente
+          aditivo y por tanto tiene el negro por neutro, así que va con la continua
+          quitada para que sume grano y no una capa de luz plana.
+        -->
+        <image class="tex-l" href="/img/flyer/papel-310L.webp" width="595" height="885.43"
+               preserveAspectRatio="xMidYMid slice"/>
+        <image class="tex-m" href="/img/flyer/papel-375M.webp" width="595" height="885.43"
+               preserveAspectRatio="xMidYMid slice"/>
+      </g>
+
+      <defs>
+        <linearGradient id="g-sombra" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-opacity="0"/>
+          <stop offset=".05" stop-opacity=".018"/>
+          <stop offset=".10" stop-opacity=".035"/>
+          <stop offset=".15" stop-opacity=".055"/>
+          <stop offset=".20" stop-opacity=".073"/>
+          <stop offset=".25" stop-opacity=".089"/>
+          <stop offset=".30" stop-opacity=".108"/>
+          <stop offset=".35" stop-opacity=".130"/>
+          <stop offset=".40" stop-opacity=".145"/>
+          <stop offset=".45" stop-opacity=".153"/>
+          <stop offset=".50" stop-opacity=".164"/>
+          <stop offset=".55" stop-opacity=".175"/>
+          <stop offset=".60" stop-opacity=".181"/>
+          <stop offset=".65" stop-opacity=".172"/>
+          <stop offset=".70" stop-opacity=".157"/>
+          <stop offset=".75" stop-opacity=".138"/>
+          <stop offset=".80" stop-opacity=".111"/>
+          <stop offset=".85" stop-opacity=".084"/>
+          <stop offset=".90" stop-opacity=".060"/>
+          <stop offset=".95" stop-opacity=".044"/>
+          <stop offset="1" stop-opacity=".021"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="franja" id="franja"></div>
+  </div>
+</div>
+
+<button type="button" id="reponer" class="reponer">Reponer el cartel</button>
+
+<p class="visualmente-oculto" id="aviso" role="status" aria-live="polite"></p>
+<p class="visualmente-oculto" id="contador" role="status" aria-live="polite"></p>
+
+<div class="velo" id="velo"></div>
+<div class="mano" id="mano"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /*
+    ── la comba del texto ──
+    Las letras NO giran. En un cilindro una vertical sigue siendo vertical —es
+    paralela al eje—, así que los palos de las letras quedan a plomo con el poste;
+    lo único que se curva es la línea de base. Montar el texto sobre una trayectoria
+    giraba cada letra con la tangente, y por eso las de los extremos salían tumbadas
+    y el efecto no cuajaba.
+
+    Aquí cada letra se baja lo que le toca según dónde caiga: y = base + A·(1−u²),
+    la misma parábola del papel a esa altura. Se hace una sola vez, en unidades del
+    artboard, así que vale para cualquier tamaño de pantalla.
+
+    El anclaje pasa a la izquierda a propósito: en SVG, dar una lista de posiciones
+    por letra parte el texto en tantos trozos como letras, y con anclaje centrado
+    cada trozo se centraría por su cuenta. Así que primero se mide el ancho, se
+    calcula dónde empieza la línea para que quede centrada, y luego se reparten las
+    alturas.
+  */
+  /*
+    El título, además, se parte letra a letra. Cada una va a su sitio y se le aplica un
+    SESGO VERTICAL igual a la pendiente de la parábola en ese punto: y' = y + m·(x−x₀),
+    con m = −4·A·u/595, la derivada de la comba ahí. Así el pie de cada letra acompaña
+    la curva en vez de quedarse horizontal, y el renglón deja de hacer escalera.
+
+    Y sigue sin girar nada: un sesgo vertical deja las verticales donde estaban —la
+    recta x = c sigue siendo x = c—, así que los palos continúan a plomo con el poste.
+    Solo el título: en los cuerpos pequeños la pendiente es mínima y no compensa.
+  */
+  function partirEnLetras(t){
+    const base = +t.dataset.base, amp = +t.dataset.comba;
+    const NS = 'http://www.w3.org/2000/svg';
+    const texto = t.textContent, sitios = [];
+    for (let i = 0; i < texto.length; i++){
+      const ini = t.getStartPositionOfChar(i).x, fin = t.getEndPositionOfChar(i).x;
+      sitios.push([texto[i], ini, (ini + fin) / 2]);
+    }
+    const g = document.createElementNS(NS, 'g');
+    for (const [ch, ini, medio] of sitios){
+      if (ch === ' ') continue;
+      const u = Math.min(Math.max(2*medio/595 - 1, -1), 1);
+      const m = -4 * amp * u / 595;
+      const el = document.createElementNS(NS, 'text');
+      el.setAttribute('class', t.getAttribute('class'));
+      el.setAttribute('x', ini.toFixed(2));
+      el.setAttribute('y', (base + amp * (1 - u*u)).toFixed(2));
+      el.setAttribute('transform', `matrix(1 ${m.toFixed(5)} 0 1 0 ${(-m*medio).toFixed(3)})`);
+      el.textContent = ch;
+      g.appendChild(el);
+    }
+    if (g.childNodes.length) t.replaceWith(g);
+  }
+
+  /*
+    ── reponer ──
+    Cada papelito se despliega desde su canto de arriba, uno tras otro. Mismas reglas
+    que el viento: una animación de "transform" y nada más —sin filtros, sin fusiones,
+    sin 3D—, que es lo que el navegador sabe llevarse fuera del hilo principal. Si en
+    vez de eso animase un alto o una opacidad, volvería a repintar en cada frame y el
+    texto volvería a temblar.
+
+    El fotograma final es EXACTAMENTE la postura de reposo, con su ladeo incluido, así
+    que al terminar y soltar el mando al viento no hay salto. Y arranca en cero, con
+    relleno hacia atrás, para que durante su espera el papelito no ocupe ni un píxel:
+    con un valor mínimo asomaba una tira de papel bajo la banda antes de tiempo.
+  */
+  function entrar(s, retardo){
+    if (s.viento){ s.viento.cancel(); s.viento = null; }
+    clearTimeout(s.reloj);
+    if (quieto || !s.h){ ventear(s); return; }
+    const arriba = (-s.h/2).toFixed(1) + 'px', abajo = (s.h/2).toFixed(1) + 'px';
+    const postura = k =>
+      `translate(0,${arriba}) scaleY(${k}) skewX(${s.cuelga.toFixed(2)}deg) translate(0,${abajo})`;
+    s.entrando = true;
+    s.el.animate(
+      [{ transform: postura(0) }, { transform: postura(1) }],
+      { duration: REPONE, delay: retardo, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'backwards' }
+    );
+    /* el relevo al viento va por reloj y no por la promesa de fin de la animación:
+       la promesa no siempre resuelve —depende de cómo el navegador retire la
+       animación al acabar— y el papelito se quedaría quieto para siempre */
+    s.reloj = setTimeout(() => { s.entrando = false; ventear(s); }, retardo + REPONE + 20);
+  }
+
+  /*
+    Se llama dos veces: una ahora mismo, antes del primer pintado, y otra cuando la
+    tipografía real ha llegado. Antes solo corría tras esperar a las fuentes, y por
+    eso el texto se veía un instante recto y luego saltaba a curvo. Con la tipografía
+    de reserva las letras caen en sitios algo distintos, pero la curva ya está: lo que
+    hace la segunda pasada es afinar las posiciones, no estrenar la deformación.
+
+    Como la primera pasada parte el título en letras, hace falta guardar el original
+    para poder rehacerlo tal cual en la segunda.
+  */
+  let tiposOriginal = null;
+
+  function combarTexto(){
+    const grupo = document.getElementById('tipos');
+    if (!grupo) return true;
+    if (tiposOriginal === null) tiposOriginal = grupo.innerHTML;
+    else grupo.innerHTML = tiposOriginal;
+    const lineas = Array.from(grupo.querySelectorAll('text[data-comba]'));
+    /*
+      Medir un texto SVG antes de que el navegador lo haya maquetado devuelve cero
+      —Chromium maqueta a demanda, Firefox no—, y con cero el reparto de alturas sale
+      mal y las líneas se quedan rectas. Así que primero se comprueba que la medida
+      valga algo; si no, se devuelve falso y se reintenta en el siguiente fotograma.
+    */
+    let medible = false;
+    try { medible = lineas.length > 0 && lineas[0].getComputedTextLength() > 0; } catch(_){}
+    if (!medible) return false;
+    for (const t of lineas){
+      const base = +t.dataset.base, amp = +t.dataset.comba;
+      try {
+        const ancho = t.getComputedTextLength();
+        t.setAttribute('text-anchor', 'start');
+        t.setAttribute('x', (297.5 - ancho/2).toFixed(2));
+        /* el ancho medido incluye el espaciado que sobra tras la última letra, y
+           aquí es negativo: se recentra sobre la mancha real */
+        const caja = t.getBBox();
+        t.setAttribute('x', (297.5 - ancho/2 + (297.5 - (caja.x + caja.width/2))).toFixed(2));
+        if (t.dataset.partir !== undefined){ partirEnLetras(t); continue; }
+        const n = t.textContent.length, ys = [];
+        for (let i = 0; i < n; i++){
+          const x = (t.getStartPositionOfChar(i).x + t.getEndPositionOfChar(i).x) / 2;
+          const u = Math.min(Math.max(2*x/595 - 1, -1), 1);
+          ys.push((base + amp * (1 - u*u)).toFixed(2));
+        }
+        t.setAttribute('y', ys.join(' '));
+      } catch(_){ /* si algo falla, la línea se queda recta y legible */ }
+    }
+    grupo.removeAttribute('visibility');
+    return true;
+  }
+
+  /*
+    El texto nace oculto y no se enseña hasta que está combado, así que no hay ningún
+    fotograma con las líneas rectas. Si la primera medida llega demasiado pronto se
+    reintenta al fotograma siguiente; y si tras unos cuantos intentos siguiera sin
+    poder medirse, se enseña igual —recto pero legible es mejor que invisible—.
+  */
+  (function curvar(intento){
+    if (combarTexto()) return;
+    if (intento > 12){ document.getElementById('tipos').removeAttribute('visibility'); return; }
+    requestAnimationFrame(() => curvar(intento + 1));
+  })(0);
+  if (document.fonts) document.fonts.ready.then(combarTexto);  // afinado al llegar Archivo
+
+  /* ── parámetros ── */
+  const CORREO      = 'hello@1000gracias.studio';
+  const SITIO       = '1000gracias.studio';
+  const GLOSA       = 'Diseño web para bienes públicos, cultura y oficios';
+  const N_TABS      = 7;     // los mismos que el cartel impreso
+  const COMBA       = 12.43; // cuánto suben las esquinas del canto de abajo, en medidas del artboard
+  const LADEO       = 2;     // grados que se ladea cada papelito colgando, a un lado o al otro
+  const DESIGUAL    = 5;     // cuánto varía el largo de un papelito a otro, en medidas del artboard
+  const COMBA_TECHO = 0;     // el canto de arriba de la franja va recto: ahí cae el ojo
+  const RESISTENCIA = 14;    // px que el papel aguanta antes de ceder
+  const RECORRIDO   = 72;    // px de tirón hacia abajo para completar el corte
+  const LATERAL     = 0.35;  // cuánto suma el movimiento lateral al corte
+  const SEPARA      = 1.5;   // cuánto baja la parte ya cortada respecto a la pegada
+  const RASGADO     = 3.2;   // profundidad del zigzag del rasgado (0 = corte limpio)
+  const PASO_RASGADO= 5;     // largo de cada diente
+  const OREJA       = 13;    // pliegue de invitación al pasar el cursor
+  const MEZCLA      = 0.55;  // cuánto manda el cursor sobre la diagonal al torcer el pliegue
+  const MIN_PLIEGUE = 22;    // px de doblez que siempre tiene que haber
+  const HOLGURA     = 0.92;  // margen de papel que nunca se dobla (0–1)
+  const FRENO       = 0.35;  // cuánto se aplana el pliegue al completarse el corte
+  const CEDE        = 0;     // desplazamiento del papelito al tirar (0 = se queda en su sitio)
+  const INCLINA     = 87;    // grados del papelito en la mano (90 sería perfectamente recto)
+  const LARGO_MANO  = 460;   // largo máximo del papelito en la mano, en px
+  const ESCALONA    = 75;    // ms entre un papelito y el siguiente al reponer
+  const REPONE      = 340;   // lo que tarda cada uno en desplegarse
+  /* física de papel en 3D: la hoja se voltea en profundidad, no gira dentro de la pantalla */
+  const G           = 0.30;   // gravedad
+  const ARRASTRE    = 0.020;  // el papel llega enseguida a su velocidad y ya no acelera
+  const ROCE_LADO   = 0.020;  // lo mismo, de lado
+  const VIENTO      = 0.16;   // corriente lenta que la mece mientras baja
+  const SOPLO       = 0.09;   // qué rápido va y viene esa corriente
+  const RESORTE     = 0.020;  // la mantiene en su inclinación en vez de dejarla voltear
+  const MECIDA      = 0.05;   // el mismo viento la hace respirar un poco
+  const ROCE_GIRO   = 0.90;   // muy amortiguado: baja sin girar
+  const BRISA       = 0.02;   // ruido mínimo para que no caiga dos veces igual
+  const GIRO_MAX    = 4;      // grados por frame
+
+  const quieto   = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const conHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  const muro     = document.getElementById('muro');
+  const franja   = document.getElementById('franja');
+  const aviso    = document.getElementById('aviso');
+  const contador = document.getElementById('contador');
+  const velo     = document.getElementById('velo');
+  const mano     = document.getElementById('mano');
+
+  let estados = [], vuelos = [], tweens = [];
+  let raf = null, enMano = null;
+  let anchoCartel = 0, comba = 0, combaTecho = 0;
+
+  /* ══════════ geometría ══════════ */
+
+  /*
+    Los dos cantos horizontales del papelito, en la coordenada X del cartel. Son la
+    misma parábola que recorta el cartel arriba: nada en el centro, todo en las
+    esquinas. En la mano el papelito ya no está en el poste, así que van a cero y
+    el papel queda recto.
+  */
+  function alto(X, amp){
+    if (!anchoCartel) return 0;
+    const u = Math.min(Math.max(2*X/anchoCartel - 1, -1), 1);
+    return amp * u * u;
+  }
+  const hundido = (s, X) => s.recto ? 0 : alto(X, comba) + s.corto;   // se come el canto de abajo
+  const techo   = (s, X) => s.recto ? 0 : combaTecho - alto(X, combaTecho);  // baja el de arriba
+
+  /*
+    Canto superior: sigue la curva del poste donde el papel está intacto y se vuelve
+    zigzag donde ya se rasgó. El zigzag de cada papelito se sortea una vez y no
+    cambia más: es SU rasgado. Canto inferior: la misma curva, en seis tramos.
+    k escala todo cuando el papelito crece en la mano.
+  */
+  function contorno(s, k){
+    const w = s.w, h = s.h, corte = Math.min(s.corte, s.w);
+
+    /* el canto se arma en coordenadas "desde el papel": y = 0 es el borde intacto */
+    let canto;
+    if (corte <= 0.5){
+      canto = [[0,0],[w,0]];
+    } else {
+      canto = [[0, SEPARA]];
+      for (const d of s.rasgado){
+        if (d[0] >= corte) break;
+        canto.push(d);
+      }
+      canto.push([corte, SEPARA], [corte, 0], [w, 0]);
+    }
+
+    /* si se agarró por la derecha, se espeja: el rasgado avanza hacia la izquierda */
+    if (s.desdeDerecha) canto = canto.map(q => [w - q[0], q[1]]).reverse();
+
+    /* los tramos intactos se parten, si no la curva del poste se los salta */
+    const pts = [];
+    for (let i = 0; i < canto.length; i++){
+      const a = canto[i], b = canto[i+1];
+      pts.push(a);
+      if (b && a[1] === 0 && b[1] === 0){
+        const n = Math.ceil(Math.abs(b[0]-a[0]) / (w/6));
+        for (let j = 1; j < n; j++) pts.push([a[0] + (b[0]-a[0])*j/n, 0]);
+      }
+    }
+
+    const salida = pts.map(q => [q[0]*k, (techo(s, s.izq + q[0]) + q[1]) * k]);
+    for (let i = 6; i >= 0; i--){
+      const x = w * i / 6;
+      salida.push([x*k, (h - hundido(s, s.izq + x)) * k]);
+    }
+    return salida;
+  }
+
+  function sortearRasgado(s){
+    s.rasgado = [];
+    for (let x = 0, i = 0; x < s.w; i++){
+      x = (i + 0.35 + Math.random()*0.3) * PASO_RASGADO;
+      s.rasgado.push([x, SEPARA + (i % 2 ? 0 : RASGADO * (0.45 + Math.random()*0.55))]);
+    }
+  }
+
+  /* Sutherland–Hodgman contra el semiplano (p−M)·n ≤ 0 */
+  function recortar(pts, M, n){
+    const d = p => (p[0]-M[0])*n[0] + (p[1]-M[1])*n[1];
+    const out = [];
+    for (let i = 0; i < pts.length; i++){
+      const a = pts[i], b = pts[(i+1) % pts.length];
+      const da = d(a), db = d(b);
+      if (da <= 0) out.push(a);
+      if ((da <= 0) !== (db <= 0)){
+        const t = da / (da - db);
+        out.push([a[0] + (b[0]-a[0])*t, a[1] + (b[1]-a[1])*t]);
+      }
+    }
+    return out;
+  }
+
+  function reflejar(p, M, n){
+    const d = (p[0]-M[0])*n[0] + (p[1]-M[1])*n[1];
+    return [p[0] - 2*d*n[0], p[1] - 2*d*n[1]];
+  }
+
+  const poly = (pts, pad = 0) =>
+    `polygon(${pts.map(p => `${(p[0]+pad).toFixed(1)}px ${(p[1]+pad).toFixed(1)}px`).join(',')})`;
+
+  /*
+    El dorso del papel doblado. El degradado corre a lo largo del pliegue: raya
+    oscura justo en el doblez y de ahí aclarando hasta la punta.
+
+    Las paradas van en píxeles contados desde donde el degradado entra en la caja de
+    la solapa, no en porcentaje. En porcentaje se medían contra la caja entera, que
+    es gigante —el doblez puede llegar a dos veces el alto del papelito—, así que en
+    cuanto el doblez crecía solo se veía la cola del degradado: un plano liso, y más
+    claro que el papel de al lado, que sí lleva la sombra del poste. De ahí el
+    manchón blanco al llevar el pliegue al extremo.
+
+    La punta se queda en #ece8e8, por debajo del crema del papel: es el REVERSO de
+    la hoja, y un reverso no puede salir más luminoso que la cara.
+  */
+  function bandas(s, n, M, L){
+    const W = s.w + s.pad*2, H = s.h + s.pad*2;
+    /* por qué esquina de la caja entra el degradado, y a qué distancia le queda el
+       doblez: la solapa es el reflejo, así que su punta cae a L/2 del pliegue */
+    const ox = n[0] > 0 ? 0 : W, oy = n[1] > 0 ? 0 : H;
+    const d = (M[0] + s.pad - ox) * n[0] + (M[1] + s.pad - oy) * n[1];
+    const R = L / 2;
+    /*
+      Solo la raya del pliegue va dura, que un doblez sí tiene un canto marcado. De
+      ahí en adelante las paradas van sueltas —una posición cada una, sin pareja—
+      para que el navegador interpole y la sombra sea un degradado continuo. Con las
+      paradas emparejadas quedaban bandas de color planas, con escalones entre ellas.
+    */
+    const raya = Math.max(1.5, R * 0.035);
+    const p1 = d + raya;
+    const p2 = Math.max(p1, d + R * 0.22);
+    const p3 = Math.max(p2, d + R * 0.52);
+    const p4 = Math.max(p3, d + R * 0.88);
+    const px = v => v.toFixed(1) + 'px';
+    return `linear-gradient(${(Math.atan2(n[0], -n[1]) * 180 / Math.PI).toFixed(1)}deg,` +
+           ` #a8a1a2 ${px(d)} ${px(p1)},` +
+           ` #c6bfc0 ${px(p2)},` +
+           ` #dcd5d6 ${px(p3)},` +
+           ` #ece8e8 ${px(p4)})`;
+  }
+
+  /*
+    El doblez no puede pasar del borde donde el papel sigue pegado: las dos esquinas
+    superiores tienen que quedar del lado plano. De ahí sale L ≤ 2·(p−C)·n.
+    Doblar hacia arriba llega lejísimos; hacia abajo el tope da cero y solo corta.
+  */
+  function topePliegue(s, n){
+    const d1 = (0   - s.cx)*n[0] + (0 - s.cy)*n[1];
+    const d2 = (s.w - s.cx)*n[0] + (0 - s.cy)*n[1];
+    return Math.max(0, 2 * Math.min(d1, d2) * HOLGURA);
+  }
+
+  /* ══════════ pintar ══════════ */
+
+  function pintar(s){
+    const L = Math.hypot(s.fx, s.fy);
+    const k = s.crecido ? s.scMano : 1;   // en la mano el papel mide de verdad más
+
+    /*
+      s.recto es cierto desde que el papelito se suelta y empieza a venirse a la mano.
+      A partir de ahí ya no hay pliegue que dibujar: el papel está libre. Sin esta
+      condición la solapa se seguía pintando durante todo el viaje, creciendo con la
+      escala, y dejaba una estela clara saliendo del papelito.
+    */
+    if (L < 2 || s.recto){
+      s.cara.style.clipPath = poly(contorno(s, k));
+      s.flap.style.display = 'none';
+    } else {
+      const base = contorno(s, 1);
+      const n = [s.fx/L, s.fy/L];
+      const M = [s.cx + s.fx/2, s.cy + s.fy/2];
+      const doblado = recortar(base, M, n);
+      const frente  = recortar(base, M, [-n[0], -n[1]]);
+
+      s.cara.style.clipPath = frente.length >= 3 ? poly(frente) : 'polygon(0 0,0 0,0 0)';
+
+      if (doblado.length >= 3){
+        s.flap.style.display = 'block';
+        s.flap.style.clipPath = poly(doblado.map(p => reflejar(p, M, n)), s.pad);
+        s.flap.style.backgroundImage = bandas(s, n, M, L);
+      } else {
+        s.flap.style.display = 'none';
+      }
+    }
+
+    /*
+      Colgando. El papelito no es una pieza suelta: es el mismo papel del cartel,
+      al que le hicieron unos cortes. Su canto de arriba TIENE que seguir siendo la
+      línea donde acaba la banda azul, continua de lado a lado.
+
+      Por eso el ladeo es un sesgo y no un giro. Un giro, aunque sea sobre el canto
+      de arriba, inclina ese canto y lo parte en siete escaloncitos; el sesgo desplaza
+      cada punto en proporción a lo lejos que esté de arriba, así que el canto —que
+      está a distancia cero— no se mueve ni un pelo y solo se va abriendo hacia abajo.
+      Que es, además, lo que hace una tira de papel colgando: se dobla, no bascula.
+
+      Y es 2D a propósito. Antes el papelito también se despegaba del poste con un
+      rotateX, y eso obliga al navegador a proyectarlo en perspectiva: deja de dibujar
+      texto y pasa a mapear una textura, que remuestrea y reencaja en cada frame. De
+      ahí venían las dos cosas juntas, el texto pastoso y el temblor de un píxel a un
+      lado y a otro con el viento. Sin giros en profundidad, el papelito es una
+      transformación plana y el texto se dibuja como texto.
+
+      Va al final de la cadena, o sea que se aplica primero: es la postura de la que
+      parte el papel. En la mano no, allí se lee recto.
+
+      --viento es el vaivén y cada papelito lo toma en su medida, con --vela.
+    */
+    const cuelga = s.recto ? '' :
+      ` translate(0,${(-s.h/2).toFixed(1)}px)` +
+      ` skewX(calc(${s.cuelga.toFixed(2)}deg + var(--viento,0deg) * ${s.vela.toFixed(2)}))` +
+      ` translate(0,${(s.h/2).toFixed(1)}px)`;
+
+    const t = `translate(${s.tx.toFixed(1)}px,${s.ty.toFixed(1)}px) ` +
+              `rotateX(${s.rx.toFixed(2)}deg) rotateY(${s.ry.toFixed(2)}deg) ` +
+              `rotateZ(${s.rot.toFixed(2)}deg) scale(${s.sc.toFixed(3)})` + cuelga;
+    s.el.style.transform = t;
+    s.flap.style.transform = t;
+  }
+
+  /* mientras se arrastra también cambia el recorte del papel, no solo la postura */
+  const moviendo = (s, si) => { s.cara.style.willChange = si ? 'clip-path' : ''; };
+
+  /*
+    El viento, como animación de "transform". Antes era CSS animando una propiedad
+    personalizada que alimentaba la transformación: eso obliga a recalcular estilo y
+    repintar en cada frame, y repintar es reencajar cada letra en la rejilla de
+    píxeles. Animando "transform" directamente, el navegador puede llevarse el
+    movimiento fuera del hilo principal y limitarse a mover la capa ya dibujada.
+
+    Los once pasos son un seno muestreado. El retardo negativo arranca a cada
+    papelito a media racha, así que nunca van a compás.
+  */
+  const SENO = [0, .588, .951, .951, .588, 0, -.588, -.951, -.951, -.588, 0];
+
+  function ventear(s){
+    if (s.viento){ s.viento.cancel(); s.viento = null; }
+    if (quieto || !s.h || s.entrando || !s.el.isConnected) return;
+    if (s.el.dataset.estado !== 'pegado') return;
+    const arriba = (-s.h/2).toFixed(1) + 'px', abajo = (s.h/2).toFixed(1) + 'px';
+    const postura = a => `translate(0,${arriba}) skewX(${a.toFixed(3)}deg) translate(0,${abajo})`;
+    s.viento = s.el.animate(
+      SENO.map(k => ({ transform: postura(s.cuelga + k * s.vela) })),
+      { duration: s.sopla, delay: s.racha, iterations: Infinity, easing: 'linear' }
+    );
+  }
+
+  /*
+    De cuánto se maqueta la hoja antes de encogerla. 1 en el muro: el texto se dibuja
+    al tamaño en que se ve, y sale limpio. 3 solo mientras el papelito viaja a la mano
+    o vuelve, que es cuando la transformación lo agranda y hacen falta píxeles de sobra.
+  */
+  function nitidez(s, n){
+    s.el.style.setProperty('--nitidez', n);
+    s.el.style.setProperty('--encoge', (1/n).toFixed(5));
+  }
+
+  /* los dos recortes que la comba le hace a este papelito, para que la hoja de
+     dentro se ajuste al papel que queda */
+  function recortes(s){
+    const a = s.recto ? 0 : techo(s, s.izq + s.w/2);
+    const b = s.recto ? 0 : hundido(s, s.izq + s.w/2);
+    const e = s.crecido ? s.sc || s.scMano : 1;
+    s.el.style.setProperty('--recorte-arriba', (a * e) + 'px');
+    s.el.style.setProperty('--recorte', (b * e) + 'px');
+  }
+
+  /* ══════════ construir ══════════ */
+
+  /* la luz del poste, repetida en cada papelito para que se la lleve puesta */
+  const ACABADO = `<span class="acabado"><span class="sombra"></span></span>`;
+
+  function construir(){
+    vuelos = []; tweens = []; estados = [];
+    enMano = null; caidos = 0; sobre = null; tirando = null;
+    velo.dataset.abierto = 'no';
+    mano.innerHTML = '';
+    franja.innerHTML = '';
+
+    for (let i = 0; i < N_TABS; i++){
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'tab';
+      el.dataset.estado = 'pegado';
+      el.setAttribute('aria-label', `Arrancar el papelito ${i+1}: ${CORREO}`);
+      el.innerHTML =
+        `<span class="cara">` +
+          `<span class="fondo"></span>` +
+          `<span class="hoja">` +
+            `<span class="marca"><img src="/img/flyer/marca.svg" alt=""></span>` +
+            `<span class="texto">` +
+              `<span class="principal">${CORREO}<span class="copia"></span></span>` +
+              `<span class="mas">${SITIO}</span>` +
+              `<span class="mas mas--glosa">${GLOSA}</span>` +
+            `</span>` +
+          `</span>` +
+          ACABADO +
+        `</span>`;
+      franja.appendChild(el);
+
+      const flap = document.createElement('div');
+      flap.className = 'dobles';
+      franja.appendChild(flap);
+
+      const s = { el, flap, cara: el.querySelector('.cara'), i, w:0, h:0, pad:0, cx:0, cy:0, fx:0, fy:0, izq:0,
+                  corte:0, tx:0, ty:0, rot:0, rx:0, ry:0, sc:1, cortado:false, crecido:false,
+                  recto:false, baseX:0, baseY:0, scMano:1, txMano:0, tyMano:0,
+                  /* cada papelito cuelga a su aire: se ladea, se separa del poste y
+                     lo cortaron un poco más corto que a sus vecinos */
+                  cuelga:  (Math.random()-.5) * 2 * LADEO,
+                  desigual: Math.random() * DESIGUAL, corto:0,
+                  vela: .6 + Math.random() * .9,      // cuánto le entra el viento de lado
+                  sopla: 5000 + Math.random() * 4500, // lo que tarda una racha entera
+                  racha: -Math.random() * 9000,       // y por dónde de la racha empieza
+                  viento: null,
+                  tendido: 72 + Math.random()*12 };   // una cara al suelo y otra arriba, desde que se suelta
+      estados.push(s);
+    }
+    medir();
+    estados.forEach(pintar);
+    estados.forEach((s, i) => entrar(s, i * ESCALONA));
+    marcador();
+  }
+
+  function medir(){
+    anchoCartel = franja.clientWidth;
+    comba      = COMBA * anchoCartel / 595;
+    combaTecho = COMBA_TECHO * anchoCartel / 595;
+    const paso = anchoCartel / N_TABS;
+    for (const s of estados){
+      if (s.crecido || s.el.dataset.estado === 'mano') continue;
+      const izq = Math.round(s.i * paso);
+      s.izq = izq;
+      s.el.style.left  = izq + 'px';
+      s.el.style.width = (Math.round((s.i + 1) * paso) - izq) + 'px';
+      s.w = s.el.offsetWidth;
+      s.h = s.el.offsetHeight;
+      if (!s.rasgado || s.anchoRasgado !== s.w){ sortearRasgado(s); s.anchoRasgado = s.w; }
+      s.pad = Math.round(s.h * 2 + 30);           // el pliegue máximo es 2·alto
+      s.el.style.setProperty('--w', s.w + 'px');
+      s.el.style.setProperty('--h', s.h + 'px');
+      /* dónde cae este papelito dentro del cartel: la luz del cilindro es una sola
+         para los 595 de ancho, cada papelito enseña su trozo */
+      s.el.style.setProperty('--x', izq + 'px');
+      s.el.style.setProperty('--ancho-cartel', anchoCartel + 'px');
+      s.corto = s.desigual * anchoCartel / 595;
+      recortes(s);
+      ventear(s);          // la postura depende del alto: al remedir, se rehace
+      Object.assign(s.flap.style, {
+        left:   (s.el.offsetLeft - s.pad) + 'px',
+        top:    (s.el.offsetTop  - s.pad) + 'px',
+        width:  (s.w + s.pad*2) + 'px',
+        height: (s.h + s.pad*2) + 'px'
+      });
+    }
+  }
+  addEventListener('resize', () => { medir(); estados.forEach(pintar); });
+
+  function marcador(){
+    const quedan = estados.filter(s => s.el.dataset.estado === 'pegado').length;
+    contador.textContent = quedan ? `Quedan ${quedan} de ${N_TABS} papelitos` : 'No queda ninguno';
+  }
+
+  function decir(txt){ aviso.textContent = txt; }
+
+  /* ══════════ interacción en el muro ══════════ */
+
+  function esquina(s, clientX){
+    const r = s.el.getBoundingClientRect();
+    s.cx = (clientX - r.left) < s.w/2 ? 0 : s.w;
+    s.cy = s.h;
+    s.desdeDerecha = s.cx === s.w;   // el rasgado empieza por donde se agarra
+  }
+
+  /*
+    Hacia dónde se dobla la esquina. Tres pasos:
+
+    1. La componente vertical del arrastre se refleja hacia arriba. Tirar hacia
+       abajo no puede despegar una esquina que está en el borde de abajo, pero el
+       sentido horizontal sí se respeta: por eso el pliegue se tuerce al mover.
+    2. Se mezcla con la diagonal hacia la esquina superior opuesta, para que el
+       pliegue conserve carácter de esquina y no de borde entero levantado.
+    3. Si el ángulo resultante es de los que no pueden doblar nada —el doblez se
+       saldría del papel pegado—, se gira lo mínimo hacia la diagonal hasta que sí.
+       Ese último paso es lo que evita que el pliegue se quede plantado.
+  */
+  function dirPliegue(s, dx, dy){
+    const base = Math.atan2(-s.h, s.cx === 0 ? s.w : -s.w);
+    if (Math.hypot(dx || 0, dy || 0) < 4) return [Math.cos(base), Math.sin(base)];
+
+    let dif = Math.atan2(-Math.abs(dy), dx) - base;
+    while (dif >  Math.PI) dif -= 2*Math.PI;
+    while (dif < -Math.PI) dif += 2*Math.PI;
+
+    let ang = base + dif * MEZCLA;
+    const giro = (base > ang ? 1 : -1) * Math.PI/180;
+    for (let i = 0; i < 60 && topePliegue(s, [Math.cos(ang), Math.sin(ang)]) < MIN_PLIEGUE; i++)
+      ang += giro;
+
+    return [Math.cos(ang), Math.sin(ang)];
+  }
+
+  /*
+    El largo del pliegue lo manda el TIRÓN, no lo lejos que haya viajado el cursor.
+    Antes salía de la distancia en bruto, y arrastrando de lado —sin tirar apenas
+    hacia abajo— el papelito se doblaba entero en diagonal: el corte casi no avanzaba,
+    porque el corte sí pondera lo lateral, pero el pliegue crecía con cada píxel
+    recorrido. Ahora lo lateral pesa lo mismo en los dos sitios, y además hay un tope
+    en proporción al papelito: por grande que sea el arrastre, el doblez no pasa de
+    poco más de media diagonal.
+  */
+  function pliegue(s, dx, dy, atenua){
+    const d = dirPliegue(s, dx, dy);
+    s.dir = d;
+    const tiron = Math.hypot(dx * LATERAL, dy);
+    const L = Math.min(tiron, topePliegue(s, d), Math.hypot(s.w, s.h) * 0.55) * atenua;
+    s.fx = d[0] * L; s.fy = d[1] * L;
+  }
+
+  /*
+    Los punteros se escuchan en la franja, no en cada papelito. Si se escucharan en
+    el papelito, doblar la esquina lo recorta bajo el cursor, el navegador dispara
+    pointerleave, se despliega, el cursor vuelve a estar encima… y parpadea sin fin.
+    Aquí el papelito bajo el cursor se decide por coordenada, no por qué hay pintado.
+  */
+  let sobre = null, tirando = null;
+
+  /*
+    Por la caja real de cada papelito, no por una rejilla de ancho / N_TABS.
+
+    Los papelitos no miden todos lo mismo —el rasgado los deja en 62, 64, 66—
+    ni están donde diría la rejilla, porque cuelgan ladeados. En las juntas la
+    rejilla devolvía un papelito que no estaba bajo el cursor, y esquina() le
+    elegía la esquina comparándolo con una caja que no lo contiene: saltaba uno
+    de al lado y se doblaba hacia cualquier lado.
+
+    Se mira la caja del elemento y no lo que hay pintado: doblar la esquina lo
+    recorta bajo el cursor, y hacer la prueba contra el dibujo devolvería al
+    parpadeo que se quiso evitar escuchando en la franja.
+
+    Devuelve null cuando el cursor no está sobre ninguno. Antes acotaba al del
+    extremo, que es la otra mitad del mismo error.
+  */
+  const CERCA = 12;   // px de gracia a los lados, para que las juntas no tengan filo
+
+  function tabEn(clientX, clientY){
+    let dentro = null, cerca = null, dist = Infinity;
+
+    for (const s of estados){
+      const b = s.el.getBoundingClientRect();
+      const fuera = clientX < b.left || clientX > b.right ||
+                    (clientY != null && (clientY < b.top || clientY > b.bottom));
+
+      /* si se solapan —uno colgando sobre otro— manda el que sigue pegado, que
+         es el único al que el hover le hace algo */
+      if (!fuera && (!dentro || s.el.dataset.estado === 'pegado')) dentro = s;
+
+      const dx = Math.max(b.left - clientX, 0, clientX - b.right);
+      if (dx < dist){ dist = dx; cerca = s; }
+    }
+
+    return dentro || (dist <= CERCA ? cerca : null);
+  }
+
+  function despegar(){
+    if (sobre && sobre.el.dataset.estado === 'pegado') tween(sobre, { fx:0, fy:0 }, 160);
+    sobre = null;
+  }
+
+  franja.addEventListener('pointermove', e => {
+    if (tirando){ mover(e); return; }
+    if (!conHover || enMano || e.pointerType !== 'mouse') return;
+    const s = tabEn(e.clientX, e.clientY);
+    if (s === sobre) return;
+    despegar();
+    if (s && s.el.dataset.estado === 'pegado'){
+      sobre = s;
+      esquina(s, e.clientX);
+      s.dir = dirPliegue(s);
+      tween(s, { fx: s.dir[0]*OREJA, fy: s.dir[1]*OREJA }, 130);
+    }
+  });
+
+  franja.addEventListener('pointerleave', () => { if (!tirando) despegar(); });
+
+  franja.addEventListener('pointerdown', e => {
+    if (enMano || tirando) return;
+    const encima = e.target.closest && e.target.closest('.tab');
+    if (encima && encima.dataset.estado !== 'pegado') return;   // papel caído: es un click
+
+    const s = tabEn(e.clientX, e.clientY);
+    if (!s || s.el.dataset.estado !== 'pegado') return;
+
+    e.preventDefault();
+    cancelarTween(s);
+    sobre = null;
+    esquina(s, e.clientX);
+    s.dir = dirPliegue(s);
+    s.cortado = false;
+    tirando = { s, id:e.pointerId, x0:e.clientX, y0:e.clientY };
+
+    franja.setPointerCapture(e.pointerId);
+    s.el.dataset.estado = 'tirando';
+    if (s.viento) s.viento.pause();   // agarrado no se mece (y el tirón no mueve la caja)
+    s.el.style.zIndex = 7; s.flap.style.zIndex = 7;
+    moviendo(s, true);
+    enMovimiento();
+  });
+
+  function mover(e){
+    if (e.pointerId !== tirando.id) return;
+    const s = tirando.s;
+    const dx = e.clientX - tirando.x0, dy = e.clientY - tirando.y0;
+
+    /*
+      Cuando cede la última esquina el papel queda suelto: no se va de su sitio,
+      pero ya nada lo sujeta, así que el doblez deja de tener límites. Sigue al
+      cursor a donde vaya y se pasa a la otra esquina si el cursor cruza al otro
+      lado, doblándose para ese lado.
+    */
+    if (s.cortado){
+      const r = s.el.getBoundingClientRect();
+      s.cx = (e.clientX - r.left) < s.w/2 ? 0 : s.w;
+      s.cy = s.h;
+
+      const L = Math.hypot(dx, dy);
+      if (L > 2){
+        const adentro = s.cx === 0 ? 1 : -1;              // hacia dentro del papel
+        const ux = Math.abs(dx) / L * adentro, uy = -Math.abs(dy) / L;
+        const n = Math.hypot(ux, uy) || 1;
+        const largo = Math.min(L * 0.7, Math.hypot(s.w, s.h) * 0.85);
+        s.fx = ux / n * largo; s.fy = uy / n * largo;
+      }
+      pintar(s);
+      return;
+    }
+
+    /* el corte solo avanza al tirar hacia abajo */
+    const tiron = Math.max(dy, 0) + Math.abs(dx) * LATERAL;
+    const p = Math.min(Math.max((tiron - RESISTENCIA) / RECORRIDO, 0), 1);
+
+    pliegue(s, dx, dy, 1 - FRENO * p * p);
+    s.corte = p * s.w;
+    s.tx = dx * CEDE; s.ty = Math.max(dy,0) * CEDE;
+    pintar(s);
+
+    if (p >= 1){
+      s.cortado = true;
+      s.corte = s.w;
+      s.el.dataset.estado = 'volando';
+      if (s.viento){ s.viento.cancel(); s.viento = null; }
+      pintar(s);
+      marcador();
+    }
+  }
+
+  function soltarDedo(e){
+    if (!tirando || (e && e.pointerId !== tirando.id)) return;
+    const s = tirando.s;
+    tirando = null;
+    enMovimiento();
+    try { franja.releasePointerCapture(e.pointerId); } catch(_){}
+
+    if (s.cortado){
+      acercar(s);                       // ← lo soltaste: se te viene a la mano
+    } else {
+      s.el.dataset.estado = 'pegado';
+      s.el.style.zIndex = ''; s.flap.style.zIndex = '';
+      if (s.viento) s.viento.play();   // no se llegó a cortar: vuelve a mecerse
+      tween(s, { fx:0, fy:0, corte:0, tx:0, ty:0, rot:0 }, 260, () => moviendo(s, false));
+    }
+  }
+  franja.addEventListener('pointerup', soltarDedo);
+  franja.addEventListener('pointercancel', soltarDedo);
+
+  franja.addEventListener('click', e => {
+    const el = e.target.closest && e.target.closest('.tab');
+    if (!el) return;
+    const s = estados.find(x => x.el === el);
+    if (!s) return;
+    if (el.dataset.estado === 'pegado' && e.detail === 0 && !enMano) // detail 0 = teclado
+      arrancarConTeclado(s);
+  });
+
+  /* en la mano el papelito ya no se suelta al tocarlo: copia el correo.
+     Para soltarlo, click fuera o Escape. */
+  mano.addEventListener('click', copiar);
+
+  function arrancarConTeclado(s){
+    s.cx = s.w; s.cy = s.h;
+    if (s.viento){ s.viento.cancel(); s.viento = null; }
+    s.el.dataset.estado = 'volando';
+    s.el.style.zIndex = 7; s.flap.style.zIndex = 7;
+    moviendo(s, true);
+    marcador();
+
+    if (quieto){ s.corte = s.w; s.fx = s.fy = 0; pintar(s); acercar(s); return; }
+
+    s.dir = dirPliegue(s);
+    const L = topePliegue(s, s.dir) * 0.55;
+    tween(s, { fx: s.dir[0]*L, fy: s.dir[1]*L }, 240, () => {
+      tween(s, { corte: s.w }, 200, () => acercar(s));
+    });
+  }
+
+  /* ══════════ el papelito en la mano ══════════ */
+
+  function acercar(s){
+    if (enMano) return;
+    enMano = s;
+    const el = s.el;
+
+    /* posición real sin transform: así el salto al layer fijo no mueve un pixel */
+    const guardar = el.style.transform;
+    el.style.transform = 'none';
+    const r = el.getBoundingClientRect();
+    el.style.transform = guardar;
+    s.baseX = r.left; s.baseY = r.top;
+
+    cancelarTween(s);
+    vuelos = vuelos.filter(v => v.s !== s);
+    s.flap.style.display = 'none';
+    moviendo(s, true);
+
+    /* fuera del poste el papel ya no se comba: se lee recto */
+    s.recto = true;
+    nitidez(s, 3);          // el viaje lo amplía casi tres veces
+    recortes(s);
+
+    Object.assign(el.style, {
+      position:'fixed', left:r.left+'px', top:r.top+'px',
+      width:s.w+'px', height:s.h+'px', margin:'0', zIndex:''
+    });
+    mano.appendChild(el);
+    el.dataset.estado = 'mano';
+    delete el.dataset.copiado;
+    el.setAttribute('aria-label',
+      `Papelito de 1000gracias. ${CORREO}. ${SITIO}. Pulsa para copiar el correo, Escape para soltarlo.`);
+
+    velo.dataset.abierto = 'si';
+
+    /* girado, el papelito mide s.h de largo por s.w de alto */
+    const sc = Math.min(Math.min(innerWidth * 0.86, LARGO_MANO) / s.h, innerHeight * 0.6 / s.w);
+    const objX = innerWidth/2  - (r.left + s.w/2);
+    const objY = innerHeight/2 - (r.top  + s.h/2);
+
+    /* si venía volteado del suelo, se endereza por el camino corto */
+    const derecho = INCLINA + 360 * Math.round((s.rot - INCLINA) / 360);
+    const plano   = 360 * Math.round(s.rx / 360);
+
+    tween(s, { tx:objX, ty:objY, rot:derecho, sc, fx:0, fy:0, rx:plano, ry:0 }, quieto ? 0 : 460, () => {
+      crecer(s);
+      el.focus({ preventScroll:true });
+    });
+    decir(CORREO);
+  }
+
+  /*
+    Llega escalado: mismo bitmap estirado, texto pastoso. Aquí se cambia por tamaño
+    real —mismo centro, misma pinta— y el navegador remaqueta el texto grande.
+  */
+  function crecer(s){
+    const el = s.el;
+    s.scMano = s.sc; s.txMano = s.tx; s.tyMano = s.ty;
+
+    const w2 = s.w * s.sc, h2 = s.h * s.sc;
+    const cx = s.baseX + s.w/2 + s.tx;
+    const cy = s.baseY + s.h/2 + s.ty;
+
+    el.style.width  = w2 + 'px';
+    el.style.height = h2 + 'px';
+    el.style.left   = (cx - w2/2) + 'px';
+    el.style.top    = (cy - h2/2) + 'px';
+    el.style.setProperty('--w', w2 + 'px');
+    el.style.setProperty('--h', h2 + 'px');
+
+    s.tx = 0; s.ty = 0; s.sc = 1; s.crecido = true;
+    nitidez(s, 1);          // ya mide lo que mide: se maqueta a tamaño real
+    recortes(s);
+    pintar(s);
+    moviendo(s, false);
+  }
+
+  function encoger(s){
+    const el = s.el;
+    el.style.width  = s.w + 'px';
+    el.style.height = s.h + 'px';
+    el.style.left   = s.baseX + 'px';
+    el.style.top    = s.baseY + 'px';
+    el.style.setProperty('--w', s.w + 'px');
+    el.style.setProperty('--h', s.h + 'px');
+    s.tx = s.txMano; s.ty = s.tyMano; s.sc = s.scMano;
+    s.crecido = false;
+    recortes(s);
+    pintar(s);
+  }
+
+  /* ── copiar el correo ── */
+  async function copiar(){
+    const s = enMano;
+    if (!s) return;
+    let bien = false;
+    try {
+      await navigator.clipboard.writeText(CORREO);
+      bien = true;
+    } catch(_){
+      /* sin permiso o sin contexto seguro: el truco de siempre */
+      const t = document.createElement('textarea');
+      t.value = CORREO;
+      t.setAttribute('readonly', '');
+      t.style.cssText = 'position:fixed;top:-1000px';
+      document.body.appendChild(t);
+      t.select();
+      try { bien = document.execCommand('copy'); } catch(__){}
+      t.remove();
+    }
+    if (!bien) return;
+    s.el.dataset.copiado = 'si';
+    decir('Correo copiado');
+    clearTimeout(copiar._t);
+    copiar._t = setTimeout(() => { delete s.el.dataset.copiado; }, 1000);
+  }
+
+  function dejarCaer(){
+    const s = enMano;
+    if (!s) return;
+    enMano = null;
+    velo.dataset.abierto = 'no';
+    s.el.dataset.estado = 'volando';
+    delete s.el.dataset.copiado;
+    moviendo(s, true);
+    nitidez(s, 3);          // encoger(s) lo deja ampliado por transformación
+    if (s.crecido) encoger(s);
+
+    /* vuelve al muro: vuelve a tener la comba del poste */
+    s.recto = false;
+    recortes(s);
+
+    /* se encoge donde está —el centro no se mueve— y desde ahí se deja caer */
+    tween(s, { sc:1, rot:INCLINA + (Math.random()-.5)*24, rx:s.tendido,
+               tx:s.tx + (Math.random()-.5)*140 },
+          quieto ? 0 : 300, () => {
+      devolver(s);
+      volar(s, (Math.random()-.5)*0.6, 0.3, 0);
+    });
+  }
+
+  /* vuelve al muro: tx/ty significan lo mismo en los dos padres (offset del slot) */
+  let caidos = 0;
+  function devolver(s){
+    const el = s.el;
+    /* por delante de los papelitos que siguen pegados, y del último que cayó */
+    Object.assign(el.style, { position:'', left:s.izq+'px', top:'', width:s.w+'px',
+                              height:'', margin:'', zIndex: 20 + (++caidos) });
+    franja.insertBefore(el, s.flap);
+    nitidez(s, 1);
+    el.removeAttribute('aria-label');
+    el.setAttribute('aria-hidden', 'true');
+    el.tabIndex = -1;
+    pintar(s);
+  }
+
+  /* ══════════ caída ══════════ */
+
+  function rectSinTransform(el){
+    const guardar = el.style.transform;
+    el.style.transform = 'none';
+    const r = el.getBoundingClientRect();
+    el.style.transform = guardar;
+    return r;
+  }
+
+  function volar(s, vx, vy, giro){
+    s.el.dataset.estado = 'volando';
+    moviendo(s, true);
+    const r = rectSinTransform(s.el);
+    const m = muro.getBoundingClientRect();
+
+    s.ry = (Math.random()-.5) * 5;
+
+    vuelos.push({
+      s, vx, vy,
+      om:  giro !== undefined ? giro : (Math.random()-.5)*0.3,
+      omx: 0,
+      omy: 0,
+      fase: Math.random() * 6.28,
+      /* ty a partir del cual el papelito ya salió del muro por abajo */
+      fuera: (m.bottom + 80) - r.top,
+      t: 0
+    });
+    arrancarLoop();
+  }
+
+  /* ══════════ tweens ══════════ */
+
+  function tween(s, hasta, ms, alFinal){
+    cancelarTween(s);
+    if (ms <= 0){
+      Object.keys(hasta).forEach(k => s[k] = hasta[k]);
+      pintar(s); alFinal && alFinal();
+      return;
+    }
+    const claves = Object.keys(hasta);
+    const desde = {};
+    for (const k of claves) desde[k] = s[k];    // fotografía lo que se va a animar, sea lo que sea
+    tweens.push({ s, desde, hasta, claves, t0:performance.now(), ms, alFinal });
+    arrancarLoop();
+  }
+  const cancelarTween = s => { tweens = tweens.filter(t => t.s !== s); };
+
+  /* la perspectiva se enciende mientras haya algo moviéndose y se apaga al parar */
+  function enMovimiento(){
+    if (tweens.length || vuelos.length || tirando) franja.dataset.vuela = 'si';
+    else delete franja.dataset.vuela;
+  }
+
+  function arrancarLoop(){ enMovimiento(); if (!raf) raf = requestAnimationFrame(paso); }
+
+  function paso(ahora){
+    const sucios = new Set();
+
+    for (let i = tweens.length - 1; i >= 0; i--){
+      const t = tweens[i];
+      const u = Math.min((ahora - t.t0) / t.ms, 1);
+      const e = 1 - Math.pow(1 - u, 3);
+      for (const k of t.claves) t.s[k] = t.desde[k] + (t.hasta[k] - t.desde[k]) * e;
+      sucios.add(t.s);
+      if (u >= 1){ tweens.splice(i, 1); t.alFinal && t.alFinal(); }
+    }
+
+    for (let i = vuelos.length - 1; i >= 0; i--){
+      const v = vuelos[i], s = v.s;
+      v.t++;
+
+      /*
+        No es una simulación aerodinámica: es una hoja que se deja caer y baja
+        despacio, mecida. Ya viene acostada desde que se suelta —una cara al piso,
+        otra arriba— y no voltea ni gira: solo respira hasta salir de cuadro.
+      */
+      v.fase += SOPLO;
+
+      v.vy += G;
+      v.vy -= ARRASTRE  * Math.abs(v.vy) * v.vy;     // enseguida deja de acelerar
+      v.vx -= ROCE_LADO * Math.abs(v.vx) * v.vx;
+      v.vx += VIENTO * Math.sin(v.fase);             // el vaivén de lado
+
+      v.omx += -RESORTE * (s.rx - s.tendido) + MECIDA * Math.sin(v.fase)
+               + (Math.random()-.5) * BRISA;
+      v.omx *= ROCE_GIRO;
+      v.omx = Math.max(-GIRO_MAX, Math.min(GIRO_MAX, v.omx));
+      v.omy *= 0.94;
+      v.om  *= 0.94;                                  // cualquier giro que traiga, se apaga
+
+      s.tx += v.vx; s.ty += v.vy;
+      s.rx += v.omx; s.ry += v.omy; s.rot += v.om;
+      sucios.add(s);
+
+      /* no hay suelo donde amontonarse: el papel se va por abajo y ahí se acaba */
+      if (s.ty > v.fuera || v.t > 900){
+        s.el.dataset.estado = 'ido';
+        s.el.style.display = 'none';
+        vuelos.splice(i, 1);
+        moviendo(s, false);
+      }
+    }
+
+    sucios.forEach(pintar);
+    raf = (tweens.length || vuelos.length) ? requestAnimationFrame(paso) : null;
+    if (!raf) enMovimiento();
+  }
+
+  /* ══════════ salidas ══════════ */
+
+  velo.addEventListener('pointerdown', dejarCaer);
+  addEventListener('keydown', e => { if (e.key === 'Escape' && enMano) dejarCaer(); });
+
+  document.getElementById('reponer').addEventListener('click', () => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = null;
+    construir();
+    decir('Cartel repuesto');
+  });
+
+  construir();
+})();
+</script>
+</body>
+</html>

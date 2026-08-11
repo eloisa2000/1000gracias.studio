@@ -1,0 +1,78 @@
+---
+import Wordmark from './Wordmark.astro';
+
+/*
+  tono: color del wordmark y de la píldora.
+  accion: qué hace la píldora. Las dos son enlaces de verdad — el contacto
+  tiene su propia URL (/conversemos) — y el script los intercepta para abrir y
+  cerrar el modal sin recargar. Sin JavaScript siguen funcionando: navegan.
+*/
+const { tono = 'azul', accion = 'abrir', tag = 'div' } = Astro.props;
+const Tag = tag;
+const abre = accion === 'abrir';
+---
+
+<Tag class:list={['nav', `nav--${tono}`]}>
+  <Wordmark tono={tono} />
+  <a
+    class="pildora"
+    href={abre ? '/conversemos' : '/'}
+    data-contacto={abre ? 'abrir' : 'cerrar'}
+    aria-label={abre ? 'Abrir el formulario de contacto' : 'Cerrar el formulario de contacto'}
+    aria-haspopup={abre ? 'dialog' : undefined}
+  >
+    <span class="pildora__etiqueta">{abre ? 'Conversemos' : 'X'}</span>
+  </a>
+</Tag>
+
+<style>
+  .nav {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+  }
+
+  .nav--azul .pildora {
+    color: var(--azul);
+  }
+
+  .nav--crema .pildora {
+    color: var(--crema);
+  }
+
+  /* Al hover la píldora se rellena con su propio color y el texto se invierte.
+     El cómo está en global.css. */
+  @media (hover: hover) {
+    .nav--azul .pildora:hover {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: var(--crema);
+    }
+
+    .nav--crema .pildora:hover {
+      background: var(--crema);
+      border-color: var(--crema);
+      color: var(--azul);
+    }
+  }
+
+  /* Pasos 4 y 5 del orden descendente en móvil: el logo y después el botón. */
+  @media (max-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .nav :global(.wordmark) {
+      animation: entra 520ms var(--ease) 210ms both;
+    }
+
+    .nav .pildora {
+      animation: entra 520ms var(--ease) 280ms both;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .nav {
+      align-items: center;
+    }
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import ProjectItem from './ProjectItem.astro';
+
+const { proyectos } = Astro.props;
+---
+
+<nav class="proyectos" aria-labelledby="proyectos-rotulo">
+  <h2 class="proyectos__rotulo" id="proyectos-rotulo" data-apila>Proyectos</h2>
+  <ul class="proyectos__lista" data-lista-proyectos>
+    {proyectos.map((proyecto, i) => <ProjectItem proyecto={proyecto} indice={i + 1} />)}
+  </ul>
+</nav>
+
+<style>
+  .proyectos__rotulo {
+    font-family: var(--tipo-rotulo);
+    font-weight: 400;
+    font-size: calc(40 * var(--k));
+    line-height: 1;
+    letter-spacing: calc(-1.6 * var(--k));
+    color: var(--azul);
+  }
+
+  .proyectos__lista {
+    margin-top: calc(88 * var(--k));
+  }
+
+  /* Los proyectos van entrando uno después de otro, apilándose. El estado
+     escondido vive dentro del media query: si alguien pide movimiento
+     reducido, la lista se ve de una y no depende de que corra la animación. */
+  @media (prefers-reduced-motion: no-preference) {
+    .proyectos__rotulo {
+      animation: entra 520ms var(--ease) 180ms both;
+    }
+
+    /* Paso 6 del orden descendente en móvil: va después del botón del nav. */
+    @media (max-width: 1024px) {
+      .proyectos__rotulo {
+        animation-delay: 350ms;
+      }
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .proyectos__rotulo {
+      font-size: calc(27.745 * var(--k));
+      letter-spacing: calc(-1.1098 * var(--k));
+    }
+
+    .proyectos__lista {
+      margin-top: calc(40 * var(--k));
+    }
+  }
+</style>

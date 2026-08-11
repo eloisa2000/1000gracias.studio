@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import ContactModal from '../components/ContactModal.astro';
+import { getProyectos, getAjustes } from '../lib/content.js';
+
+const [proyectos, ajustes] = await Promise.all([getProyectos(), getAjustes()]);
+---
+
+<Base
+  title="Conversemos — 1000gracias"
+  description="Déjanos tu contacto y conversemos sobre tu proyecto. Diseño web para organizaciones, colectivos y personas en cultura, educación y causas sociales."
+>
+  <Hero proyectos={proyectos} ajustes={ajustes} inerte />
+  <ContactModal ajustes={ajustes} pagina />
+</Base>
+
+<script>
+  import '../scripts/contact-modal.js';
+</script>

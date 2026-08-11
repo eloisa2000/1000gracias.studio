@@ -1,0 +1,168 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--crema);
+  color: var(--navy);
+  font-family: var(--tipo-titulo);
+  font-weight: 400;
+  font-variation-settings: 'wdth' 100;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+p,
+figure,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--rojo);
+}
+
+:focus-visible {
+  outline: calc(3 * var(--k)) solid var(--rojo);
+  outline-offset: calc(4 * var(--k));
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Píldora: botón y enlaces con forma de cápsula. Usada por el nav y por
+   "Enviar". El radio total viene del Figma (43.195 sobre el artboard). */
+.pildora {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(17.671 * var(--k)) calc(23.561 * var(--k));
+  border: calc(3.927 * var(--k)) solid currentColor;
+  border-radius: calc(43.195 * var(--k));
+  background: none;
+  font-family: var(--tipo-titulo);
+  font-weight: 400;
+  font-size: calc(35.342 * var(--k));
+  line-height: 1;
+  letter-spacing: calc(-1.7671 * var(--k));
+  font-feature-settings: 'salt' 1, 'case' 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/*
+  El hover invierte la píldora, pero el texto no se puede fundir junto con el
+  fondo: iría de azul a crema mientras el fondo va de crema a azul, o sea la
+  misma interpolación en sentidos opuestos, y a mitad de camino serían el mismo
+  color exacto. La palabra desaparecería, con cualquier duración.
+
+  Por eso el fondo se funde y el texto cambia de golpe a mitad de camino,
+  cuando el fondo ya está lo bastante oscuro para que el crema se lea. Nunca
+  hay un instante sin contraste.
+*/
+.pildora {
+  transition:
+    background-color var(--swap) var(--ease),
+    border-color var(--swap) var(--ease),
+    color 0s linear calc(var(--swap) * 0.5);
+}
+
+/* La píldora del modal sí cambia de ancho al abrir y cerrar (ver
+   contact-modal.js). El resto no, para que no se arrastren al redimensionar. */
+.pildora[data-contacto='cerrar'] {
+  transition: width var(--entrada) var(--ease);
+}
+
+.pildora__etiqueta {
+  transition: opacity calc(var(--entrada) * 0.5) var(--ease);
+}
+
+.pildora--rojo {
+  border-color: var(--rojo);
+  background: var(--rojo);
+  color: var(--crema);
+}
+
+@media (hover: hover) {
+  .pildora--rojo:hover {
+    background: var(--crema);
+    color: var(--rojo);
+  }
+}
+
+/* Mientras el contacto está abierto, las estrellas de la home se apagan: las
+   del modal parten justo encima de ellas y se van moviendo solas. */
+html.is-contacto .escenario .estrella {
+  opacity: 0;
+}
+
+/* Lo mismo con la carita mientras el muro está abierto: la copia del modal
+   queda justo encima, y con las dos puestas cualquier diferencia de un píxel
+   o de ángulo se vería doble. */
+html.is-muro .carita--enlace {
+  opacity: 0;
+}
+
+/*
+  Entrada compartida: subir un poco y aparecer. Vive acá y no en cada
+  componente porque el escalonado de la home la cruza — en móvil los elementos
+  entran en orden descendente, y los retardos están repartidos entre Titular,
+  Nav, ProjectList, ProjectItem y Brandmark.
+*/
+@keyframes entra {
+  from {
+    opacity: 0;
+    transform: translateY(calc(16 * var(--k)));
+  }
+}
+
+@media (max-width: 1024px) {
+  .pildora {
+    padding: calc(8.318 * var(--k)) calc(11.091 * var(--k));
+    border-width: calc(1.848 * var(--k));
+    border-radius: calc(20.333 * var(--k));
+    font-size: calc(16.636 * var(--k));
+    letter-spacing: calc(-0.8318 * var(--k));
+  }
+}

@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import ContactModal from '../components/ContactModal.astro';
+import MuroModal from '../components/MuroModal.astro';
+import { getProyectos, getAjustes } from '../lib/content.js';
+
+const [proyectos, ajustes] = await Promise.all([getProyectos(), getAjustes()]);
+---
+
+<Base conDatosDelEstudio>
+  <Hero proyectos={proyectos} ajustes={ajustes} />
+  <ContactModal ajustes={ajustes} />
+  <MuroModal />
+</Base>
+
+<script>
+  import '../scripts/hover-stage.js';
+  import '../scripts/contact-modal.js';
+  import '../scripts/muro-modal.js';
+</script>

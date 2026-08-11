@@ -1,0 +1,179 @@
+---
+/*
+  Un proyecto de la lista. Mientras no existan las páginas /proyectos/[slug],
+  el ítem con `liveUrl` es un enlace al sitio publicado y el resto son botones:
+  siguen siendo enfocables con teclado y disparan el cambio de imagen del
+  escenario, que es lo único que hacen por ahora.
+
+  En móvil no hay hover, así que al tocar el nombre aparece la imagen flotando
+  sobre el ítem. Es la misma imagen que usa el escenario en escritorio (mismo
+  src, srcset y sizes), así que el navegador la sirve de caché.
+*/
+const { proyecto, indice = 0 } = Astro.props;
+const esEnlace = Boolean(proyecto.liveUrl);
+const SIZES = '(max-width: 1024px) 79vw, 41vw';
+const numero = `${String(indice).padStart(2, '0')}.`;
+---
+
+<li class="item" data-item data-apila style={`--i:${indice}`}>
+  {
+    esEnlace ? (
+      <a
+        class="item__accion"
+        href={proyecto.liveUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-proyecto={proyecto.slug}
+      >
+        <span class="item__numero">{numero}</span>
+        <span class="item__nombre">{proyecto.title}</span>
+        <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
+      </a>
+    ) : (
+      <button class="item__accion" type="button" data-proyecto={proyecto.slug}>
+        <span class="item__numero">{numero}</span>
+        <span class="item__nombre">{proyecto.title}</span>
+      </button>
+    )
+  }
+
+  {
+    (proyecto.videoSrc || proyecto.hoverSrc) && (
+      <div class="item__flotante" aria-hidden="true">
+        {proyecto.videoSrc ? (
+          <video poster={proyecto.hoverSrc} muted loop playsinline preload="none">
+            <source src={proyecto.videoSrc} type="video/mp4" />
+          </video>
+        ) : (
+          <img src={proyecto.hoverSrc} srcset={proyecto.hoverSrcset} sizes={SIZES} alt="" />
+        )}
+      </div>
+    )
+  }
+</li>
+
+<style>
+  .item {
+    position: relative;
+    padding-bottom: calc(3.78 * var(--k));
+    border-bottom: calc(0.756 * var(--k)) solid var(--azul);
+  }
+
+  .item + .item {
+    padding-top: calc(3.78 * var(--k));
+  }
+
+  .item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  /* Entra después del rótulo y de los proyectos anteriores. Ver ProjectList. */
+  @media (prefers-reduced-motion: no-preference) {
+    .item {
+      animation: entra 520ms var(--ease) both;
+      animation-delay: calc(180ms + var(--i) * 90ms);
+    }
+
+    /* Paso 7 del orden descendente en móvil. */
+    @media (max-width: 1024px) {
+      .item {
+        animation-delay: calc(350ms + var(--i) * 70ms);
+      }
+    }
+  }
+
+  /* El número va en su propia columna: si el nombre se parte en dos líneas,
+     la segunda queda alineada con la primera y no debajo del número. */
+  .item__accion {
+    display: flex;
+    align-items: baseline;
+    gap: calc(14 * var(--k));
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(40.369 * var(--k));
+    line-height: 1;
+    letter-spacing: calc(-2.0185 * var(--k));
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--azul);
+  }
+
+  .item__numero {
+    flex: none;
+    /* Cifras de ancho fijo: así los cuatro nombres arrancan en la misma
+       columna aunque el 1 sea más angosto que el 0. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* La imagen flotante es solo de móvil: en escritorio el hover ya cambia la
+     imagen del escenario. */
+  .item__flotante {
+    display: none;
+  }
+
+  @media (max-width: 1024px) {
+    .item__flotante {
+      display: block;
+      position: absolute;
+      z-index: 5;
+      top: 50%;
+      right: 10%;
+      width: 56%;
+      aspect-ratio: 1;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-50%) scale(0.96);
+      transition:
+        opacity var(--swap) var(--ease),
+        transform var(--swap) var(--ease),
+        visibility 0s linear var(--swap);
+      pointer-events: none;
+    }
+
+    /* La animación de apilado le crea un contexto de apilamiento a cada ítem,
+       así que el z-index del flotante queda encerrado ahí adentro y los
+       proyectos siguientes se dibujan encima. El z-index va en el ítem. */
+    .item.is-activa {
+      z-index: 5;
+    }
+
+    .item.is-activa .item__flotante {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) scale(1);
+      transition-delay: 0s;
+    }
+
+    .item__flotante img,
+    .item__flotante video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .item {
+      padding-bottom: calc(2.622 * var(--k));
+      border-bottom-width: calc(0.52 * var(--k));
+    }
+
+    .item + .item {
+      padding-top: calc(2.622 * var(--k));
+    }
+
+    .item__accion {
+      /* Con 14 el nombre más largo se parte en dos líneas por 3.7 px. */
+      gap: calc(8 * var(--k));
+      font-size: calc(28.002 * var(--k));
+      letter-spacing: calc(-1.4001 * var(--k));
+    }
+  }
+</style>

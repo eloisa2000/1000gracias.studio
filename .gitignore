@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.local
+.DS_Store
+
+# Permisos locales de Claude Code, propios de cada máquina.
+.claude/settings.local.json
+
+# Capturas y notas sueltas en la raíz.
+texto.png
+
+# Los videos originales, sin comprimir. Se quedan en el equipo: lo que se
+# publica son los de public/videos.
+videos-fuente/

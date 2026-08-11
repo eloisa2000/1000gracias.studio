@@ -1,0 +1,22 @@
+{
+  "name": "1000gracias-studio",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sanity": "sanity --cwd ./sanity"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource/archivo": "^5.2.5",
+    "@fontsource/onest": "^5.2.5",
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^1.1.0",
+    "astro": "^5.13.5"
+  }
+}
