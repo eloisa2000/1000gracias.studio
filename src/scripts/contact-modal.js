@@ -245,11 +245,20 @@ if (form) {
         body: new FormData(form),
         headers: { Accept: 'application/json' },
       });
-      if (!respuesta.ok) throw new Error(String(respuesta.status));
+      if (!respuesta.ok) {
+        /* Formspree contesta en JSON cuando se le pide con Accept, y explica
+           qué pasó: el formulario sin confirmar, el dominio no permitido, un
+           campo rechazado. Vale más eso que un «algo salió mal». */
+        const detalle = await respuesta
+          .json()
+          .then((d) => d?.errors?.map((e) => e.message).filter(Boolean).join('. '))
+          .catch(() => null);
+        throw new Error(detalle || `Error ${respuesta.status}`);
+      }
       form.reset();
       decir('Listo, nos llegó tu mensaje. Te escribimos pronto.');
-    } catch {
-      decir(`No pudimos enviarlo. Inténtalo de nuevo o escríbenos a ${correo}.`, 'error');
+    } catch (error) {
+      decir(`${error.message}. Si sigue fallando, escríbenos a ${correo}.`, 'error');
     } finally {
       boton.disabled = false;
     }

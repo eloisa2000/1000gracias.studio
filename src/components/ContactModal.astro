@@ -128,6 +128,10 @@ const Raiz = pagina ? 'section' : 'dialog';
           <textarea class="campo__control campo__control--area" id="c-mensaje" name="mensaje" rows="5" required></textarea>
         </p>
 
+        {/* Asunto del aviso que llega al correo. Sin esto, Formspree manda
+            todos con el mismo asunto genérico y la bandeja queda ilegible. */}
+        <input type="hidden" name="_subject" value="Nuevo contacto desde 1000gracias.studio" />
+
         {/*
           Trampa para bots. Se llama `_gotcha` y no cualquier cosa porque ese
           es el nombre que Formspree reconoce: si llega con algo escrito, lo
