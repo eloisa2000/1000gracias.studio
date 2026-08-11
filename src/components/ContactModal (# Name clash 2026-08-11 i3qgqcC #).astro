@@ -74,7 +74,7 @@ const Raiz = pagina ? 'section' : 'dialog';
         <div class="form__fila">
           <p class="campo">
             {/* El asterisco va con `aria-hidden`: para quien usa lector de
-                pantalla el atributo `required` ya lo dice, y si no leería
+                pantalla, el atributo `required` ya lo dice, y si no saldría
                 «Nombre asterisco». */}
             <label class="campo__label" for="c-nombre">
               Nombre<span class="campo__req" aria-hidden="true">*</span>
@@ -104,7 +104,7 @@ const Raiz = pagina ? 'section' : 'dialog';
             </label>
             <span class="campo__select">
               {/* El `required` funciona porque la primera opción vale "": el
-                  navegador no la da por respondida. */}
+                  navegador no la acepta como respuesta. */}
               <select class="campo__control" id="c-servicio" name="servicio" required>
                 <option value="">Elige una opción</option>
                 {servicios.map((s) => <option value={s}>{s}</option>)}
@@ -122,9 +122,7 @@ const Raiz = pagina ? 'section' : 'dialog';
         </p>
 
         <p class="campo">
-          <label class="campo__label" for="c-mensaje">
-            ¿Qué tienes en mente?<span class="campo__req" aria-hidden="true">*</span>
-          </label>
+          <label class="campo__label" for="c-mensaje">¿Qué tienes en mente?</label>
           <textarea class="campo__control campo__control--area" id="c-mensaje" name="mensaje" rows="5" required></textarea>
         </p>
 
@@ -410,11 +408,6 @@ const Raiz = pagina ? 'section' : 'dialog';
     letter-spacing: calc(-1.3764 * var(--k));
     font-feature-settings: 'salt' 1, 'case' 1;
     color: var(--azul);
-  }
-
-  .campo__req {
-    color: var(--rojo);
-    padding-left: calc(2 * var(--k));
   }
 
   .campo__control {
