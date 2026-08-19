@@ -105,6 +105,20 @@ const numero = `${String(indice).padStart(2, '0')}.`;
     color: var(--azul);
   }
 
+  /* Al pasar el cursor el proyecto se corre un poco a la derecha. Solo con
+     hover real: en tactil el toque ya muestra el proyecto y no hay estado
+     intermedio que insinuar. */
+  @media (hover: hover) {
+    .item__accion {
+      transition: transform var(--swap) var(--ease);
+    }
+
+    .item__accion:hover,
+    .item__accion:focus-visible {
+      transform: translateX(calc(18 * var(--k)));
+    }
+  }
+
   .item__numero {
     flex: none;
     /* Cifras de ancho fijo: así los cuatro nombres arrancan en la misma

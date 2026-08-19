@@ -34,14 +34,49 @@ if (dialogo && carita) {
     window.setTimeout(unaVez, 50);
   };
 
-  /* Los 350 KB del muro se piden al primer hover sobre la carita, no en cada
-     carga de la home. Si alguien hace clic sin pasar antes, se piden ahí. */
+  /*
+    Los 350 KB del muro no se piden junto con la home: se piden cuando el
+    navegador queda desocupado, y antes si alguien roza la carita. Así el hilo
+    principal y la red se los quedan primero las imágenes de la portada, que
+    son las que se ven.
+
+    Y el muro no se descubre hasta que el iframe avisa que terminó. Antes se
+    descubría a los 420 ms pasara lo que pasara: con la red lenta el fundido
+    se gastaba sobre un documento a medio armar y quedaba la trama sola.
+  */
+  const listo = () => dialogo.classList.add('is-cargado');
+
+  let reserva = null;
   const cargar = () => {
     if (marco.getAttribute('src')) return;
     marco.setAttribute('src', marco.dataset.src);
+    /* Red de seguridad: si algo de adentro nunca termina de cargar —una
+       imagen que no llega, una fuente que se cuelga— el evento `load` no
+       llega nunca y la estrella se quedaría dando vueltas para siempre. A los
+       10 segundos se muestra lo que haya, que es mejor que nada. */
+    reserva = window.setTimeout(listo, 10000);
   };
-  carita.addEventListener('pointerenter', cargar, { once: true });
-  carita.addEventListener('focus', cargar, { once: true });
+
+  /* Un iframe sin `src` dispara un `load` por su about:blank inicial. Ese no
+     cuenta: solo el del documento que pedimos. */
+  marco.addEventListener('load', () => {
+    if (!marco.getAttribute('src')) return;
+    window.clearTimeout(reserva);
+    listo();
+  });
+
+  carita.addEventListener('pointerenter', cargar);
+  carita.addEventListener('focus', cargar);
+
+  /* En táctil no hay hover, así que sin esto el muro empezaba a bajarse recién
+     al tocar. `requestIdleCallback` todavía no está en todos los Safari. */
+  const cuandoSobre = (fn) =>
+    'requestIdleCallback' in window
+      ? window.requestIdleCallback(fn, { timeout: 3000 })
+      : window.setTimeout(fn, 1200);
+
+  if (document.readyState === 'complete') cuandoSobre(cargar);
+  else window.addEventListener('load', () => cuandoSobre(cargar), { once: true });
 
   /* La copia de la carita se coloca justo encima de la de la página, para que
      al abrir el modal no se mueva ni un píxel. En móvil la de la página va en
@@ -80,6 +115,12 @@ if (dialogo && carita) {
     const clon = giroDe(copia);
     if (original && clon) clon.currentTime = original.currentTime;
   };
+
+  /* La estrella de la espera morfa con SMIL, que no entiende de media queries:
+     con movimiento reducido hay que pararla a mano. */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    dialogo.querySelector('.muro__estrella')?.pauseAnimations();
+  }
 
   const abrir = () => {
     if (dialogo.open && !cerrando) return;

@@ -23,7 +23,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,600;100,800;100,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Onest:wght@400&display=swap" rel="stylesheet">
 <style>
   :root{
     --crema:#FAF6F6;
@@ -31,6 +31,18 @@
     --rojo:#D71B1B;
 
     --archivo:"Archivo",Helvetica,Arial,sans-serif;
+    --onest:"Onest",Helvetica,Arial,sans-serif;
+
+    /*
+      Los mismos tokens del sitio (src/styles/tokens.css). Esta página es
+      independiente, pero sus dos controles —la X y la carita— son los del
+      sitio y tienen que medir y moverse igual: enmarcada se ven los del modal
+      y suelta se ven estos, y no puede notarse el cambio.
+    */
+    --k:clamp(0.5px, min(100vw / 1728, 100svh / 1117), 1.22px);
+    --swap:260ms;
+    --entrada:420ms;
+    --ease:cubic-bezier(0.2, 0.6, 0.2, 1);
 
     /*
       --kf es "un píxel del artboard". El cartel del Figma mide 595 × 842 en plano;
@@ -96,6 +108,14 @@
     overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
   }
 
+  /* El resto de los tokens del sitio. */
+  @media (max-width:1024px){
+    :root{--k:clamp(0.85px, 100vw / 393, 1.35px)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    :root{--swap:0ms;--entrada:0ms}
+  }
+
   /*
     Cierre. Esta página vive de dos formas: suelta en /contacto/ y dentro de un
     modal del sitio. Suelta, la X vuelve al inicio; dentro del modal se
@@ -103,18 +123,38 @@
 
     Lo mismo con el botón de reponer: suelto es la única interfaz que tiene la
     página, y enmarcado lo reemplaza la carita del modal.
+
+    Los dos son los mismos controles del modal, copiados: la píldora de
+    global.css y la carita de Brandmark.astro. Están duplicados porque esta
+    página no comparte hoja con el sitio —tiene su propio reset y sus propias
+    fuentes a propósito—, pero si allá cambian, acá tienen que cambiar igual.
   */
   .cerrar{
-    position:fixed;top:20px;right:20px;z-index:50;
+    position:fixed;top:calc(28 * var(--k));right:calc(30 * var(--k));z-index:50;
     display:inline-flex;align-items:center;justify-content:center;
-    width:46px;height:46px;
-    border:3px solid var(--azul);border-radius:999px;
-    background:var(--crema);color:var(--azul);
-    font:600 18px/1 var(--archivo);text-decoration:none;
-    transition:background-color .26s,color .26s;
+    padding:calc(17.671 * var(--k)) calc(23.561 * var(--k));
+    border:calc(3.927 * var(--k)) solid currentColor;
+    border-radius:calc(43.195 * var(--k));
+    background:none;color:var(--azul);
+    font-family:var(--archivo);font-weight:400;
+    font-size:calc(35.342 * var(--k));line-height:1;
+    letter-spacing:calc(-1.7671 * var(--k));
+    font-feature-settings:'salt' 1,'case' 1;
+    text-decoration:none;white-space:nowrap;cursor:pointer;
+    /* El fondo se funde y el texto salta a mitad de camino: si se fundieran
+       los dos, se cruzarían en el mismo color y la X desaparecería. */
+    transition:
+      background-color var(--swap) var(--ease),
+      border-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * .5);
   }
-  .cerrar:hover{background:var(--azul);color:var(--crema)}
+  @media (hover:hover){
+    .cerrar:hover{background:var(--azul);border-color:var(--azul);color:var(--crema)}
+  }
   html.en-marco .cerrar{display:none}
+  @media (max-width:1024px){
+    .cerrar{top:calc(19 * var(--k));right:calc(16 * var(--k))}
+  }
 
   /* ── el muro: trama de transparencia y el poste, a sangre ── */
   .muro{
@@ -376,16 +416,68 @@
 
   .dobles{position:absolute;pointer-events:none;display:none}
 
-  /* ── lo único que queda de interfaz ── */
+  /* ── lo único que queda de interfaz: la carita, que repone el cartel ──
+     Copia de Brandmark.astro. Va abajo a la derecha, que es donde queda en la
+     home. Enmarcada la reemplaza la del modal. */
   .reponer{
-    position:fixed;right:14px;bottom:14px;z-index:30;
-    appearance:none;cursor:pointer;border:0;
-    background:var(--azul);color:var(--crema);padding:9px 13px;
-    font:800 9.5px/1 var(--archivo);letter-spacing:.13em;text-transform:uppercase;
+    position:fixed;right:calc(30 * var(--k));bottom:calc(24 * var(--k));z-index:30;
+    display:block;appearance:none;padding:0;border:0;background:none;cursor:pointer;
+    width:calc(124.767 * var(--k));height:calc(103.402 * var(--k));
   }
-  .reponer:hover{background:var(--crema);color:var(--azul);box-shadow:inset 0 0 0 1px var(--azul)}
-  .reponer:focus-visible{outline:2px solid var(--rojo);outline-offset:2px}
   html.en-marco .reponer{display:none}
+
+  .brandmark{position:absolute;inset:0;z-index:1}
+  /* El SVG es un elemento reemplazado: con `inset` solo no se estira, así que
+     el alto y el ancho van explícitos. */
+  .brandmark img{
+    position:absolute;left:-4.66%;top:-5.62%;
+    width:calc(100% + 4.66% + 3.7%);height:calc(100% + 5.62% + 5.62%);
+    max-width:none;
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    /* Gira en torno al centro del círculo de la cara, no al de la caja. */
+    .brandmark img{transform-origin:42.54% 50%;animation:gira 14s linear infinite}
+    .reponer:hover .brandmark img,
+    .reponer:focus-visible .brandmark img{animation-play-state:paused}
+  }
+  @keyframes gira{to{transform:rotate(360deg)}}
+
+  /* El globo queda entero a la izquierda de la cara, con la cola a la vista. */
+  .globo{
+    position:absolute;z-index:0;
+    right:calc(140 * var(--k));top:calc(-9 * var(--k));
+    width:0;height:calc(49 * var(--k));overflow:hidden;
+    background:var(--rojo);
+    -webkit-mask:url('/svg/globo.svg') 0 0 / 100% 100% no-repeat;
+    mask:url('/svg/globo.svg') 0 0 / 100% 100% no-repeat;
+    transition:width var(--entrada) var(--ease);
+  }
+  @media (hover:hover){
+    .reponer:hover .globo,.reponer:focus-visible .globo{width:calc(201 * var(--k))}
+  }
+  .globo__pista{display:flex;align-items:center;height:calc(44 * var(--k));width:max-content}
+  @media (prefers-reduced-motion:no-preference){
+    .globo__pista{animation:marquesina 9s linear infinite}
+  }
+  .globo__texto{
+    font-family:var(--onest);font-weight:400;
+    font-size:calc(16 * var(--k));line-height:1;
+    letter-spacing:calc(-0.5 * var(--k));
+    white-space:pre;color:var(--crema);
+  }
+  @keyframes marquesina{to{transform:translateX(-50%)}}
+
+  @media (max-width:1024px){
+    .reponer{
+      right:calc(16 * var(--k));bottom:calc(16 * var(--k));
+      width:calc(86.542 * var(--k));height:calc(71.724 * var(--k));
+    }
+    /* Todo a escala de la carita chica: 86.542 / 124.767 = 0.6936. */
+    .globo{right:calc(97.1 * var(--k));top:calc(-6.2 * var(--k));height:calc(34 * var(--k))}
+    .globo__pista{height:calc(30.5 * var(--k))}
+    .globo__texto{font-size:calc(11.1 * var(--k));letter-spacing:calc(-0.35 * var(--k))}
+  }
 
   /* ── el papelito en la mano ── */
   .velo{
@@ -505,7 +597,15 @@
   </div>
 </div>
 
-<button type="button" id="reponer" class="reponer">Reponer el cartel</button>
+<button type="button" id="reponer" class="reponer" aria-label="Reponer los papelitos">
+  <span class="globo" aria-hidden="true">
+    <span class="globo__pista">
+      <span class="globo__texto">reponer papelitos • reponer papelitos • reponer papelitos • </span>
+      <span class="globo__texto">reponer papelitos • reponer papelitos • reponer papelitos • </span>
+    </span>
+  </span>
+  <span class="brandmark"><img src="/svg/brandmark.svg" alt=""></span>
+</button>
 
 <p class="visualmente-oculto" id="aviso" role="status" aria-live="polite"></p>
 <p class="visualmente-oculto" id="contador" role="status" aria-live="polite"></p>
