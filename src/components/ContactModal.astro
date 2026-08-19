@@ -345,6 +345,18 @@ const Raiz = pagina ? 'section' : 'dialog';
     background: var(--crema);
   }
 
+  /*
+    Ni la carita ni el punto del wordmark entran acá: son copias que caen
+    justo encima de las de la home, ya puestas, y si animaran su entrada se
+    verían parpadear sobre las de abajo al abrir el contacto.
+
+    En /conversemos sí entran: ahí esto es la página, no una capa sobre otra.
+  */
+  .contacto:not(.contacto--pagina) :global(.carita),
+  .contacto:not(.contacto--pagina) :global(.wordmark__punto) {
+    animation: none;
+  }
+
   /* En el Figma la carita queda abajo a la derecha, encima del área del
      formulario, no debajo. Por eso va posicionada, no en el flujo. */
   .contacto__brandmark {

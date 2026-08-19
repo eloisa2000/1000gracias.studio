@@ -111,6 +111,28 @@ const estilo = [
     max-width: none;
   }
 
+  /*
+    Entrada, solo las del escenario: crecen un poco mientras suben de opacidad.
+    Las del modal no la llevan —esas no aparecen, viajan desde las de la home—
+    y por eso la regla va colgada del escenario y no de la estrella suelta.
+
+    El relleno es `backwards` y no `both`: al terminar hay que soltar la
+    opacidad, porque cuando se abre el contacto las estrellas de la home se
+    apagan (ver global.css) y un relleno hacia adelante ganaría esa pelea.
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.escenario) .estrella {
+      animation: brota 620ms var(--ease) var(--retardo) backwards;
+    }
+  }
+
+  @keyframes brota {
+    from {
+      opacity: 0;
+      transform: scale(0.82);
+    }
+  }
+
   @media (max-width: 1024px) {
     .estrella {
       left: calc(var(--xm) * var(--k));

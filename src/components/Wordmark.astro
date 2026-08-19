@@ -47,6 +47,28 @@ const Tag = tag;
     transform: rotate(-45deg);
   }
 
+  /* El punto se funde solo, un poco después de la palabra. `backwards`: no
+     hay nada que sostener al final. */
+  @media (prefers-reduced-motion: no-preference) {
+    .wordmark__punto {
+      animation: enciende 620ms var(--ease) 90ms backwards;
+    }
+
+    /* En móvil el wordmark entero ya entra a los 210 ms (ver Nav): el punto
+       llega después, no junto. */
+    @media (max-width: 1024px) {
+      .wordmark__punto {
+        animation-delay: 300ms;
+      }
+    }
+  }
+
+  @keyframes enciende {
+    from {
+      opacity: 0;
+    }
+  }
+
   @media (max-width: 1024px) {
     .wordmark {
       padding-left: calc(14.23 * var(--k));

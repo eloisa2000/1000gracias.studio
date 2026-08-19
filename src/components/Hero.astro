@@ -59,8 +59,22 @@ const SIZES = '(max-width: 1024px) 79vw, 41vw';
       <div class="escenario__capa escenario__capa--pie"></div>
     </div>
 
-    <Star variante="rellena" x={-17.42} y={-79} box={470.42} movil={{ x: -14, y: -40, box: 209.219 }} />
-    <Star variante="contorno" x={52} y={126} box={218.3} movil={{ x: 16.87, y: 51.18, box: 97.089 }} />
+    <Star
+      variante="rellena"
+      x={-17.42}
+      y={-79}
+      box={470.42}
+      movil={{ x: -14, y: -40, box: 209.219 }}
+      retardo={100}
+    />
+    <Star
+      variante="contorno"
+      x={52}
+      y={126}
+      box={218.3}
+      movil={{ x: 16.87, y: 51.18, box: 97.089 }}
+      retardo={200}
+    />
 
     <Titular tag="h1" />
   </div>
