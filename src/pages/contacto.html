@@ -1653,7 +1653,22 @@
 
     for (let i = tweens.length - 1; i >= 0; i--){
       const t = tweens[i];
-      const u = Math.min((ahora - t.t0) / t.ms, 1);
+      /*
+        El 0 de abajo no sobra: `ahora` es la hora en que EMPEZÓ el cuadro, y
+        los eventos de puntero de ese mismo cuadro se atienden después. O sea
+        que un tween arrancado desde un pointermove nace con t0 unos
+        milisegundos por delante de `ahora`, y en su primer paso u salía
+        negativo. Con u < 0 la curva 1−(1−u)³ también es negativa, y el valor
+        no se quedaba en su sitio: se pasaba al otro lado. El pliegue apuntaba
+        justo al revés —hacia fuera del papel—, así que el doblez se tragaba el
+        papelito entero y el reverso salía disparado a un lado. Un cuadro, y de
+        vuelta a la normalidad.
+
+        Con la oreja en 13 px el tirón al revés medía un píxel y lo tapaba el
+        `if (L < 2)` de pintar. Al subirla a 28 pasó a medir dos y pico, y se
+        empezó a ver en cada papelito.
+      */
+      const u = Math.max(0, Math.min((ahora - t.t0) / t.ms, 1));
       const e = 1 - Math.pow(1 - u, 3);
       for (const k of t.claves) t.s[k] = t.desde[k] + (t.hasta[k] - t.desde[k]) * e;
       sucios.add(t.s);
