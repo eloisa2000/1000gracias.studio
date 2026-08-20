@@ -1173,9 +1173,12 @@
 
   /* ══════════ interacción en el muro ══════════ */
 
+  /* Por qué esquina se agarra. La mitad va sobre la caja pintada y no sobre
+     `s.w`: el papelito cuelga sesgado, así que su caja es más ancha que él y
+     comparar contra el ancho nominal partía por el 44% y no por la mitad. */
   function esquina(s, clientX){
     const r = s.el.getBoundingClientRect();
-    s.cx = (clientX - r.left) < s.w/2 ? 0 : s.w;
+    s.cx = (clientX - r.left) < r.width/2 ? 0 : s.w;
     s.cy = s.h;
     s.desdeDerecha = s.cx === s.w;   // el rasgado empieza por donde se agarra
   }
@@ -1234,53 +1237,58 @@
   let sobre = null, tirando = null;
 
   /*
-    Por la caja real de cada papelito, no por una rejilla de ancho / N_TABS.
+    Por el papelito de verdad, no por su caja.
 
-    Los papelitos no miden todos lo mismo —el rasgado los deja en 62, 64, 66—
-    ni están donde diría la rejilla, porque cuelgan ladeados. En las juntas la
-    rejilla devolvía un papelito que no estaba bajo el cursor, y esquina() le
-    elegía la esquina comparándolo con una caja que no lo contiene: saltaba uno
-    de al lado y se doblaba hacia cualquier lado.
+    Antes se miraba la caja de cada uno. Pero los papelitos cuelgan sesgados,
+    así que la caja es un rectángulo bastante más ancho que el papel y las de
+    los vecinos se pisan varios píxeles. En esa franja de solape mandaba
+    siempre el de la derecha, y en las juntas la caja seguía valiendo donde ya
+    no había papel: el cursor estaba sobre un papelito y se doblaba el de al
+    lado. Justo en los bordes, que es donde más se nota.
 
-    Se mira la caja del elemento y no lo que hay pintado: doblar la esquina lo
-    recorta bajo el cursor, y hacer la prueba contra el dibujo devolvería al
-    parpadeo que se quiso evitar escuchando en la franja.
+    `elementsFromPoint` da la respuesta exacta —respeta el sesgo— y aquí no
+    tiene el problema por el que se descartó mirar el dibujo: el recorte del
+    doblez vive en `.cara`, no en el botón, así que doblar la esquina no
+    cambia la zona sensible del papelito. Comprobado: doblando uno, los 24
+    puntos de prueba siguen devolviendo lo mismo.
 
-    Devuelve null cuando el cursor no está sobre ninguno. Antes acotaba al del
-    extremo, que es la otra mitad del mismo error.
+    Si se solapan —uno colgando sobre otro— manda el que sigue pegado, que es
+    el único al que el hover le hace algo.
   */
-  const CERCA = 12;   // px de gracia a los lados, para que las juntas no tengan filo
+  const CERCA = 6;   // px de gracia a los lados, para que las juntas no tengan filo
 
-  function tabEn(clientX, clientY){
-    let dentro = null, cerca = null, dist = Infinity;
-
-    for (const s of estados){
-      const b = s.el.getBoundingClientRect();
-      const fuera = clientX < b.left || clientX > b.right ||
-                    (clientY != null && (clientY < b.top || clientY > b.bottom));
-
-      /* si se solapan —uno colgando sobre otro— manda el que sigue pegado, que
-         es el único al que el hover le hace algo */
-      if (!fuera && (!dentro || s.el.dataset.estado === 'pegado')) dentro = s;
-
-      /*
-        La gracia es solo lateral: sirve para que las juntas entre papelitos no
-        tengan filo. Por arriba y por abajo no hay junta ninguna —arriba está el
-        cartel y abajo el aire—, así que ahí no se perdona nada.
-
-        Sin esta condición pasaba lo siguiente: la franja cuelga ladeada, o sea
-        que el canto de arriba de cada papelito está unos píxeles más abajo que
-        el del anterior. Al pasar el cursor por esa cornisa no estaba sobre
-        ninguno, pero la distancia lateral valía cero y se devolvía el de
-        debajo igual. Moviéndose de lado se iba doblando y desdoblando uno tras
-        otro, un tirón por papelito.
-      */
-      const enY = clientY == null || (clientY >= b.top && clientY <= b.bottom);
-      const dx = Math.max(b.left - clientX, 0, clientX - b.right);
-      if (enY && dx < dist){ dist = dx; cerca = s; }
+  function papelEn(clientX, clientY){
+    let primero = null;
+    for (const el of document.elementsFromPoint(clientX, clientY)){
+      const t = el.closest && el.closest('.tab');
+      if (!t) continue;
+      const s = estados.find(v => v.el === t);
+      if (!s) continue;
+      if (s.el.dataset.estado === 'pegado') return s;
+      if (!primero) primero = s;
     }
+    return primero;
+  }
 
-    return dentro || (dist <= CERCA ? cerca : null);
+  /*
+    Devuelve null cuando el cursor no está sobre ninguno. La gracia se busca
+    palpando a los lados, no midiendo distancias a cajas: entre un papelito y
+    el siguiente el corte es un zigzag, y lo que hay que salvar son esas
+    hendiduras de un par de píxeles. Por arriba y por abajo no se perdona
+    nada: ahí no hay junta, hay cartel y aire.
+  */
+  function tabEn(clientX, clientY){
+    if (clientY == null) return null;
+    const directo = papelEn(clientX, clientY);
+    if (directo) return directo;
+
+    for (let d = 2; d <= CERCA; d += 2){
+      const izq = papelEn(clientX - d, clientY);
+      if (izq) return izq;
+      const der = papelEn(clientX + d, clientY);
+      if (der) return der;
+    }
+    return null;
   }
 
   function despegar(){
