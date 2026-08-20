@@ -1,12 +1,13 @@
 ---
+import { enLinea } from '../lib/svg.js';
+import puntoSvg from '../../public/svg/punto.svg?raw';
+
 const { tono = 'azul', tag = 'span' } = Astro.props;
 const Tag = tag;
 ---
 
 <Tag class:list={['wordmark', `wordmark--${tono}`]}>
-  <span class="wordmark__punto" aria-hidden="true">
-    <img src="/svg/punto.svg" alt="" />
-  </span>1000gracias
+  <span class="wordmark__punto" aria-hidden="true" set:html={enLinea(puntoSvg)} />1000gracias
 </Tag>
 
 <style>
@@ -41,7 +42,7 @@ const Tag = tag;
     justify-content: center;
   }
 
-  .wordmark__punto img {
+  .wordmark__punto :global(svg) {
     width: 78.271%;
     height: 63.149%;
     transform: rotate(-45deg);
@@ -51,7 +52,7 @@ const Tag = tag;
      hay nada que sostener al final. */
   @media (prefers-reduced-motion: no-preference) {
     .wordmark__punto {
-      animation: enciende 620ms var(--ease) 90ms backwards;
+      animation: enciende 700ms var(--ease) 90ms backwards;
     }
 
     /* En móvil el wordmark entero ya entra a los 210 ms (ver Nav): el punto

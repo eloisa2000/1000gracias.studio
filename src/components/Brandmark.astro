@@ -15,6 +15,9 @@
   con `texto` en marquesina, que entra y sale animando el ancho igual que la
   píldora del nav.
 */
+import { enLinea } from '../lib/svg.js';
+import brandmarkSvg from '../../public/svg/brandmark.svg?raw';
+
 const { enlace = null, accion = null, texto = 'contacto' } = Astro.props;
 
 const conGlobo = Boolean(enlace || accion);
@@ -42,9 +45,7 @@ const tanda = `${texto} • `.repeat(3);
     )
   }
 
-  <span class="brandmark">
-    <img src="/svg/brandmark.svg" alt="" />
-  </span>
+  <span class="brandmark" set:html={enLinea(brandmarkSvg)} />
 </Tag>
 
 <style>
@@ -70,9 +71,10 @@ const tanda = `${texto} • `.repeat(3);
     z-index: 1;
   }
 
-  /* El SVG es un elemento reemplazado: con `inset` solo no se estira, así que
-     el alto y el ancho van explícitos. */
-  .brandmark img {
+  /* El SVG va dentro del HTML (ver src/lib/svg.js), así que Astro no le pone
+     el atributo del ámbito y hay que alcanzarlo con :global. Con `inset` solo
+     no se estira: el alto y el ancho van explícitos. */
+  .brandmark :global(svg) {
     position: absolute;
     left: -4.66%;
     top: -5.62%;
@@ -87,7 +89,7 @@ const tanda = `${texto} • `.repeat(3);
        mismo `transform`. */
     .carita {
       transform-origin: 41.43% 50%;
-      animation: aparece 440ms var(--ease) both;
+      animation: aparece 380ms var(--ease) both;
     }
 
     /* En móvil la carita va al final: está abajo de todo y la home entra en
@@ -99,15 +101,15 @@ const tanda = `${texto} • `.repeat(3);
       }
     }
 
-    .brandmark img {
+    .brandmark :global(svg) {
       /* El centro del círculo de la cara dentro del SVG, no el de la caja. */
       transform-origin: 42.54% 50%;
       animation: gira 14s linear infinite;
     }
 
-    .carita--globo:hover .brandmark img,
-    .carita--globo:focus-visible .brandmark img,
-    .carita--globo.is-activa .brandmark img {
+    .carita--globo:hover .brandmark :global(svg),
+    .carita--globo:focus-visible .brandmark :global(svg),
+    .carita--globo.is-activa .brandmark :global(svg) {
       animation-play-state: paused;
     }
   }
@@ -124,7 +126,7 @@ const tanda = `${texto} • `.repeat(3);
   @keyframes aparece {
     from {
       opacity: 0;
-      transform: scale(1.35);
+      transform: scale(1.5);
     }
   }
 

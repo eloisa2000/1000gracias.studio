@@ -779,7 +779,7 @@
   const SEPARA      = 1.5;   // cuánto baja la parte ya cortada respecto a la pegada
   const RASGADO     = 3.2;   // profundidad del zigzag del rasgado (0 = corte limpio)
   const PASO_RASGADO= 5;     // largo de cada diente
-  const OREJA       = 13;    // pliegue de invitación al pasar el cursor
+  const OREJA       = 28;    // pliegue de invitación al pasar el cursor
   const MEZCLA      = 0.55;  // cuánto manda el cursor sobre la diagonal al torcer el pliegue
   const MIN_PLIEGUE = 22;    // px de doblez que siempre tiene que haber
   const HOLGURA     = 0.92;  // margen de papel que nunca se dobla (0–1)
@@ -1263,8 +1263,21 @@
          es el único al que el hover le hace algo */
       if (!fuera && (!dentro || s.el.dataset.estado === 'pegado')) dentro = s;
 
+      /*
+        La gracia es solo lateral: sirve para que las juntas entre papelitos no
+        tengan filo. Por arriba y por abajo no hay junta ninguna —arriba está el
+        cartel y abajo el aire—, así que ahí no se perdona nada.
+
+        Sin esta condición pasaba lo siguiente: la franja cuelga ladeada, o sea
+        que el canto de arriba de cada papelito está unos píxeles más abajo que
+        el del anterior. Al pasar el cursor por esa cornisa no estaba sobre
+        ninguno, pero la distancia lateral valía cero y se devolvía el de
+        debajo igual. Moviéndose de lado se iba doblando y desdoblando uno tras
+        otro, un tirón por papelito.
+      */
+      const enY = clientY == null || (clientY >= b.top && clientY <= b.bottom);
       const dx = Math.max(b.left - clientX, 0, clientX - b.right);
-      if (dx < dist){ dist = dx; cerca = s; }
+      if (enY && dx < dist){ dist = dx; cerca = s; }
     }
 
     return dentro || (dist <= CERCA ? cerca : null);
@@ -1285,7 +1298,10 @@
       sobre = s;
       esquina(s, e.clientX);
       s.dir = dirPliegue(s);
-      tween(s, { fx: s.dir[0]*OREJA, fy: s.dir[1]*OREJA }, 130);
+      /* La oreja no puede pasarse del borde donde el papel sigue pegado. Con
+         13 px no hacía falta comprobarlo; con 28 sí. */
+      const L = Math.min(OREJA, topePliegue(s, s.dir));
+      tween(s, { fx: s.dir[0]*L, fy: s.dir[1]*L }, 160);
     }
   });
 

@@ -7,15 +7,19 @@
   porcentajes de `inset` y la razón caja/interior son los del nodo original y
   no cambian entre pantallas; lo único que varía es posición y tamaño.
 */
+import { enLinea } from '../lib/svg.js';
+import rellenaSvg from '../../public/svg/estrella-rellena.svg?raw';
+import contornoSvg from '../../public/svg/estrella-contorno.svg?raw';
+
 const FORMAS = {
   rellena: {
-    src: '/svg/estrella-rellena.svg',
+    svg: rellenaSvg,
     rot: -31,
     ratio: 0.728756, // 342.821 / 470.42
     inset: [11.58, 13.19, 17.9, 13.19],
   },
   contorno: {
-    src: '/svg/estrella-contorno.svg',
+    svg: contornoSvg,
     rot: -99,
     ratio: 0.874032, // 190.801 / 218.3
     inset: [10.52, 12.21, 17.14, 12.21],
@@ -73,9 +77,7 @@ const estilo = [
 ---
 
 <div class="estrella" style={estilo} aria-hidden="true">
-  <div class="estrella__giro">
-    <img src={forma.src} alt="" />
-  </div>
+  <div class="estrella__giro" set:html={enLinea(forma.svg)}></div>
 </div>
 
 <style>
@@ -100,9 +102,10 @@ const estilo = [
     transform: rotate(calc(var(--rot) * 1deg));
   }
 
-  /* El SVG es un elemento reemplazado: con `inset` solo no se estira, así que
-     el alto y el ancho van explícitos. */
-  .estrella__giro img {
+  /* El SVG va dentro del HTML (ver src/lib/svg.js), así que Astro no le pone
+     el atributo del ámbito y hay que alcanzarlo con :global. Con `inset` solo
+     no se estira: el alto y el ancho van explícitos. */
+  .estrella__giro :global(svg) {
     position: absolute;
     left: var(--l);
     top: var(--t);
@@ -122,14 +125,16 @@ const estilo = [
   */
   @media (prefers-reduced-motion: no-preference) {
     :global(.escenario) .estrella {
-      animation: brota 620ms var(--ease) var(--retardo) backwards;
+      animation: brota 680ms var(--ease) var(--retardo) backwards;
     }
   }
 
+  /* El recorrido es largo a propósito: con 0.82 el cambio no se veía. Es del
+     orden del que hacen al cerrarse el contacto, que es el que se pidió. */
   @keyframes brota {
     from {
       opacity: 0;
-      transform: scale(0.82);
+      transform: scale(0.45);
     }
   }
 
