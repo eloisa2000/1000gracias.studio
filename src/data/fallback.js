@@ -34,6 +34,8 @@ const hay = (archivo) => existsSync(join(process.cwd(), 'public', CASONA, archiv
 const vistaMovil = hay('vista-movil.jpg') && {
   tipo: 'imagen',
   src: `${CASONA}/vista-movil.jpg`,
+  ancho: 1042,
+  alto: 515,
   alt: 'Cinco pantallas del sitio en móvil, una al lado de otra: la agenda cultural, un salón, el formulario de eventos, el vecindario y el pie con los datos de contacto.',
   rotulo: 'Vista móvil',
   leyenda: 'Claro para una lectura vertical.',
@@ -43,6 +45,8 @@ const movimiento = (hay('movimiento.mp4') || hay('movimiento.jpg')) && {
   tipo: hay('movimiento.mp4') ? 'video' : 'imagen',
   src: hay('movimiento.mp4') ? `${CASONA}/movimiento.mp4` : `${CASONA}/movimiento.jpg`,
   poster: hay('movimiento.mp4') && hay('movimiento.jpg') ? `${CASONA}/movimiento.jpg` : null,
+  ancho: 1042,
+  alto: 691,
   alt: 'Un notebook sobre baldosas al sol con el inicio del sitio: «Un espacio para las Industrias Creativas en el corazón del Barrio Yungay».',
   rotulo: 'Movimiento',
   leyenda: 'Movimiento sutil que acompaña sin quitarle protagonismo al contenido.',
