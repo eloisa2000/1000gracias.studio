@@ -10,6 +10,8 @@
   panel crema, que queda justo encima del de la home.
 */
 
+import { duracionCss } from './duracion.js';
+
 const dialogo = document.getElementById('contacto');
 
 if (dialogo) {
@@ -30,7 +32,7 @@ if (dialogo) {
   let cerrando = false;
   let cierreProgramado = null;
 
-  const duracion = () => parseFloat(getComputedStyle(html).getPropertyValue('--entrada')) || 0;
+  const duracion = () => duracionCss('--entrada');
 
   /* La píldora «Conversemos» y la «X» ocupan el mismo lugar y están ancladas
      a la derecha: la del modal parte con el ancho de la otra y se anima hasta

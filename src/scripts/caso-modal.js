@@ -14,6 +14,8 @@
   videos y el desplazamiento suave.
 */
 
+import { duracionCss } from './duracion.js';
+
 import Lenis from 'lenis';
 
 const html = document.documentElement;
@@ -76,7 +78,7 @@ if (dialogos.size) {
   let cierreProgramado = null;
   let regreso = null;
 
-  const duracion = () => parseFloat(getComputedStyle(html).getPropertyValue('--entrada')) || 0;
+  const duracion = () => duracionCss('--entrada');
   /* Lo que tarda en cerrarse antes de poder sacar el diálogo: en escritorio
      se apaga la información (--sale) y vuelve el crema (--corre); en móvil
      baja la hoja. Las proporciones son las de CaseModal.astro. */

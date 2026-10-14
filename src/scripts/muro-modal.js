@@ -6,6 +6,8 @@
   navega, y la X de esa página vuelve al inicio.
 */
 
+import { duracionCss } from './duracion.js';
+
 const dialogo = document.getElementById('muro');
 const carita = document.querySelector('.carita--enlace');
 
@@ -19,7 +21,7 @@ if (dialogo && carita) {
   let cerrando = false;
   let cierreProgramado = null;
 
-  const duracion = () => parseFloat(getComputedStyle(html).getPropertyValue('--entrada')) || 0;
+  const duracion = () => duracionCss('--entrada');
 
   /* Ver la nota en contact-modal.js: sin cuadros, requestAnimationFrame no
      corre nunca y el modal se quedaría en su estado de partida. */
