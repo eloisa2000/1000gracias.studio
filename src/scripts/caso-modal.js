@@ -41,12 +41,15 @@ if (dialogos.size) {
   let empujado = false;
   let cerrando = false;
   let cierreProgramado = null;
+  let regreso = null;
 
   const duracion = () => parseFloat(getComputedStyle(html).getPropertyValue('--entrada')) || 0;
   /* Lo que tarda en cerrarse antes de poder sacar el diálogo: en escritorio
      se apaga la información (--sale) y vuelve el crema (--corre); en móvil
      baja la hoja. Las proporciones son las de CaseModal.astro. */
   const cierre = () => (enMovil.matches ? duracion() : duracion() * (0.7 + 1.7));
+  // Lo que tarda la home en volver a encenderse, pieza por pieza (tokens.css).
+  const vuelta = () => duracion() * (0.7 + 0.2 * 2);
 
   // La lista de proyectos vuelve a apilarse al cerrar, como con el contacto.
   const reapilar = () => {
@@ -98,6 +101,8 @@ if (dialogos.size) {
 
     void dialogo.offsetWidth; // fuerza el reflow antes de animar
 
+    window.clearTimeout(regreso);
+    html.classList.add('con-caso');
     enElSiguienteCuadro(() => {
       html.classList.add('is-caso');
       dialogo.classList.add('is-abierto');
@@ -120,6 +125,7 @@ if (dialogos.size) {
       empujado = false;
       dialogo.close();
       html.classList.remove('is-caso');
+      regreso = window.setTimeout(() => html.classList.remove('con-caso'), vuelta() + 60);
       abierto = null;
       cerrando = false;
       reapilar();

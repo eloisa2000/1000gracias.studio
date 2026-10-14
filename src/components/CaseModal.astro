@@ -143,8 +143,9 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
     El recorrido tiene tres tiempos, y los tres salen de --entrada (así con
     movimiento reducido todo vale 0):
-    1. --sale: se apaga lo que hay encima del azul y del crema de la home
-       (global.css, `html.is-caso`). Mientras tanto el diálogo es invisible.
+    1. --sale: se apaga lo que hay encima del azul y del crema de la home,
+       una pieza después de otra (global.css, `html.is-caso`). Mientras
+       tanto el diálogo es invisible.
     2. --corre: el diálogo aparece de golpe —es idéntico a lo que quedó: azul
        hasta el 51.91% y crema después— y el crema avanza hasta el 33.218%,
        donde termina la columna azul del caso (574 / 1728).
@@ -152,7 +153,8 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
        correrse el borde y que aparece la información pasa un segundo.
   */
   .caso {
-    --sale: calc(var(--entrada) * 0.7);
+    /* --apaga y --escalon viven en tokens.css: los usa también la home. */
+    --sale: calc(var(--apaga) + var(--escalon) * 2);
     --corre: calc(var(--entrada) * 1.7);
     --espera: calc(var(--entrada) * 0.7);
     --llega: calc(var(--sale) + var(--corre) + var(--espera));
@@ -206,7 +208,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     z-index: 0;
     background: var(--azul);
     opacity: 0;
-    transition: opacity 0s linear calc(var(--sale) + var(--corre));
+    transition: opacity 0s linear calc(var(--apaga) + var(--corre));
   }
 
   .caso__info {
@@ -217,7 +219,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     overscroll-behavior: contain;
     padding: calc(27 * var(--k)) calc(22 * var(--k)) calc(48 * var(--k)) calc(23 * var(--k));
     opacity: 0;
-    transition: opacity var(--sale) var(--ease) 0s;
+    transition: opacity var(--apaga) var(--ease) 0s;
   }
 
   .caso__barra {
@@ -355,8 +357,8 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     opacity: 0;
     clip-path: inset(0 0 0 27.99%);
     transition:
-      clip-path var(--corre) var(--ease) var(--sale),
-      opacity 0s linear calc(var(--sale) + var(--corre));
+      clip-path var(--corre) var(--ease) var(--apaga),
+      opacity 0s linear calc(var(--apaga) + var(--corre));
   }
 
   .caso__cerrar {
@@ -368,7 +370,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     background: var(--crema);
     opacity: 0;
     transition:
-      opacity var(--sale) var(--ease) 0s,
+      opacity var(--apaga) var(--ease) 0s,
       background-color var(--swap) var(--ease),
       border-color var(--swap) var(--ease),
       color 0s linear calc(var(--swap) * 0.5);
@@ -390,8 +392,8 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     opacity: 0;
     transform: translateY(calc(16 * var(--k)));
     transition:
-      opacity var(--sale) var(--ease) 0s,
-      transform var(--sale) var(--ease) 0s;
+      opacity var(--apaga) var(--ease) 0s,
+      transform var(--apaga) var(--ease) 0s;
   }
 
   /* La carita no se apaga: la copia del caso cae justo encima de la de la
@@ -435,7 +437,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
   .caso.is-abierto .caso__cerrar {
     opacity: 1;
     transition:
-      opacity var(--sale) var(--ease) var(--llega),
+      opacity var(--apaga) var(--ease) var(--llega),
       background-color var(--swap) var(--ease),
       border-color var(--swap) var(--ease),
       color 0s linear calc(var(--swap) * 0.5);

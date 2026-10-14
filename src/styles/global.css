@@ -146,25 +146,40 @@ html.is-contacto .escenario .estrella {
 
 /*
   Al abrir un caso en escritorio, lo primero es que la home se vacíe: se
-  apagan las estrellas, la imagen y el titular del escenario, y el nav y los
-  proyectos del panel. Quedan solo el azul y el crema, que es justo donde
-  arranca el caso (ver CaseModal.astro). La carita se queda: el caso tiene
-  una copia en el mismo lugar. Dura lo mismo que el --sale del caso.
+  apagan, una después de otra, las estrellas, la imagen y el titular del
+  escenario; y en el panel, el nav y después los proyectos. Quedan solo el
+  azul y el crema, que es justo donde arranca el caso (ver CaseModal.astro).
+  La carita se queda: el caso tiene una copia en el mismo lugar. Al volver se
+  encienden en el mismo orden.
+
+  Las transiciones viven en `con-caso`, que caso-modal.js pone al abrir y
+  saca cuando la home terminó de volver: fuera de eso no estorban ni al
+  fundido del marco al cargar ni a las estrellas del contacto, que se apagan
+  de golpe.
 */
 @media (min-width: 1025px) {
-  .escenario__marco,
-  .escenario .estrella,
-  .escenario .titular,
-  .panel .nav,
-  .panel__proyectos {
-    transition: opacity calc(var(--entrada) * 0.7) var(--ease);
+  html.con-caso .escenario .estrella,
+  html.con-caso .escenario .escenario__marco,
+  html.con-caso .escenario .titular,
+  html.con-caso .panel .nav,
+  html.con-caso .panel .panel__proyectos {
+    transition: opacity var(--apaga) var(--ease) var(--retardo-caso, 0s);
   }
 
-  html.is-caso .escenario__marco,
+  html.con-caso .escenario .escenario__marco,
+  html.con-caso .panel .panel__proyectos {
+    --retardo-caso: var(--escalon);
+  }
+
+  html.con-caso .escenario .titular {
+    --retardo-caso: calc(var(--escalon) * 2);
+  }
+
   html.is-caso .escenario .estrella,
+  html.is-caso .escenario .escenario__marco,
   html.is-caso .escenario .titular,
   html.is-caso .panel .nav,
-  html.is-caso .panel__proyectos {
+  html.is-caso .panel .panel__proyectos {
     opacity: 0;
   }
 }
