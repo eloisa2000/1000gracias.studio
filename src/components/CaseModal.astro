@@ -139,6 +139,66 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
             )
           )
         }
+
+        {/* El pie: quién más participó, el siguiente proyecto y una invitación
+            a escribir. Cada columna aparece solo si tiene algo. */}
+        <footer class="pie">
+          {
+            (caso.creditos.length > 0 || liveUrl) && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Créditos</h3>
+                {caso.creditos.length > 0 && (
+                  <ul class="pie__creditos">
+                    {caso.creditos.map((c) => (
+                      <li>
+                        {c.etiqueta}: {c.valor}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {liveUrl && (
+                  <a class="pie__enlace" href={liveUrl} target="_blank" rel="noopener noreferrer">
+                    Ver sitio en vivo <span aria-hidden="true">↗</span>
+                    <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
+                  </a>
+                )}
+              </div>
+            )
+          }
+
+          {
+            caso.siguiente && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Siguiente proyecto</h3>
+                <a
+                  class="pie__siguiente"
+                  href={caso.siguiente.href}
+                  target={caso.siguiente.externo ? '_blank' : undefined}
+                  rel={caso.siguiente.externo ? 'noopener noreferrer' : undefined}
+                >
+                  <span class="pie__miniatura">
+                    {caso.siguiente.coverSrc && <img src={caso.siguiente.coverSrc} alt="" loading="lazy" decoding="async" />}
+                  </span>
+                  <span class="pie__nombre">
+                    {caso.siguiente.title}
+                    {caso.siguiente.lema && ` - ${caso.siguiente.lema}`} <span aria-hidden="true">→</span>
+                  </span>
+                  {caso.siguiente.externo && <span class="visualmente-oculto">(abre en una pestaña nueva)</span>}
+                </a>
+              </div>
+            )
+          }
+
+          {
+            caso.pregunta && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Contacto</h3>
+                <p class="pie__pregunta">{caso.pregunta}</p>
+                <a class="pie__boton" href="/conversemos/">{caso.boton ?? 'Escríbenos'}</a>
+              </div>
+            )
+          }
+        </footer>
       </div>
     </div>
 
@@ -549,6 +609,136 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
   }
 
   /*
+    Pie del caso. Va de borde a borde de la columna, como las citas, con tres
+    columnas que arrancan donde el Figma: a 23, 341 y 768 del borde.
+  */
+  .pie {
+    display: grid;
+    grid-template-columns: calc(318 * var(--k)) calc(427 * var(--k)) 1fr;
+    margin-inline: calc(-69 * var(--k)) calc(-46 * var(--k));
+    padding: calc(54 * var(--k)) calc(46 * var(--k)) 0 calc(23 * var(--k));
+    color: var(--navy);
+  }
+
+  /* Después de una cita, el pie va pegado a ella, como en el Figma. */
+  .bloque + .pie {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .cita + .pie {
+    margin-top: 0;
+  }
+
+  .pie__rotulo {
+    margin-bottom: calc(14 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .pie__creditos {
+    font-family: var(--tipo-rotulo);
+    font-size: calc(16 * var(--k));
+    line-height: 1.5;
+  }
+
+  .pie__enlace {
+    display: inline-block;
+    margin-top: calc(16 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 500;
+    font-size: calc(16 * var(--k));
+    line-height: 1.5;
+    color: var(--navy);
+    text-decoration: none;
+  }
+
+  .pie__siguiente {
+    display: block;
+    width: calc(388 * var(--k));
+    max-width: 100%;
+    color: var(--navy);
+    text-decoration: none;
+  }
+
+  .pie__miniatura {
+    display: block;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    border-radius: calc(10 * var(--k));
+    background: color-mix(in srgb, var(--navy) 8%, var(--crema));
+  }
+
+  .pie__miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pie__nombre {
+    display: block;
+    margin-top: calc(10 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .pie__pregunta {
+    max-width: calc(300 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-size: calc(28 * var(--k));
+    line-height: 1.15;
+    letter-spacing: calc(-1.12 * var(--k));
+  }
+
+  /* Píldora chica y rellena. Lleva a /conversemos como página: dentro del
+     caso no se abre el modal del contacto encima. */
+  .pie__boton {
+    display: inline-block;
+    margin-top: calc(22 * var(--k));
+    padding: calc(12 * var(--k)) calc(24 * var(--k));
+    border: calc(2 * var(--k)) solid var(--azul);
+    border-radius: calc(40 * var(--k));
+    background: var(--azul);
+    color: var(--crema);
+    font-family: var(--tipo-titulo);
+    font-size: calc(16 * var(--k));
+    line-height: 1;
+    letter-spacing: calc(-0.32 * var(--k));
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      background-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
+  }
+
+  @media (hover: hover) {
+    .pie__boton:hover {
+      background: var(--crema);
+      color: var(--azul);
+    }
+
+    .pie__enlace:hover,
+    .pie__siguiente:hover .pie__nombre {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .pie__miniatura img {
+      transition: transform var(--swap) var(--ease);
+    }
+
+    .pie__siguiente:hover .pie__miniatura img {
+      transform: scale(1.03);
+    }
+  }
+
+  /*
     Móvil: la hoja sube desde abajo y se desplaza entera, como el contacto.
     Adentro no se mueve nada: el movimiento es la hoja.
   */
@@ -727,6 +917,52 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     .cita__texto {
       font-size: calc(24 * var(--k));
       letter-spacing: calc(-1.6 * var(--k));
+    }
+
+    .pie {
+      grid-template-columns: 1fr;
+      gap: calc(32 * var(--k));
+      margin-inline: calc(-16 * var(--k));
+      padding: calc(32 * var(--k)) calc(16 * var(--k)) 0;
+    }
+
+    .bloque + .pie {
+      margin-top: calc(40 * var(--k));
+    }
+
+    .cita + .pie {
+      margin-top: 0;
+    }
+
+    .pie__rotulo {
+      margin-bottom: calc(10 * var(--k));
+      font-size: calc(12.5 * var(--k));
+      letter-spacing: calc(-0.5 * var(--k));
+    }
+
+    .pie__creditos,
+    .pie__enlace {
+      font-size: calc(14 * var(--k));
+    }
+
+    .pie__siguiente {
+      width: 100%;
+    }
+
+    .pie__nombre {
+      font-size: calc(12.5 * var(--k));
+    }
+
+    .pie__pregunta {
+      max-width: none;
+      font-size: calc(22 * var(--k));
+      letter-spacing: calc(-0.88 * var(--k));
+    }
+
+    .pie__boton {
+      margin-top: calc(16 * var(--k));
+      padding: calc(10 * var(--k)) calc(20 * var(--k));
+      font-size: calc(14 * var(--k));
     }
 
     .cita__autor {

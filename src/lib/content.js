@@ -65,14 +65,45 @@ function caso(c) {
     ficha: c.ficha ?? [],
     proceso: c.proceso ?? [],
     bloques: (c.bloques ?? []).map(bloque).filter(Boolean),
+    creditos: c.creditos ?? [],
+    siguiente: c.siguiente ?? null,
+    pregunta: c.pregunta ?? null,
+    boton: c.boton ?? null,
   };
+}
+
+/*
+  El «Siguiente proyecto» de cada caso, ya resuelto: el que se eligió en el
+  caso o, si no hay, el que sigue en el orden de la home (y después del
+  último, el primero). Si ese proyecto tiene caso, el enlace va a su caso; si
+  no, a su sitio publicado.
+*/
+function conSiguiente(proyectos) {
+  return proyectos.map((p, i) => {
+    if (!p.caso) return p;
+    const elegido = proyectos.find((o) => o.slug === p.caso.siguiente && o !== p);
+    const siguiente = elegido ?? (proyectos.length > 1 ? proyectos[(i + 1) % proyectos.length] : null);
+    return {
+      ...p,
+      caso: {
+        ...p.caso,
+        siguiente: siguiente && {
+          title: siguiente.title,
+          lema: siguiente.lema ?? null,
+          coverSrc: siguiente.coverSrc ?? siguiente.hoverSrc ?? null,
+          href: siguiente.caso ? `/caso/${siguiente.slug}/` : siguiente.liveUrl,
+          externo: !siguiente.caso,
+        },
+      },
+    };
+  });
 }
 
 export async function getProyectos() {
   const datos = await traer(PROYECTOS_QUERY, null);
-  if (!datos || datos.length === 0) return respaldo.proyectos;
+  if (!datos || datos.length === 0) return conSiguiente(respaldo.proyectos);
 
-  return datos.map((p, i) => {
+  const proyectos = datos.map((p, i) => {
     const escenario = imagenEscenario(p.hoverImage);
     return {
       id: p.id,
@@ -84,6 +115,7 @@ export async function getProyectos() {
       excerpt: p.excerpt ?? null,
       tools: p.tools ?? [],
       liveUrl: p.liveUrl ?? null,
+      lema: p.lema ?? null,
       hoverSrc: escenario?.src ?? null,
       hoverSrcset: escenario?.srcset,
       // Si el proyecto trae video, manda el video y la imagen queda de póster.
@@ -92,6 +124,7 @@ export async function getProyectos() {
       caso: caso(p.caso),
     };
   });
+  return conSiguiente(proyectos);
 }
 
 export async function getAjustes() {

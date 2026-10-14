@@ -196,5 +196,43 @@ export const caso = {
       type: 'array',
       of: [{ type: 'casoMedio' }, { type: 'casoSeccion' }, { type: 'casoCita' }],
     },
+
+    /* El pie del caso: créditos, siguiente proyecto y contacto. */
+    {
+      name: 'creditos',
+      title: 'Créditos',
+      description: 'Quién hizo qué, aparte de 1000gracias. Por ejemplo: Fotografía · Casona Compañía.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'credito',
+          fields: [
+            { name: 'etiqueta', title: 'Qué', type: 'string', validation: (Rule) => Rule.required() },
+            { name: 'valor', title: 'Quién', type: 'string', validation: (Rule) => Rule.required() },
+          ],
+          preview: { select: { title: 'etiqueta', subtitle: 'valor' } },
+        },
+      ],
+    },
+    {
+      name: 'siguiente',
+      title: 'Siguiente proyecto',
+      description: 'Si lo dejas vacío, va el que sigue en el orden de la home.',
+      type: 'reference',
+      to: [{ type: 'project' }],
+    },
+    {
+      name: 'pregunta',
+      title: 'Pregunta del contacto',
+      description: 'La que invita a escribir, al final del caso.',
+      type: 'string',
+    },
+    {
+      name: 'boton',
+      title: 'Botón del contacto',
+      type: 'string',
+      initialValue: 'Escríbenos',
+    },
   ],
 };

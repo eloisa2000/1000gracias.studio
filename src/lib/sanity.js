@@ -40,6 +40,7 @@ export const PROYECTOS_QUERY = /* groq */ `
     excerpt,
     tools,
     liveUrl,
+    lema,
     credits,
     hoverImage,
     coverImage,
@@ -57,7 +58,11 @@ export const PROYECTOS_QUERY = /* groq */ `
         cita,
         autor,
         medios[]{ ${MEDIO} }
-      }
+      },
+      creditos[]{ etiqueta, valor },
+      "siguiente": siguiente->slug.current,
+      pregunta,
+      boton
     }
   }
 `;

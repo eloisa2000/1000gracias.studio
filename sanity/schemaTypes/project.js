@@ -73,6 +73,12 @@ export const project = {
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
     },
+    {
+      name: 'lema',
+      title: 'Frase corta',
+      description: 'Lo que es, en pocas palabras. Va junto al nombre cuando el proyecto aparece como «Siguiente proyecto». Por ejemplo: Zapatillas hechas en Chile.',
+      type: 'string',
+    },
     { name: 'liveUrl', title: 'Sitio publicado', type: 'url' },
     {
       name: 'caso',

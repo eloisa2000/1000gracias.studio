@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+
 /*
   Datos de prueba. Se usan mientras no haya un proyecto de Sanity configurado
   (SANITY_PROJECT_ID en .env), para que `npm run dev` funcione de entrada.
@@ -18,6 +21,32 @@ const cuadrado = (hex) =>
 
 /* El caso de Casona Compañía, con los textos y las imágenes del Figma. */
 const CASONA = '/img/casos/casona-compania';
+
+/*
+  «Vista móvil» y «Movimiento» todavía no están exportadas del Figma. Entran
+  solas en cuanto aparezcan en public/img/casos/casona-compania/ con estos
+  nombres; mientras tanto no se muestran, para no dejar un hueco. Movimiento
+  puede ser un video: si hay movimiento.mp4, va el video y el .jpg queda de
+  póster.
+*/
+const hay = (archivo) => existsSync(join(process.cwd(), 'public', CASONA, archivo));
+
+const vistaMovil = hay('vista-movil.jpg') && {
+  tipo: 'imagen',
+  src: `${CASONA}/vista-movil.jpg`,
+  alt: 'Cinco pantallas del sitio en móvil, una al lado de otra: la agenda cultural, un salón, el formulario de eventos, el vecindario y el pie con los datos de contacto.',
+  rotulo: 'Vista móvil',
+  leyenda: 'Claro para una lectura vertical.',
+};
+
+const movimiento = (hay('movimiento.mp4') || hay('movimiento.jpg')) && {
+  tipo: hay('movimiento.mp4') ? 'video' : 'imagen',
+  src: hay('movimiento.mp4') ? `${CASONA}/movimiento.mp4` : `${CASONA}/movimiento.jpg`,
+  poster: hay('movimiento.mp4') && hay('movimiento.jpg') ? `${CASONA}/movimiento.jpg` : null,
+  alt: 'Un notebook sobre baldosas al sol con el inicio del sitio: «Un espacio para las Industrias Creativas en el corazón del Barrio Yungay».',
+  rotulo: 'Movimiento',
+  leyenda: 'Movimiento sutil que acompaña sin quitarle protagonismo al contenido.',
+};
 
 const casona = {
   titular: 'Un espacio con muchos usos, explicado en una sola página',
@@ -131,14 +160,24 @@ const casona = {
           rotulo: 'Contacto',
           leyenda: 'Un formulario de cotización que hoy recibe la mayoría de las consultas.',
         },
-      ],
+        vistaMovil,
+        movimiento,
+      ].filter(Boolean),
     },
     {
       tipo: 'cita',
-      cita: '«Tener presencia digital es parte de la marca del espacio: permite dar más detalle e información que las redes sociales.»',
-      autor: 'Carlos Olivares, Director, Casona Compañía',
+      cita: '«Antes teníamos una página web, pero no permitía que nos contactaran directamente, así que la mayoría de las consultas llegaba por Instagram. Hoy nos llegan muchas cotizaciones por el formulario: es nuestra principal fuente de consultas.»',
+      autor: 'Carlos Olivares, Director de Casona Compañía',
     },
   ],
+  creditos: [
+    { etiqueta: 'Planimetrías', valor: 'Oficina Bravo' },
+    { etiqueta: 'Recorrido virtual', valor: 'Vicel Proyectos' },
+    { etiqueta: 'Fotografía', valor: 'Casona Compañía' },
+  ],
+  siguiente: 'graz',
+  pregunta: '¿Tienes un espacio o proyecto que cuesta explicar?',
+  boton: 'Escríbenos',
 };
 
 export const proyectos = [
@@ -191,6 +230,7 @@ export const proyectos = [
     id: 'graz',
     title: 'Graz',
     slug: 'graz',
+    lema: 'Zapatillas hechas en Chile',
     order: 4,
     year: '2023',
     type: 'Oficio',
