@@ -266,8 +266,11 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     }
   }
 
+  /* La barra mide lo que la marca: 1.5 × 35.745 = 53.618. El titular arranca
+     44 más abajo, a 124.618 del borde, y ahí mismo arranca el contenido de la
+     derecha, para que las dos columnas empiecen a la misma altura. */
   .caso__titular {
-    margin-top: calc(28 * var(--k));
+    margin-top: calc(44 * var(--k));
     font-family: var(--tipo-rotulo);
     font-weight: 400;
     font-size: calc(44 * var(--k));
@@ -374,11 +377,13 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
       opacity 0s linear calc(var(--apaga) + var(--corre));
   }
 
+  /* Centrada con la fila de la marca (27 + 53.618 / 2 − 76.684 / 2) y con
+     su borde derecho alineado con el del contenido. */
   .caso__cerrar {
     position: absolute;
     z-index: 3;
-    top: calc(28 * var(--k));
-    right: calc(30 * var(--k));
+    top: calc(15.467 * var(--k));
+    right: calc(46 * var(--k));
     color: var(--azul);
     background: var(--crema);
     opacity: 0;
@@ -401,7 +406,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     height: 100%;
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: calc(108 * var(--k)) calc(46 * var(--k)) calc(160 * var(--k)) calc(69 * var(--k));
+    padding: calc(124.618 * var(--k)) calc(46 * var(--k)) calc(160 * var(--k)) calc(69 * var(--k));
     opacity: 0;
     transform: translateY(calc(16 * var(--k)));
     transition:
