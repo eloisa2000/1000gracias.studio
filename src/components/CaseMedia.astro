@@ -1,0 +1,154 @@
+---
+/*
+  Una imagen, un video o una captura larga del caso, con su rótulo y leyenda
+  abajo si los tiene.
+
+  - imagen: con su proporción original, a todo el ancho de la columna.
+  - video: muted y en loop. No lleva `autoplay`: lo enciende caso-modal.js
+    cuando entra en pantalla, y con movimiento reducido se queda el póster.
+  - captura: una página larga dentro de un marco oscuro, que se va
+    desplazando sola de arriba abajo (8 s, como en el Figma).
+*/
+const { medio } = Astro.props;
+const SIZES = '(max-width: 1024px) calc(100vw - 32px), 61vw';
+const { tipo, src, srcset, poster, ancho, alto, alt, rotulo, leyenda } = medio;
+const proporcion = ancho && alto ? `${ancho} / ${alto}` : undefined;
+---
+
+<figure class:list={['medio', `medio--${tipo}`]}>
+  {
+    tipo === 'video' ? (
+      <video
+        class="medio__cuadro"
+        style={proporcion && `aspect-ratio: ${proporcion}`}
+        poster={poster ?? undefined}
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-label={alt || undefined}
+        aria-hidden={alt ? undefined : 'true'}
+        data-caso-video
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    ) : tipo === 'captura' ? (
+      <div class="medio__cuadro medio__marco">
+        <div class="medio__ventana">
+          <img class="medio__largo" src={src} srcset={srcset} sizes="(max-width: 1024px) 60vw, 36vw" width={ancho} height={alto} alt={alt} loading="lazy" decoding="async" />
+        </div>
+      </div>
+    ) : (
+      <img class="medio__cuadro" src={src} srcset={srcset} sizes={SIZES} width={ancho} height={alto} alt={alt} loading="lazy" decoding="async" />
+    )
+  }
+  {
+    (rotulo || leyenda) && (
+      <figcaption class="medio__pie">
+        {rotulo && <span class="medio__rotulo">{rotulo}</span>}
+        {leyenda && <span class="medio__leyenda">{leyenda}</span>}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .medio__cuadro {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: calc(20 * var(--k));
+    background: color-mix(in srgb, var(--navy) 8%, var(--crema));
+    /* El texto alternativo no se dibuja mientras la imagen carga. */
+    color: transparent;
+  }
+
+  video.medio__cuadro {
+    object-fit: cover;
+  }
+
+  /* Captura larga: marco de 1041 × 435 con una ventana de 617 × 383 al
+     centro. La imagen llena la ventana con `cover` y lo que se anima es su
+     `object-position`, de arriba abajo: así funciona con cualquier alto de
+     captura sin medir nada. */
+  .medio__marco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1041 / 435;
+    background: var(--navy);
+  }
+
+  .medio__ventana {
+    width: 59.27%; /* 617 / 1041 */
+    aspect-ratio: 617 / 383;
+    overflow: hidden;
+  }
+
+  .medio__largo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .medio__largo {
+      animation: desplaza 8s cubic-bezier(0.655, 0, 0.58, 1) infinite;
+    }
+  }
+
+  @keyframes desplaza {
+    to {
+      object-position: 50% 100%;
+    }
+  }
+
+  .medio__pie {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+    margin-top: calc(9 * var(--k));
+    color: var(--navy);
+  }
+
+  .medio__rotulo {
+    flex: none;
+    font-family: var(--tipo-titulo);
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .medio__leyenda {
+    max-width: calc(614 * var(--k));
+    margin-left: auto;
+    font-family: var(--tipo-rotulo);
+    font-size: calc(16 * var(--k));
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  @media (max-width: 1024px) {
+    .medio__cuadro {
+      border-radius: calc(10 * var(--k));
+    }
+
+    .medio__pie {
+      gap: calc(12 * var(--k));
+      margin-top: calc(6 * var(--k));
+    }
+
+    .medio__rotulo {
+      font-size: calc(11 * var(--k));
+      letter-spacing: calc(-0.44 * var(--k));
+    }
+
+    .medio__leyenda {
+      font-size: calc(12 * var(--k));
+      line-height: 1.4;
+    }
+  }
+</style>

@@ -39,6 +39,21 @@ export function imagenCuadrada(source, respaldo = null) {
   };
 }
 
+/**
+ * Devuelve `{ src, srcset }` sin recortar, para las imágenes del caso: van a
+ * todo el ancho de su columna y con su proporción original.
+ */
+export function imagenCaso(source) {
+  const b = urlFor(source);
+  if (!b) return null;
+
+  const en = (w) => b.width(w).fit('max').auto('format').quality(80).url();
+  return {
+    src: en(1400),
+    srcset: [`${en(800)} 800w`, `${en(1400)} 1400w`, `${en(2100)} 2100w`].join(', '),
+  };
+}
+
 /** Miniatura cuadrada para futuras páginas de proyecto y para compartir. */
 export function imagenPortada(source, respaldo = null, ancho = 800) {
   const b = urlFor(source);

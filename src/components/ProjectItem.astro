@@ -1,15 +1,16 @@
 ---
 /*
-  Un proyecto de la lista. Mientras no existan las páginas /proyectos/[slug],
-  el ítem con `liveUrl` es un enlace al sitio publicado y el resto son botones:
-  siguen siendo enfocables con teclado y disparan el cambio de imagen del
-  escenario, que es lo único que hacen por ahora.
+  Un proyecto de la lista. Si tiene caso, es un enlace a /caso/<slug>/, que en
+  la home se abre como modal (caso-modal.js). Si no, el ítem con `liveUrl`
+  enlaza al sitio publicado y el resto son botones: siguen siendo enfocables
+  con teclado y disparan el cambio de imagen del escenario.
 
   En móvil no hay hover, así que al tocar el nombre aparece la imagen flotando
   sobre el ítem. Es la misma imagen que usa el escenario en escritorio (mismo
   src, srcset y sizes), así que el navegador la sirve de caché.
 */
 const { proyecto, indice = 0 } = Astro.props;
+const conCaso = Boolean(proyecto.caso);
 const esEnlace = Boolean(proyecto.liveUrl);
 const SIZES = '(max-width: 1024px) 79vw, 41vw';
 const numero = `${String(indice).padStart(2, '0')}.`;
@@ -17,7 +18,17 @@ const numero = `${String(indice).padStart(2, '0')}.`;
 
 <li class="item" data-item data-apila style={`--i:${indice}`}>
   {
-    esEnlace ? (
+    conCaso ? (
+      <a
+        class="item__accion"
+        href={`/caso/${proyecto.slug}/`}
+        data-proyecto={proyecto.slug}
+        data-abre-caso={proyecto.slug}
+      >
+        <span class="item__numero">{numero}</span>
+        <span class="item__nombre">{proyecto.title}</span>
+      </a>
+    ) : esEnlace ? (
       <a
         class="item__accion"
         href={proyecto.liveUrl}

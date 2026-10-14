@@ -7,7 +7,8 @@ import ProjectList from './ProjectList.astro';
 
 // `inerte` lo usa /conversemos: ahí el hero es solo el fondo del takeover, así
 // que no debe recibir foco ni clics.
-const { ajustes, proyectos, inerte = false } = Astro.props;
+// `titular` baja el h1 a otra etiqueta donde la página ya tiene el suyo.
+const { ajustes, proyectos, inerte = false, titular = 'h1' } = Astro.props;
 // Un proyecto entra al escenario si trae video o imagen. Si trae las dos, el
 // video manda y la imagen queda de póster (primer cuadro y movimiento reducido).
 const enEscenario = proyectos.filter((p) => p.videoSrc || p.hoverSrc);
@@ -76,7 +77,7 @@ const SIZES = '(max-width: 1024px) 79vw, 41vw';
       retardo={200}
     />
 
-    <Titular tag="h1" />
+    <Titular tag={titular} />
   </div>
 
   <div class="panel">

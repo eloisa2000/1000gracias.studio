@@ -1,5 +1,5 @@
 import { sanity, PROYECTOS_QUERY, AJUSTES_QUERY } from './sanity.js';
-import { imagenEscenario, imagenCuadrada, imagenPortada } from './image.js';
+import { imagenEscenario, imagenCuadrada, imagenPortada, imagenCaso } from './image.js';
 import * as respaldo from '../data/fallback.js';
 
 /*
@@ -17,6 +17,55 @@ async function traer(query, alFallar) {
     console.warn('[1000gracias] Sanity no respondió, se usan los datos de prueba:', error.message);
     return alFallar;
   }
+}
+
+/* Una imagen o video del caso, con la misma forma que los de respaldo. */
+function medio(m) {
+  if (!m) return null;
+  const imagen = imagenCaso(m.imagen);
+  const tipo = m.tipo ?? 'imagen';
+  if (tipo === 'video' ? !m.videoUrl : !imagen) return null;
+  return {
+    tipo,
+    src: tipo === 'video' ? m.videoUrl : imagen.src,
+    srcset: tipo === 'video' ? undefined : imagen.srcset,
+    poster: tipo === 'video' ? imagen?.src ?? null : null,
+    ancho: m.dimensiones?.width ?? null,
+    alto: m.dimensiones?.height ?? null,
+    alt: m.alt ?? '',
+    rotulo: m.rotulo ?? null,
+    leyenda: m.leyenda ?? null,
+  };
+}
+
+function bloque(b) {
+  if (b._type === 'casoMedio') {
+    const m = medio(b);
+    return m && { tipo: 'medio', medio: m };
+  }
+  if (b._type === 'casoSeccion') {
+    return {
+      tipo: 'seccion',
+      titulo: b.titulo,
+      texto: b.texto ?? '',
+      disposicion: b.disposicion ?? 'lado',
+      medios: (b.medios ?? []).map(medio).filter(Boolean),
+    };
+  }
+  if (b._type === 'casoCita') return { tipo: 'cita', cita: b.cita, autor: b.autor ?? null };
+  return null;
+}
+
+/* Sin titular no hay caso: el proyecto sigue enlazando a su sitio. */
+function caso(c) {
+  if (!c?.titular) return null;
+  return {
+    titular: c.titular,
+    bajada: c.bajada ?? null,
+    ficha: c.ficha ?? [],
+    proceso: c.proceso ?? [],
+    bloques: (c.bloques ?? []).map(bloque).filter(Boolean),
+  };
 }
 
 export async function getProyectos() {
@@ -40,6 +89,7 @@ export async function getProyectos() {
       // Si el proyecto trae video, manda el video y la imagen queda de póster.
       videoSrc: p.hoverVideo?.asset?.url ?? null,
       coverSrc: imagenPortada(p.coverImage),
+      caso: caso(p.caso),
     };
   });
 }

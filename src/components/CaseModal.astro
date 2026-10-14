@@ -1,0 +1,642 @@
+---
+import Wordmark from './Wordmark.astro';
+import Brandmark from './Brandmark.astro';
+import Cruz from './Cruz.astro';
+import CaseMedia from './CaseMedia.astro';
+
+/*
+  La página de caso. Como el contacto, vive en dos formas con el mismo marcado:
+
+  - En la home es un <dialog> por proyecto, y al abrirlo la URL pasa a
+    /caso/<slug>/ (ver src/scripts/caso-modal.js).
+  - En /caso/<slug>/ es la página misma, ya en su estado final, para que el
+    enlace se pueda compartir y funcione sin JavaScript.
+
+  En escritorio la columna azul queda fija —titular, ficha y proceso— y la de
+  la derecha se desplaza. Al abrir, el azul de la franja del escenario se
+  corre hacia la derecha y el crema del panel avanza hacia la izquierda, hasta
+  cerrarse sobre la imagen del hero. En móvil la hoja entera sube desde abajo,
+  como el contacto.
+*/
+const { proyecto, pagina = false } = Astro.props;
+const { caso, slug, liveUrl } = proyecto;
+const id = `caso-${slug}`;
+const Raiz = pagina ? 'section' : 'dialog';
+const Titulo = pagina ? 'h1' : 'h2';
+const numero = (i) => `${String(i + 1).padStart(2, '0')}.`;
+const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+---
+
+<Raiz
+  class:list={['caso', pagina && 'caso--pagina', pagina && 'is-abierto']}
+  id={pagina ? undefined : id}
+  data-caso={pagina ? undefined : slug}
+  aria-labelledby={`${id}-titulo`}
+>
+  <div class="caso__lado">
+    <div class="caso__fondo"></div>
+
+    <div class="caso__info">
+      <div class="caso__barra">
+        <Wordmark tono="crema" />
+        {
+          liveUrl && (
+            <a class="caso__ver" href={liveUrl} target="_blank" rel="noopener noreferrer">
+              Ver sitio <span aria-hidden="true">↗</span>
+              <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
+            </a>
+          )
+        }
+      </div>
+
+      <Titulo class="caso__titular" id={`${id}-titulo`}>{caso.titular}</Titulo>
+      {caso.bajada && <p class="caso__bajada">{caso.bajada}</p>}
+
+      {
+        caso.ficha.length > 0 && (
+          <dl class="caso__ficha">
+            {caso.ficha.map((fila) => (
+              <div class="fila">
+                <dt class="fila__etiqueta">{fila.etiqueta}</dt>
+                <dd class="fila__valor">{fila.valor}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      {
+        caso.proceso.length > 0 && (
+          <>
+            <h3 class="caso__rotulo">¿Cómo se hizo?</h3>
+            <ol class="caso__proceso">
+              {caso.proceso.map((paso, i) => (
+                <li class="fila fila--paso">
+                  <span class="fila__etiqueta">
+                    {numero(i)} {paso.nombre}
+                  </span>
+                  {paso.texto && <p class="fila__valor">{paso.texto}</p>}
+                </li>
+              ))}
+            </ol>
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="caso__panel">
+    <a class="pildora pildora--x caso__cerrar" href="/" data-cierra-caso aria-label="Cerrar el caso">
+      <span class="pildora__etiqueta"><Cruz /></span>
+    </a>
+
+    <div class="caso__contenido" data-caso-contenido>
+      {
+        caso.bloques.map((b) =>
+          b.tipo === 'medio' ? (
+            <div class="bloque">
+              <CaseMedia medio={b.medio} />
+            </div>
+          ) : b.tipo === 'seccion' ? (
+            <section class="bloque seccion">
+              <div class:list={['seccion__texto', `seccion__texto--${b.disposicion}`]}>
+                <h3 class="seccion__titulo">{b.titulo}</h3>
+                {parrafos(b.texto).length > 0 && (
+                  <div class="seccion__parrafos">
+                    {parrafos(b.texto).map((p) => (
+                      <p>{p}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {b.medios.length > 0 && (
+                <div class="seccion__medios">
+                  {b.medios.map((m) => (
+                    <CaseMedia medio={m} />
+                  ))}
+                </div>
+              )}
+            </section>
+          ) : (
+            <figure class="bloque cita">
+              <blockquote class="cita__texto">
+                <p>{b.cita}</p>
+              </blockquote>
+              {b.autor && <figcaption class="cita__autor">{b.autor}</figcaption>}
+            </figure>
+          )
+        )
+      }
+    </div>
+
+    <div class="caso__brandmark">
+      <Brandmark />
+    </div>
+  </div>
+</Raiz>
+
+<style>
+  /*
+    Transparente, como el contacto: la home queda detrás y es lo que se ve
+    mientras el azul y el crema se cierran sobre ella.
+
+    La columna azul mide 574 de 1728. En la home la franja azul del escenario
+    termina al 11.726% del ancho (22.588% de 51.91%) y el panel crema empieza
+    al 51.91%: de ahí parten los dos barridos.
+  */
+  .caso {
+    --barrido: calc(var(--entrada) * 1.5);
+    width: 100vw;
+    max-width: 100vw;
+    height: 100svh;
+    max-height: 100svh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--navy);
+    overflow: hidden;
+  }
+
+  .caso[open],
+  .caso--pagina {
+    display: grid;
+    grid-template-columns: 33.218% 1fr; /* 574 / 1728 */
+    /* La fila mide la pantalla y no el contenido: si no, la columna de la
+       derecha crece entera y no tiene dentro de qué desplazarse. */
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .caso::backdrop {
+    background: none;
+  }
+
+  .caso--pagina {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  /* Columna azul */
+
+  .caso__lado {
+    isolation: isolate;
+    position: relative;
+    min-width: 0;
+    color: var(--crema);
+  }
+
+  /* Parte en el borde de la franja de la home (11.726 / 33.218 = 35.3% de
+     esta columna) y se abre hasta cubrirla entera. */
+  .caso__fondo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--azul);
+    clip-path: inset(0 64.7% 0 0);
+    transition: clip-path var(--barrido) var(--ease);
+  }
+
+  .caso__info {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(27 * var(--k)) calc(22 * var(--k)) calc(48 * var(--k)) calc(23 * var(--k));
+    opacity: 0;
+    transition: opacity var(--entrada) var(--ease) 0s;
+  }
+
+  .caso__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+  }
+
+  /* Si el escenario de la home ya se borró, la marca no entra animada: llega
+     con el resto de la columna. */
+  .caso:not(.caso--pagina) :global(.wordmark__punto) {
+    animation: none;
+  }
+
+  .caso__ver {
+    font-family: var(--tipo-rotulo);
+    font-weight: 500;
+    font-size: calc(15 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.6 * var(--k));
+    color: var(--crema);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) {
+    .caso__ver:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  .caso__titular {
+    margin-top: calc(28 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 400;
+    font-size: calc(44 * var(--k));
+    line-height: 0.96;
+    letter-spacing: calc(-3.52 * var(--k));
+  }
+
+  .caso__bajada {
+    max-width: calc(504 * var(--k));
+    margin-top: calc(20 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-size: calc(19 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  .caso__ficha {
+    display: flex;
+    flex-direction: column;
+    margin: calc(23 * var(--k)) 0 0;
+    padding: calc(24 * var(--k)) 0;
+  }
+
+  .caso__rotulo {
+    margin-top: calc(19 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 400;
+    font-size: calc(19 * var(--k));
+    line-height: 1.4;
+    letter-spacing: calc(-1.14 * var(--k));
+  }
+
+  .caso__proceso {
+    margin-top: calc(18 * var(--k));
+  }
+
+  /* Una fila de la ficha o del proceso: etiqueta a la izquierda, valor a la
+     derecha. En la ficha la línea va debajo de cada fila; en el proceso,
+     solo entre filas. */
+  .fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+    padding: calc(2 * var(--k)) 0 calc(4 * var(--k));
+    border-bottom: calc(1 * var(--k)) solid var(--crema);
+  }
+
+  .fila + .fila {
+    padding-top: calc(4 * var(--k));
+  }
+
+  .fila--paso {
+    align-items: flex-start;
+    padding: calc(6 * var(--k)) 0;
+  }
+
+  .fila--paso:first-child {
+    padding-top: 0;
+  }
+
+  .fila--paso:last-child {
+    border-bottom: 0;
+  }
+
+  .fila__etiqueta {
+    flex: none;
+    font-family: var(--tipo-titulo);
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .fila__valor {
+    max-width: calc(314 * var(--k));
+    margin: 0;
+    font-family: var(--tipo-rotulo);
+    font-size: calc(15 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-0.6 * var(--k));
+    text-align: right;
+  }
+
+  .fila--paso .fila__valor {
+    max-width: calc(328 * var(--k));
+    font-size: calc(16 * var(--k));
+    letter-spacing: calc(-0.64 * var(--k));
+  }
+
+  /* Panel crema */
+
+  /* Parte donde empieza el panel de la home: (51.91 − 33.218) / 66.782. */
+  .caso__panel {
+    position: relative;
+    min-width: 0;
+    background: var(--crema);
+    clip-path: inset(0 0 0 27.99%);
+    transition: clip-path var(--barrido) var(--ease);
+  }
+
+  .caso__cerrar {
+    position: absolute;
+    z-index: 3;
+    top: calc(28 * var(--k));
+    right: calc(30 * var(--k));
+    color: var(--azul);
+    background: var(--crema);
+  }
+
+  @media (hover: hover) {
+    .caso__cerrar:hover {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: var(--crema);
+    }
+  }
+
+  .caso__contenido {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(108 * var(--k)) calc(46 * var(--k)) calc(160 * var(--k)) calc(69 * var(--k));
+    opacity: 0;
+    transform: translateY(calc(16 * var(--k)));
+    transition:
+      opacity var(--entrada) var(--ease) 0s,
+      transform var(--entrada) var(--ease) 0s;
+  }
+
+  /* Ni la carita entra animada: la copia cae justo encima de la de la home. */
+  .caso__brandmark {
+    position: absolute;
+    right: calc(30 * var(--k));
+    bottom: calc(38 * var(--k));
+    z-index: 3;
+  }
+
+  .caso:not(.caso--pagina) :global(.carita) {
+    animation: none;
+  }
+
+  /* Abierto */
+
+  .caso.is-abierto .caso__fondo,
+  .caso.is-abierto .caso__panel {
+    clip-path: inset(0);
+  }
+
+  .caso.is-abierto .caso__info,
+  .caso.is-abierto .caso__contenido {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--barrido) * 0.55 * var(--mueve));
+  }
+
+  /* Bloques de contenido */
+
+  .bloque + .bloque {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .seccion__texto {
+    display: grid;
+    gap: calc(24 * var(--k));
+    color: var(--navy);
+  }
+
+  .seccion__texto--lado {
+    grid-template-columns: calc(413 * var(--k)) 1fr;
+    align-items: start;
+  }
+
+  .seccion__texto--arriba .seccion__titulo {
+    max-width: calc(703 * var(--k));
+  }
+
+  .seccion__titulo {
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(40 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-1.6 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .seccion__parrafos {
+    display: grid;
+    gap: 1em;
+    font-family: var(--tipo-titulo);
+    font-size: calc(19 * var(--k));
+    line-height: 1.6;
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  .seccion__medios {
+    display: flex;
+    flex-direction: column;
+    gap: calc(26 * var(--k));
+    margin-top: calc(40 * var(--k));
+  }
+
+  /* La cita va a todo el ancho de la columna, de borde a borde. */
+  .cita {
+    margin-inline: calc(-69 * var(--k)) calc(-46 * var(--k));
+    padding: calc(64 * var(--k)) calc(62 * var(--k));
+    background: var(--azul);
+    color: var(--crema);
+  }
+
+  .bloque + .cita,
+  .cita + .bloque {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .cita__texto {
+    margin: 0;
+    font-family: var(--tipo-rotulo);
+    font-size: calc(40 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-3.2 * var(--k));
+    white-space: pre-line;
+  }
+
+  .cita__autor {
+    margin-top: calc(24 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-size: calc(19 * var(--k));
+    line-height: 1.6;
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  /*
+    Móvil: la hoja sube desde abajo y se desplaza entera, como el contacto.
+    Adentro no se mueve nada: el movimiento es la hoja.
+  */
+  @media (max-width: 1024px) {
+    .caso {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      transform: translateY(100%);
+      transition: transform var(--entrada) var(--ease);
+    }
+
+    .caso.is-abierto {
+      transform: none;
+    }
+
+    .caso[open],
+    .caso--pagina {
+      display: block;
+    }
+
+    .caso__fondo,
+    .caso__panel,
+    .caso.is-abierto .caso__fondo,
+    .caso.is-abierto .caso__panel {
+      clip-path: none;
+      transition: none;
+    }
+
+    .caso__info,
+    .caso__contenido {
+      height: auto;
+      overflow: visible;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .caso__info {
+      padding: calc(19 * var(--k)) calc(16 * var(--k)) calc(32 * var(--k));
+    }
+
+    /* La X sube a la barra azul, al lado del «Ver sitio». */
+    .caso__barra {
+      padding-right: calc(40 * var(--k));
+    }
+
+    .caso__panel {
+      position: static;
+    }
+
+    .caso__cerrar {
+      top: calc(19 * var(--k));
+      right: calc(16 * var(--k));
+      color: var(--crema);
+      background: var(--azul);
+    }
+
+    @media (hover: hover) {
+      .caso__cerrar:hover {
+        background: var(--crema);
+        border-color: var(--crema);
+        color: var(--azul);
+      }
+    }
+
+    .caso__titular {
+      margin-top: calc(28 * var(--k));
+      font-size: calc(32 * var(--k));
+      letter-spacing: calc(-2.4 * var(--k));
+    }
+
+    .caso__bajada {
+      margin-top: calc(14 * var(--k));
+      font-size: calc(16 * var(--k));
+      line-height: 1.25;
+      letter-spacing: calc(-0.64 * var(--k));
+    }
+
+    .caso__ficha {
+      margin-top: calc(12 * var(--k));
+      padding: calc(16 * var(--k)) 0;
+    }
+
+    .caso__rotulo {
+      margin-top: calc(8 * var(--k));
+      font-size: calc(16 * var(--k));
+      letter-spacing: calc(-0.8 * var(--k));
+    }
+
+    .caso__proceso {
+      margin-top: calc(12 * var(--k));
+    }
+
+    .fila {
+      gap: calc(16 * var(--k));
+    }
+
+    .fila__etiqueta {
+      font-size: calc(11 * var(--k));
+      letter-spacing: calc(-0.44 * var(--k));
+    }
+
+    .fila__valor,
+    .fila--paso .fila__valor {
+      max-width: calc(220 * var(--k));
+      font-size: calc(12.5 * var(--k));
+      letter-spacing: calc(-0.5 * var(--k));
+    }
+
+    .caso__contenido {
+      padding: calc(24 * var(--k)) calc(16 * var(--k)) 0;
+    }
+
+    .caso__brandmark {
+      position: static;
+      display: flex;
+      justify-content: flex-end;
+      padding: calc(32 * var(--k)) calc(16 * var(--k)) calc(40 * var(--k));
+    }
+
+    .bloque + .bloque,
+    .bloque + .cita,
+    .cita + .bloque {
+      margin-top: calc(40 * var(--k));
+    }
+
+    .seccion__texto,
+    .seccion__texto--lado {
+      grid-template-columns: 1fr;
+      gap: calc(12 * var(--k));
+    }
+
+    .seccion__titulo {
+      font-size: calc(24 * var(--k));
+      letter-spacing: calc(-0.96 * var(--k));
+    }
+
+    .seccion__parrafos {
+      font-size: calc(15 * var(--k));
+      line-height: 1.55;
+      letter-spacing: calc(-0.45 * var(--k));
+    }
+
+    .seccion__medios {
+      gap: calc(20 * var(--k));
+      margin-top: calc(20 * var(--k));
+    }
+
+    .cita {
+      margin-inline: calc(-16 * var(--k));
+      padding: calc(32 * var(--k)) calc(16 * var(--k));
+    }
+
+    .cita__texto {
+      font-size: calc(24 * var(--k));
+      letter-spacing: calc(-1.6 * var(--k));
+    }
+
+    .cita__autor {
+      margin-top: calc(14 * var(--k));
+      font-size: calc(13 * var(--k));
+      line-height: 1.4;
+      letter-spacing: calc(-0.52 * var(--k));
+    }
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import CaseModal from '../../components/CaseModal.astro';
+import { getProyectos, getAjustes } from '../../lib/content.js';
+
+/*
+  La página de cada caso, para entrar directo o compartir el enlace. Es la
+  misma idea que /conversemos: la home de fondo, inerte, y el caso encima ya
+  abierto. Solo existe para los proyectos que tienen caso.
+*/
+export async function getStaticPaths() {
+  const proyectos = await getProyectos();
+  return proyectos.filter((p) => p.caso).map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const [proyectos, ajustes] = await Promise.all([getProyectos(), getAjustes()]);
+const proyecto = proyectos.find((p) => p.slug === slug);
+---
+
+<Base
+  title={`${proyecto.title} — 1000gracias`}
+  description={proyecto.caso.bajada ?? proyecto.caso.titular}
+>
+  <Hero proyectos={proyectos} ajustes={ajustes} inerte titular="p" />
+  <CaseModal proyecto={proyecto} pagina />
+</Base>
+
+<script>
+  import '../../scripts/caso-modal.js';
+</script>
