@@ -144,6 +144,31 @@ html.is-contacto .escenario .estrella {
   opacity: 0;
 }
 
+/*
+  Al abrir un caso en escritorio, lo primero es que la home se vacíe: se
+  apagan las estrellas, la imagen y el titular del escenario, y el nav y los
+  proyectos del panel. Quedan solo el azul y el crema, que es justo donde
+  arranca el caso (ver CaseModal.astro). La carita se queda: el caso tiene
+  una copia en el mismo lugar. Dura lo mismo que el --sale del caso.
+*/
+@media (min-width: 1025px) {
+  .escenario__marco,
+  .escenario .estrella,
+  .escenario .titular,
+  .panel .nav,
+  .panel__proyectos {
+    transition: opacity calc(var(--entrada) * 0.7) var(--ease);
+  }
+
+  html.is-caso .escenario__marco,
+  html.is-caso .escenario .estrella,
+  html.is-caso .escenario .titular,
+  html.is-caso .panel .nav,
+  html.is-caso .panel__proyectos {
+    opacity: 0;
+  }
+}
+
 /* Lo mismo con la carita mientras el muro está abierto: la copia del modal
    queda justo encima, y con las dos puestas cualquier diferencia de un píxel
    o de ángulo se vería doble. */

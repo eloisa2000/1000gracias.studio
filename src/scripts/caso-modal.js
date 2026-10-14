@@ -5,9 +5,10 @@
   puede copiar y el botón de atrás cierra. Sin JavaScript los enlaces navegan
   a la página de verdad, que tiene el mismo marcado ya abierto.
 
-  El recorrido es el mismo que el del contacto: la clase `is-abierto` lo
-  dispara entero y el CSS hace el resto. En escritorio el azul y el crema se
-  cierran sobre la imagen del hero; en móvil la hoja sube desde abajo.
+  El script solo pone y saca dos clases y el CSS hace todo el recorrido:
+  `is-caso` en <html> apaga lo que hay encima del azul y del crema de la home
+  (global.css), e `is-abierto` en el diálogo corre el borde y trae la
+  información (CaseModal.astro). En móvil la hoja sube desde abajo.
 
   También corre en /caso/<slug>/, donde no hay diálogos: ahí solo enciende los
   videos.
@@ -42,20 +43,18 @@ if (dialogos.size) {
   let cierreProgramado = null;
 
   const duracion = () => parseFloat(getComputedStyle(html).getPropertyValue('--entrada')) || 0;
-  // El barrido dura 1.5 veces la entrada, y el contenido llega a la mitad.
-  const recorrido = () => duracion() * 1.5;
+  /* Lo que tarda en cerrarse antes de poder sacar el diálogo: en escritorio
+     se apaga la información (--sale) y vuelve el crema (--corre); en móvil
+     baja la hoja. Las proporciones son las de CaseModal.astro. */
+  const cierre = () => (enMovil.matches ? duracion() : duracion() * (0.7 + 1.7));
 
-  /* La X del caso ocupa el lugar de «Conversemos»: parte con su ancho y se
-     anima hasta el suyo, igual que la del contacto. */
-  const conversemos = () =>
-    [...document.querySelectorAll('.pildora[data-contacto="abrir"]')].find((p) => p.offsetWidth > 0);
-  const cruzDe = (dialogo) => dialogo.querySelector('[data-cierra-caso]');
-  const rotulos = (pildora) => [...pildora.querySelectorAll('.pildora__etiqueta')];
-
-  const limpiar = (pildora) => {
-    if (!pildora) return;
-    pildora.style.width = '';
-    for (const e of rotulos(pildora)) e.style.opacity = '';
+  // La lista de proyectos vuelve a apilarse al cerrar, como con el contacto.
+  const reapilar = () => {
+    for (const el of document.querySelectorAll('[data-apila]')) {
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    }
   };
 
   // Ver contact-modal.js: sin el temporizador, en una pestaña de fondo el
@@ -71,19 +70,11 @@ if (dialogos.size) {
     window.setTimeout(unaVez, 50);
   };
 
-  // La lista de proyectos vuelve a apilarse al cerrar, como con el contacto.
-  const reapilar = () => {
-    for (const el of document.querySelectorAll('[data-apila]')) {
-      el.style.animation = 'none';
-      void el.offsetWidth;
-      el.style.animation = '';
-    }
-  };
-
   const abrir = (slug, { empujar = true } = {}) => {
     const dialogo = dialogos.get(slug);
     if (!dialogo) return false;
 
+    // Volver a abrir mientras se cierra cancela el cierre.
     if (cerrando && abierto === dialogo) {
       window.clearTimeout(cierreProgramado);
       cerrando = false;
@@ -92,39 +83,25 @@ if (dialogos.size) {
     }
 
     abierto = dialogo;
-    html.classList.add('is-caso');
-    if (!dialogo.open) dialogo.showModal();
-
-    // Siempre desde arriba, aunque se haya leído hasta el final la vez anterior.
-    dialogo.scrollTop = 0;
-    const contenido = dialogo.querySelector('[data-caso-contenido]');
-    if (contenido) contenido.scrollTop = 0;
+    if (!dialogo.open) {
+      dialogo.showModal();
+      // Siempre desde arriba, aunque se haya leído hasta el final la vez anterior.
+      dialogo.scrollTop = 0;
+      const contenido = dialogo.querySelector('[data-caso-contenido]');
+      if (contenido) contenido.scrollTop = 0;
+    }
 
     if (empujar) {
       history.pushState({ caso: slug }, '', `/caso/${slug}/`);
       empujado = true;
     }
 
-    const origen = conversemos();
-    const cruz = cruzDe(dialogo);
-    let anchoFinal = 0;
-    if (cruz && origen && !enMovil.matches) {
-      anchoFinal = cruz.offsetWidth;
-      cruz.style.width = `${origen.offsetWidth}px`;
-      for (const e of rotulos(cruz)) e.style.opacity = '0';
-    }
-
-    void dialogo.offsetWidth;
+    void dialogo.offsetWidth; // fuerza el reflow antes de animar
 
     enElSiguienteCuadro(() => {
+      html.classList.add('is-caso');
       dialogo.classList.add('is-abierto');
-      if (anchoFinal) {
-        cruz.style.width = `${anchoFinal}px`;
-        for (const e of rotulos(cruz)) e.style.opacity = '1';
-      }
     });
-
-    window.setTimeout(() => limpiar(cruz), recorrido() + 120);
     return true;
   };
 
@@ -133,8 +110,8 @@ if (dialogos.size) {
     if (!dialogo || cerrando) return;
     cerrando = true;
 
-    const cruz = cruzDe(dialogo);
-
+    /* La home vuelve a encenderse recién cuando el crema terminó de volver:
+       `is-caso` se saca al final, junto con el diálogo. */
     const terminar = () => {
       if (volver) {
         if (empujado) history.back();
@@ -142,32 +119,17 @@ if (dialogos.size) {
       }
       empujado = false;
       dialogo.close();
-      dialogo.classList.remove('is-abierto');
       html.classList.remove('is-caso');
-      limpiar(cruz);
       abierto = null;
       cerrando = false;
       reapilar();
     };
 
-    if (duracion() === 0) {
-      terminar();
-      return;
-    }
-
     dialogo.classList.remove('is-abierto');
 
-    const origen = conversemos();
-    if (cruz && origen && !enMovil.matches) {
-      cruz.style.width = `${cruz.offsetWidth}px`;
-      void cruz.offsetWidth;
-      enElSiguienteCuadro(() => {
-        cruz.style.width = `${origen.offsetWidth}px`;
-        for (const e of rotulos(cruz)) e.style.opacity = '0';
-      });
-    }
-
-    cierreProgramado = window.setTimeout(terminar, recorrido() + 80);
+    const espera = cierre();
+    if (espera === 0) terminar();
+    else cierreProgramado = window.setTimeout(terminar, espera + 60);
   };
 
   document.addEventListener('click', (evento) => {

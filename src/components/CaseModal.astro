@@ -13,10 +13,12 @@ import CaseMedia from './CaseMedia.astro';
     enlace se pueda compartir y funcione sin JavaScript.
 
   En escritorio la columna azul queda fija —titular, ficha y proceso— y la de
-  la derecha se desplaza. Al abrir, el azul de la franja del escenario se
-  corre hacia la derecha y el crema del panel avanza hacia la izquierda, hasta
-  cerrarse sobre la imagen del hero. En móvil la hoja entera sube desde abajo,
-  como el contacto.
+  la derecha se desplaza. Al abrir se siente como el mismo bloque azul de la
+  home: primero se apaga lo que tiene encima (estrellas, imagen, titular) y lo
+  del panel crema (nav y proyectos); después el borde entre el azul y el crema
+  se corre a la izquierda, hasta la medida del caso; y un momento después
+  aparece la información. Al cerrar, lo mismo al revés. En móvil la hoja
+  entera sube desde abajo, como el contacto.
 */
 const { proyecto, pagina = false } = Astro.props;
 const { caso, slug, liveUrl } = proyecto;
@@ -33,9 +35,9 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
   data-caso={pagina ? undefined : slug}
   aria-labelledby={`${id}-titulo`}
 >
-  <div class="caso__lado">
-    <div class="caso__fondo"></div>
+  <div class="caso__fondo"></div>
 
+  <div class="caso__lado">
     <div class="caso__info">
       <div class="caso__barra">
         <Wordmark tono="crema" />
@@ -137,15 +139,23 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
 <style>
   /*
-    Transparente, como el contacto: la home queda detrás y es lo que se ve
-    mientras el azul y el crema se cierran sobre ella.
+    Transparente, como el contacto: la home queda detrás.
 
-    La columna azul mide 574 de 1728. En la home la franja azul del escenario
-    termina al 11.726% del ancho (22.588% de 51.91%) y el panel crema empieza
-    al 51.91%: de ahí parten los dos barridos.
+    El recorrido tiene tres tiempos, y los tres salen de --entrada (así con
+    movimiento reducido todo vale 0):
+    1. --sale: se apaga lo que hay encima del azul y del crema de la home
+       (global.css, `html.is-caso`). Mientras tanto el diálogo es invisible.
+    2. --corre: el diálogo aparece de golpe —es idéntico a lo que quedó: azul
+       hasta el 51.91% y crema después— y el crema avanza hasta el 33.218%,
+       donde termina la columna azul del caso (574 / 1728).
+    3. --espera: una pausa, y entra la información. Entre que empieza a
+       correrse el borde y que aparece la información pasa un segundo.
   */
   .caso {
-    --barrido: calc(var(--entrada) * 1.5);
+    --sale: calc(var(--entrada) * 0.7);
+    --corre: calc(var(--entrada) * 1.7);
+    --espera: calc(var(--entrada) * 0.7);
+    --llega: calc(var(--sale) + var(--corre) + var(--espera));
     width: 100vw;
     max-width: 100vw;
     height: 100svh;
@@ -186,15 +196,17 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     color: var(--crema);
   }
 
-  /* Parte en el borde de la franja de la home (11.726 / 33.218 = 35.3% de
-     esta columna) y se abre hasta cubrirla entera. */
+  /* El azul ocupa lo mismo que el escenario de la home (897 / 1728), y el
+     panel crema se le monta encima al correrse. Al cerrar se esconde recién
+     cuando el crema terminó de volver. */
   .caso__fondo {
     position: absolute;
-    inset: 0;
+    inset: 0 auto 0 0;
+    width: 51.91%;
     z-index: 0;
     background: var(--azul);
-    clip-path: inset(0 64.7% 0 0);
-    transition: clip-path var(--barrido) var(--ease);
+    opacity: 0;
+    transition: opacity 0s linear calc(var(--sale) + var(--corre));
   }
 
   .caso__info {
@@ -205,7 +217,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     overscroll-behavior: contain;
     padding: calc(27 * var(--k)) calc(22 * var(--k)) calc(48 * var(--k)) calc(23 * var(--k));
     opacity: 0;
-    transition: opacity var(--entrada) var(--ease) 0s;
+    transition: opacity var(--sale) var(--ease) 0s;
   }
 
   .caso__barra {
@@ -333,13 +345,18 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
   /* Panel crema */
 
-  /* Parte donde empieza el panel de la home: (51.91 − 33.218) / 66.782. */
+  /* Parte donde empieza el panel de la home, (51.91 − 33.218) / 66.782, y
+     avanza sobre el azul. Al cerrar espera a que se apague la información. */
   .caso__panel {
     position: relative;
+    z-index: 1;
     min-width: 0;
     background: var(--crema);
+    opacity: 0;
     clip-path: inset(0 0 0 27.99%);
-    transition: clip-path var(--barrido) var(--ease);
+    transition:
+      clip-path var(--corre) var(--ease) var(--sale),
+      opacity 0s linear calc(var(--sale) + var(--corre));
   }
 
   .caso__cerrar {
@@ -349,6 +366,12 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     right: calc(30 * var(--k));
     color: var(--azul);
     background: var(--crema);
+    opacity: 0;
+    transition:
+      opacity var(--sale) var(--ease) 0s,
+      background-color var(--swap) var(--ease),
+      border-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
   }
 
   @media (hover: hover) {
@@ -367,11 +390,12 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     opacity: 0;
     transform: translateY(calc(16 * var(--k)));
     transition:
-      opacity var(--entrada) var(--ease) 0s,
-      transform var(--entrada) var(--ease) 0s;
+      opacity var(--sale) var(--ease) 0s,
+      transform var(--sale) var(--ease) 0s;
   }
 
-  /* Ni la carita entra animada: la copia cae justo encima de la de la home. */
+  /* La carita no se apaga: la copia del caso cae justo encima de la de la
+     home y aparece con el panel, así que se ve quieta todo el recorrido. */
   .caso__brandmark {
     position: absolute;
     right: calc(30 * var(--k));
@@ -385,16 +409,36 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
   /* Abierto */
 
-  .caso.is-abierto .caso__fondo,
+  /* Al abrir los retardos van al revés: el azul y el crema aparecen cuando
+     la home ya se apagó, y la información llega al final. */
+  .caso.is-abierto .caso__fondo {
+    opacity: 1;
+    transition-delay: var(--sale);
+  }
+
   .caso.is-abierto .caso__panel {
+    opacity: 1;
     clip-path: inset(0);
+    transition:
+      clip-path var(--corre) var(--ease) var(--sale),
+      opacity 0s linear var(--sale);
   }
 
   .caso.is-abierto .caso__info,
   .caso.is-abierto .caso__contenido {
     opacity: 1;
     transform: none;
-    transition-delay: calc(var(--barrido) * 0.55 * var(--mueve));
+    transition-delay: var(--llega);
+  }
+
+  /* La X espera solo para aparecer; el hover sigue siendo inmediato. */
+  .caso.is-abierto .caso__cerrar {
+    opacity: 1;
+    transition:
+      opacity var(--sale) var(--ease) var(--llega),
+      background-color var(--swap) var(--ease),
+      border-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
   }
 
   /* Bloques de contenido */
@@ -494,16 +538,36 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
       display: block;
     }
 
-    .caso__fondo,
+    /* El azul es el fondo de su propio bloque, no una capa del ancho del
+       escenario. */
+    .caso__fondo {
+      display: none;
+    }
+
+    .caso__lado {
+      background: var(--azul);
+    }
+
     .caso__panel,
-    .caso.is-abierto .caso__fondo,
     .caso.is-abierto .caso__panel {
+      opacity: 1;
       clip-path: none;
       transition: none;
     }
 
+    .caso__cerrar,
+    .caso.is-abierto .caso__cerrar {
+      opacity: 1;
+      transition:
+        background-color var(--swap) var(--ease),
+        border-color var(--swap) var(--ease),
+        color 0s linear calc(var(--swap) * 0.5);
+    }
+
     .caso__info,
-    .caso__contenido {
+    .caso__contenido,
+    .caso.is-abierto .caso__info,
+    .caso.is-abierto .caso__contenido {
       height: auto;
       overflow: visible;
       opacity: 1;
