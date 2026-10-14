@@ -99,42 +99,45 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     </a>
 
     <div class="caso__contenido" data-caso-contenido>
-      {
-        caso.bloques.map((b) =>
-          b.tipo === 'medio' ? (
-            <div class="bloque">
-              <CaseMedia medio={b.medio} />
-            </div>
-          ) : b.tipo === 'seccion' ? (
-            <section class="bloque seccion">
-              <div class:list={['seccion__texto', `seccion__texto--${b.disposicion}`]}>
-                <h3 class="seccion__titulo">{b.titulo}</h3>
-                {parrafos(b.texto).length > 0 && (
-                  <div class="seccion__parrafos">
-                    {parrafos(b.texto).map((p) => (
-                      <p>{p}</p>
+      {/* La pista es lo que mide Lenis para saber cuánto hay que desplazar. */}
+      <div class="caso__pista" data-caso-pista>
+        {
+          caso.bloques.map((b) =>
+            b.tipo === 'medio' ? (
+              <div class="bloque">
+                <CaseMedia medio={b.medio} />
+              </div>
+            ) : b.tipo === 'seccion' ? (
+              <section class="bloque seccion">
+                <div class:list={['seccion__texto', `seccion__texto--${b.disposicion}`]}>
+                  <h3 class="seccion__titulo">{b.titulo}</h3>
+                  {parrafos(b.texto).length > 0 && (
+                    <div class="seccion__parrafos">
+                      {parrafos(b.texto).map((p) => (
+                        <p>{p}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {b.medios.length > 0 && (
+                  <div class="seccion__medios">
+                    {b.medios.map((m) => (
+                      <CaseMedia medio={m} />
                     ))}
                   </div>
                 )}
-              </div>
-              {b.medios.length > 0 && (
-                <div class="seccion__medios">
-                  {b.medios.map((m) => (
-                    <CaseMedia medio={m} />
-                  ))}
-                </div>
-              )}
-            </section>
-          ) : (
-            <figure class="bloque cita">
-              <blockquote class="cita__texto">
-                <p>{b.cita}</p>
-              </blockquote>
-              {b.autor && <figcaption class="cita__autor">{b.autor}</figcaption>}
-            </figure>
+              </section>
+            ) : (
+              <figure class="bloque cita">
+                <blockquote class="cita__texto">
+                  <p>{b.cita}</p>
+                </blockquote>
+                {b.autor && <figcaption class="cita__autor">{b.autor}</figcaption>}
+              </figure>
+            )
           )
-        )
-      }
+        }
+      </div>
     </div>
 
     <div class="caso__brandmark">

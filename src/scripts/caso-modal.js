@@ -10,12 +10,45 @@
   (global.css), e `is-abierto` en el diálogo corre el borde y trae la
   información (CaseModal.astro). En móvil la hoja sube desde abajo.
 
-  También corre en /caso/<slug>/, donde no hay diálogos: ahí solo enciende los
-  videos.
+  También corre en /caso/<slug>/, donde no hay diálogos: ahí enciende los
+  videos y el desplazamiento suave.
 */
+
+import Lenis from 'lenis';
 
 const html = document.documentElement;
 const quieto = window.matchMedia('(prefers-reduced-motion: reduce)');
+const enEscritorio = window.matchMedia('(min-width: 1025px)');
+
+/* Desplazamiento suave (Lenis) en la columna de la derecha. Solo en
+   escritorio: en móvil se desplaza la hoja entera y el dedo ya tiene su
+   inercia. Con movimiento reducido se queda el desplazamiento nativo. Cada
+   caso tiene el suyo, que se crea al abrir y se destruye al cerrar. */
+const suaves = new Map();
+
+const suavizar = (raiz) => {
+  const contenido = raiz.querySelector('[data-caso-contenido]');
+  if (!contenido || suaves.has(contenido)) return;
+  if (!enEscritorio.matches || quieto.matches) return;
+  suaves.set(
+    contenido,
+    new Lenis({
+      wrapper: contenido,
+      content: contenido.querySelector('[data-caso-pista]') ?? contenido,
+      autoRaf: true,
+    })
+  );
+};
+
+const soltar = (raiz) => {
+  const contenido = raiz.querySelector('[data-caso-contenido]');
+  suaves.get(contenido)?.destroy();
+  suaves.delete(contenido);
+};
+
+// En /caso/<slug>/ la columna ya está abierta desde el principio.
+const pagina = document.querySelector('.caso--pagina');
+if (pagina) suavizar(pagina);
 
 /* Videos: suenan solo mientras se ven. Con movimiento reducido se queda el
    póster. Dentro de un diálogo cerrado no se ven nunca, así que no cargan. */
@@ -92,6 +125,7 @@ if (dialogos.size) {
       dialogo.scrollTop = 0;
       const contenido = dialogo.querySelector('[data-caso-contenido]');
       if (contenido) contenido.scrollTop = 0;
+      suavizar(dialogo);
     }
 
     if (empujar) {
@@ -124,6 +158,7 @@ if (dialogos.size) {
       }
       empujado = false;
       dialogo.close();
+      soltar(dialogo);
       html.classList.remove('is-caso');
       regreso = window.setTimeout(() => html.classList.remove('con-caso'), vuelta() + 60);
       abierto = null;
