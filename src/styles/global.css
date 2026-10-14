@@ -114,11 +114,22 @@ a {
   transition: width var(--entrada) var(--ease);
 }
 
-/* La de cerrar es un círculo de tamaño fijo con la cruz centrada. */
+/*
+  La de cerrar es un círculo con la cruz centrada, del mismo alto que
+  «Conversemos». El alto sale igual que el de cualquier píldora —padding
+  vertical, una línea de texto y el borde—, así que coinciden aunque cambie
+  una medida; el ancho es ese mismo alto: 35.342 + 2 × 17.671 + 2 × 3.
+*/
 .pildora--x {
-  width: calc(60.122 * var(--k));
-  height: calc(59.009 * var(--k));
-  padding: 0;
+  width: calc(76.684 * var(--k));
+  padding-inline: 0;
+}
+
+.pildora--x .pildora__etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1em;
 }
 
 .pildora__etiqueta {
@@ -147,7 +158,8 @@ html.is-contacto .escenario .estrella {
 /*
   Al abrir un caso en escritorio, lo primero es que la home se vacíe: se
   apagan, una después de otra, las estrellas, la imagen y el titular del
-  escenario; y en el panel, el nav y después los proyectos. Quedan solo el
+  escenario; y en el panel, «Conversemos» y después los proyectos (la marca
+  no se apaga: viaja hasta el caso, ver caso-modal.js). Quedan solo el
   azul y el crema, que es justo donde arranca el caso (ver CaseModal.astro).
   La carita se queda: el caso tiene una copia en el mismo lugar. Al volver se
   encienden en el mismo orden.
@@ -161,7 +173,7 @@ html.is-contacto .escenario .estrella {
   html.con-caso .escenario .estrella,
   html.con-caso .escenario .escenario__marco,
   html.con-caso .escenario .titular,
-  html.con-caso .panel .nav,
+  html.con-caso .panel .nav .pildora,
   html.con-caso .panel .panel__proyectos {
     transition: opacity var(--apaga) var(--ease) var(--retardo-caso, 0s);
   }
@@ -178,7 +190,7 @@ html.is-contacto .escenario .estrella {
   html.is-caso .escenario .estrella,
   html.is-caso .escenario .escenario__marco,
   html.is-caso .escenario .titular,
-  html.is-caso .panel .nav,
+  html.is-caso .panel .nav .pildora,
   html.is-caso .panel .panel__proyectos {
     opacity: 0;
   }
@@ -213,9 +225,9 @@ html.is-muro .carita--enlace {
     letter-spacing: calc(-0.8318 * var(--k));
   }
 
+  /* 16.636 + 2 × 8.318 + 2 × 1.412 */
   .pildora--x {
-    width: calc(28.293 * var(--k));
-    height: calc(27.769 * var(--k));
-    padding: 0;
+    width: calc(36.096 * var(--k));
+    padding-inline: 0;
   }
 }
