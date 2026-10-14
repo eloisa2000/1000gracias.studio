@@ -84,6 +84,63 @@ if (dialogos.size) {
   // Lo que tarda la home en volver a encenderse, pieza por pieza (tokens.css).
   const vuelta = () => duracion() * (0.7 + 0.2 * 2);
 
+  /*
+    La marca viaja: «1000gracias» se desliza desde el panel crema de la home
+    hasta la columna azul del caso, y cambia de azul a crema en el camino. Al
+    cerrar hace el viaje de vuelta.
+
+    Lo que se mueve es una copia fija dentro del diálogo, que parte justo
+    encima de una marca y termina justo encima de la otra; mientras viaja,
+    las dos de verdad están escondidas. Solo en escritorio: en móvil la marca
+    llega con la hoja.
+  */
+  const marcaHome = document.querySelector('.panel .nav .wordmark');
+  const marcaDe = (dialogo) => dialogo.querySelector('[data-caso-marca] .wordmark');
+  const color = (nombre) => getComputedStyle(html).getPropertyValue(nombre).trim();
+  let viajero = null;
+
+  const aterrizar = () => {
+    viajero?.remove();
+    viajero = null;
+  };
+
+  // Mueve la copia de `desde` a `hasta`, y llama a `alLlegar` al terminar.
+  const viajar = (dialogo, desde, hasta, { retardo, dura, tono, alLlegar }) => {
+    // Se mide antes de soltar la copia anterior: puede ser el punto de partida.
+    const a = desde.getBoundingClientRect();
+    const b = hasta.getBoundingClientRect();
+    const copia = desde.cloneNode(true);
+    aterrizar();
+    Object.assign(copia.style, {
+      visibility: 'visible',
+      transform: '',
+      position: 'fixed',
+      left: `${a.left}px`,
+      top: `${a.top}px`,
+      margin: '0',
+      zIndex: '5',
+      pointerEvents: 'none',
+    });
+    // El punto entra animado la primera vez; la copia no tiene que repetirlo.
+    copia.querySelector('.wordmark__punto')?.style.setProperty('animation', 'none');
+    copia.setAttribute('aria-hidden', 'true');
+    dialogo.append(copia);
+    viajero = copia;
+
+    const animacion = copia.animate(
+      [
+        { transform: 'translate(0, 0)', color: color(tono[0]) },
+        { transform: `translate(${b.left - a.left}px, ${b.top - a.top}px)`, color: color(tono[1]) },
+      ],
+      { delay: retardo, duration: dura, easing: 'cubic-bezier(0.2, 0.6, 0.2, 1)', fill: 'both' }
+    );
+    animacion.finished.then(() => {
+      if (viajero === copia) alLlegar?.();
+    }, () => {});
+  };
+
+  const viajaMarca = () => marcaHome && !enMovil.matches && duracion() > 0;
+
   // La lista de proyectos vuelve a apilarse al cerrar, como con el contacto.
   const reapilar = () => {
     for (const el of document.querySelectorAll('[data-apila]')) {
@@ -135,6 +192,27 @@ if (dialogos.size) {
 
     void dialogo.offsetWidth; // fuerza el reflow antes de animar
 
+    /* Ida: la copia espera a que la home se apague (--sale), viaja mientras
+       se corre el borde (--corre) y se queda encima de la marca del caso
+       hasta que la columna azul terminó de aparecer. */
+    const marcaCaso = marcaDe(dialogo);
+    if (viajaMarca() && marcaCaso) {
+      const e = duracion();
+      marcaHome.style.visibility = 'hidden';
+      marcaCaso.style.visibility = 'hidden';
+      viajar(dialogo, marcaHome, marcaCaso, {
+        retardo: e * 1.1,
+        dura: e * 1.7,
+        tono: ['--azul', '--crema'],
+        alLlegar: () =>
+          window.setTimeout(() => {
+            if (abierto !== dialogo || cerrando) return;
+            aterrizar();
+            marcaCaso.style.visibility = '';
+          }, e * (0.7 + 0.7)),
+      });
+    }
+
     window.clearTimeout(regreso);
     html.classList.add('con-caso');
     enElSiguienteCuadro(() => {
@@ -152,6 +230,8 @@ if (dialogos.size) {
     /* La home vuelve a encenderse recién cuando el crema terminó de volver:
        `is-caso` se saca al final, junto con el diálogo. */
     const terminar = () => {
+      aterrizar();
+      if (marcaHome) marcaHome.style.visibility = '';
       if (volver) {
         if (empujado) history.back();
         else history.replaceState({}, '', '/');
@@ -167,6 +247,21 @@ if (dialogos.size) {
     };
 
     dialogo.classList.remove('is-abierto');
+
+    /* Vuelta: la copia parte de la marca del caso cuando la información ya
+       se apagó (--apaga) y llega a la de la home junto con el crema. */
+    const marcaCaso = marcaDe(dialogo);
+    if (viajaMarca() && marcaCaso) {
+      const e = duracion();
+      const desde = viajero ?? marcaCaso;
+      marcaHome.style.visibility = 'hidden';
+      viajar(dialogo, desde, marcaHome, {
+        retardo: viajero ? 0 : e * 0.7,
+        dura: e * 1.7,
+        tono: ['--crema', '--azul'],
+      });
+      marcaCaso.style.visibility = 'hidden';
+    }
 
     const espera = cierre();
     if (espera === 0) terminar();

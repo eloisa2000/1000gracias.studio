@@ -45,11 +45,13 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
   <div class="caso__lado">
     <div class="caso__info">
-      <div class="caso__barra apila" style={turno(0)}>
-        <Wordmark tono="crema" />
+      {/* La marca no se apila: llega deslizándose desde la de la home
+          (caso-modal.js), así que tiene que estar quieta en su lugar. */}
+      <div class="caso__barra">
+        <span class="caso__marca" data-caso-marca><Wordmark tono="crema" /></span>
         {
           liveUrl && (
-            <a class="caso__ver" href={liveUrl} target="_blank" rel="noopener noreferrer">
+            <a class="caso__ver apila" style={turno(0)} href={liveUrl} target="_blank" rel="noopener noreferrer">
               Ver sitio <span aria-hidden="true">↗</span>
               <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
             </a>
@@ -607,7 +609,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
     /* La X sube a la barra azul, al lado del «Ver sitio». */
     .caso__barra {
-      padding-right: calc(40 * var(--k));
+      padding-right: calc(48 * var(--k));
     }
 
     .caso__panel {
