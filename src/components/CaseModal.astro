@@ -26,6 +26,12 @@ const id = `caso-${slug}`;
 const Raiz = pagina ? 'section' : 'dialog';
 const Titulo = pagina ? 'h1' : 'h2';
 const numero = (i) => `${String(i + 1).padStart(2, '0')}.`;
+
+/* Turno de cada pieza de la columna azul en el apilado de entrada: la barra,
+   el titular, la bajada, cada fila de la ficha, el rótulo y cada paso. */
+const turnoFicha = caso.bajada ? 3 : 2;
+const turnoRotulo = turnoFicha + caso.ficha.length;
+const turno = (n) => `--i:${n}`;
 const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 ---
 
@@ -39,7 +45,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
 
   <div class="caso__lado">
     <div class="caso__info">
-      <div class="caso__barra">
+      <div class="caso__barra apila" style={turno(0)}>
         <Wordmark tono="crema" />
         {
           liveUrl && (
@@ -51,14 +57,14 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
         }
       </div>
 
-      <Titulo class="caso__titular" id={`${id}-titulo`}>{caso.titular}</Titulo>
-      {caso.bajada && <p class="caso__bajada">{caso.bajada}</p>}
+      <Titulo class="caso__titular apila" id={`${id}-titulo`} style={turno(1)}>{caso.titular}</Titulo>
+      {caso.bajada && <p class="caso__bajada apila" style={turno(2)}>{caso.bajada}</p>}
 
       {
         caso.ficha.length > 0 && (
           <dl class="caso__ficha">
-            {caso.ficha.map((fila) => (
-              <div class="fila">
+            {caso.ficha.map((fila, i) => (
+              <div class="fila apila" style={turno(turnoFicha + i)}>
                 <dt class="fila__etiqueta">{fila.etiqueta}</dt>
                 <dd class="fila__valor">{fila.valor}</dd>
               </div>
@@ -70,10 +76,10 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
       {
         caso.proceso.length > 0 && (
           <>
-            <h3 class="caso__rotulo">¿Cómo se hizo?</h3>
+            <h3 class="caso__rotulo apila" style={turno(turnoRotulo)}>¿Cómo se hizo?</h3>
             <ol class="caso__proceso">
               {caso.proceso.map((paso, i) => (
-                <li class="fila fila--paso">
+                <li class="fila fila--paso apila" style={turno(turnoRotulo + 1 + i)}>
                   <span class="fila__etiqueta">
                     {numero(i)} {paso.nombre}
                   </span>
@@ -183,7 +189,9 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     background: none;
   }
 
+  /* Entrando directo no hubo recorrido: la columna se apila de una. */
   .caso--pagina {
+    --llega: 0s;
     position: fixed;
     inset: 0;
     z-index: 10;
@@ -433,6 +441,17 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     transition-delay: var(--llega);
   }
 
+  /* La columna azul entra apilada, pieza por pieza, como los proyectos de la
+     home: misma animación (`entra`, global.css) y mismo paso de 90 ms. Al
+     quitar `is-abierto` la animación se va, así que cada apertura la repite.
+     Con movimiento reducido no hay apilado: la columna aparece entera. */
+  @media (prefers-reduced-motion: no-preference) {
+    .caso.is-abierto .apila {
+      animation: entra 520ms var(--ease) both;
+      animation-delay: calc(var(--llega) + var(--i) * 90ms);
+    }
+  }
+
   /* La X espera solo para aparecer; el hover sigue siendo inmediato. */
   .caso.is-abierto .caso__cerrar {
     opacity: 1;
@@ -524,7 +543,9 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     Adentro no se mueve nada: el movimiento es la hoja.
   */
   @media (max-width: 1024px) {
+    /* La columna se apila cuando la hoja ya va llegando arriba. */
     .caso {
+      --llega: calc(var(--entrada) * 0.6);
       overflow-y: auto;
       overscroll-behavior: contain;
       transform: translateY(100%);
