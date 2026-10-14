@@ -385,7 +385,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     top: calc(15.467 * var(--k));
     right: calc(46 * var(--k));
     color: var(--azul);
-    background: var(--crema);
+    background: transparent;
     opacity: 0;
     transition:
       opacity var(--apaga) var(--ease) 0s,
@@ -625,7 +625,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
       top: calc(19 * var(--k));
       right: calc(16 * var(--k));
       color: var(--crema);
-      background: var(--azul);
+      background: transparent;
     }
 
     @media (hover: hover) {
