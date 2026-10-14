@@ -77,7 +77,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: calc(17.671 * var(--k)) calc(23.561 * var(--k));
-  border: calc(3.927 * var(--k)) solid currentColor;
+  border: calc(3 * var(--k)) solid currentColor;
   border-radius: calc(43.195 * var(--k));
   background: none;
   font-family: var(--tipo-titulo);
@@ -112,6 +112,13 @@ a {
    contact-modal.js). El resto no, para que no se arrastren al redimensionar. */
 .pildora[data-contacto='cerrar'] {
   transition: width var(--entrada) var(--ease);
+}
+
+/* La de cerrar es un círculo de tamaño fijo con la cruz centrada. */
+.pildora--x {
+  width: calc(60.122 * var(--k));
+  height: calc(59.009 * var(--k));
+  padding: 0;
 }
 
 .pildora__etiqueta {
@@ -160,9 +167,15 @@ html.is-muro .carita--enlace {
 @media (max-width: 1024px) {
   .pildora {
     padding: calc(8.318 * var(--k)) calc(11.091 * var(--k));
-    border-width: calc(1.848 * var(--k));
+    border-width: calc(1.412 * var(--k));
     border-radius: calc(20.333 * var(--k));
     font-size: calc(16.636 * var(--k));
     letter-spacing: calc(-0.8318 * var(--k));
+  }
+
+  .pildora--x {
+    width: calc(28.293 * var(--k));
+    height: calc(27.769 * var(--k));
+    padding: 0;
   }
 }
