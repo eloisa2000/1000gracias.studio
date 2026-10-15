@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import ContactModal from '../components/ContactModal.astro';
 import MuroModal from '../components/MuroModal.astro';
+import CaseModal from '../components/CaseModal.astro';
 import { getProyectos, getAjustes } from '../lib/content.js';
 
 const [proyectos, ajustes] = await Promise.all([getProyectos(), getAjustes()]);
@@ -12,10 +13,12 @@ const [proyectos, ajustes] = await Promise.all([getProyectos(), getAjustes()]);
   <Hero proyectos={proyectos} ajustes={ajustes} />
   <ContactModal ajustes={ajustes} />
   <MuroModal />
+  {proyectos.filter((p) => p.caso).map((p) => <CaseModal proyecto={p} />)}
 </Base>
 
 <script>
   import '../scripts/hover-stage.js';
   import '../scripts/contact-modal.js';
   import '../scripts/muro-modal.js';
+  import '../scripts/caso-modal.js';
 </script>

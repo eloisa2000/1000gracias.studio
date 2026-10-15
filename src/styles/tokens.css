@@ -35,6 +35,10 @@
   --swap: 260ms; /* cambio de imagen y estados de hover */
   --entrada: 420ms; /* apertura y cierre del contacto: todo se mueve junto */
   --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+  /* Al abrir un caso: lo que dura en apagarse cada pieza de la home, y lo que
+     espera cada una después de la anterior. */
+  --apaga: calc(var(--entrada) * 0.7);
+  --escalon: calc(var(--entrada) * 0.2);
   /* Multiplicador de los retardos escalonados. Vale 0 con movimiento
      reducido, para que nada quede esperando su turno. */
   --mueve: 1;

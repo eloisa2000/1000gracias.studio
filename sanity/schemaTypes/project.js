@@ -2,6 +2,10 @@ export const project = {
   name: 'project',
   title: 'Proyecto',
   type: 'document',
+  groups: [
+    { name: 'inicio', title: 'Inicio', default: true },
+    { name: 'caso', title: 'Caso' },
+  ],
   fields: [
     {
       name: 'title',
@@ -50,7 +54,7 @@ export const project = {
     {
       name: 'coverImage',
       title: 'Portada',
-      description: 'Miniatura y portada de la futura página de proyecto.',
+      description: 'Miniatura para compartir y para futuras listas de proyectos.',
       type: 'image',
       options: { hotspot: true },
       fields: [{ name: 'alt', title: 'Texto alternativo', type: 'string' }],
@@ -69,25 +73,19 @@ export const project = {
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
     },
+    {
+      name: 'lema',
+      title: 'Frase corta',
+      description: 'Lo que es, en pocas palabras. Va junto al nombre cuando el proyecto aparece como «Siguiente proyecto». Por ejemplo: Zapatillas hechas en Chile.',
+      type: 'string',
+    },
     { name: 'liveUrl', title: 'Sitio publicado', type: 'url' },
     {
-      name: 'body',
-      title: 'Cuerpo',
-      description: 'Para la futura página del proyecto.',
-      type: 'array',
-      of: [{ type: 'block' }],
-    },
-    {
-      name: 'gallery',
-      title: 'Galería',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: { hotspot: true },
-          fields: [{ name: 'alt', title: 'Texto alternativo', type: 'string' }],
-        },
-      ],
+      name: 'caso',
+      title: 'Caso',
+      description: 'La página /caso/<slug>. Se abre al tocar el proyecto en la home.',
+      type: 'caso',
+      group: 'caso',
     },
     {
       name: 'credits',

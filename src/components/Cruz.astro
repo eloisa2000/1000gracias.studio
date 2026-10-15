@@ -1,0 +1,28 @@
+---
+/*
+  La X de cerrar: el "+" del Figma girado 45°. Va dibujada en el HTML con
+  `currentColor` para que se invierta junto con la píldora en el hover.
+*/
+---
+
+<svg class="cruz" viewBox="0 0 20.0407 20.0408" fill="none" aria-hidden="true">
+  <line x1="1.11339" y1="10.0203" x2="18.9273" y2="10.0203" stroke="currentColor" stroke-width="2.22674" stroke-linecap="round" />
+  <line x1="10.0203" y1="1.11346" x2="10.0203" y2="18.9274" stroke="currentColor" stroke-width="2.22674" stroke-linecap="round" />
+</svg>
+
+<style>
+  .cruz {
+    display: block;
+    /* La misma proporción del Figma: un tercio del alto del botón. */
+    width: calc(26 * var(--k));
+    height: calc(26 * var(--k));
+    transform: rotate(45deg);
+  }
+
+  @media (max-width: 1024px) {
+    .cruz {
+      width: calc(12.24 * var(--k));
+      height: calc(12.24 * var(--k));
+    }
+  }
+</style>

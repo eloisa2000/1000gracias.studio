@@ -1,0 +1,1012 @@
+---
+import Wordmark from './Wordmark.astro';
+import Brandmark from './Brandmark.astro';
+import Cruz from './Cruz.astro';
+import CaseMedia from './CaseMedia.astro';
+
+/*
+  La página de caso. Como el contacto, vive en dos formas con el mismo marcado:
+
+  - En la home es un <dialog> por proyecto, y al abrirlo la URL pasa a
+    /caso/<slug>/ (ver src/scripts/caso-modal.js).
+  - En /caso/<slug>/ es la página misma, ya en su estado final, para que el
+    enlace se pueda compartir y funcione sin JavaScript.
+
+  En escritorio la columna azul queda fija —titular, ficha y proceso— y la de
+  la derecha se desplaza. Al abrir se siente como el mismo bloque azul de la
+  home: primero se apaga lo que tiene encima (estrellas, imagen, titular) y lo
+  del panel crema (nav y proyectos); después el borde entre el azul y el crema
+  se corre a la izquierda, hasta la medida del caso; y un momento después
+  aparece la información. Al cerrar, lo mismo al revés. En móvil la hoja
+  entera sube desde abajo, como el contacto.
+*/
+const { proyecto, pagina = false } = Astro.props;
+const { caso, slug, liveUrl } = proyecto;
+const id = `caso-${slug}`;
+const Raiz = pagina ? 'section' : 'dialog';
+const Titulo = pagina ? 'h1' : 'h2';
+const numero = (i) => `${String(i + 1).padStart(2, '0')}.`;
+
+/*
+  La columna azul entra en un orden que guía la lectura: el titular palabra
+  por palabra, la bajada línea por línea, la ficha fila por fila, el rótulo
+  del proceso y el proceso entero de una vez. `--t` es cuándo entra cada
+  pieza, en milisegundos desde que empieza el apilado.
+
+  Lo que se calcula acá supone que la bajada ocupa dos líneas. Las líneas
+  reales dependen del ancho de la pantalla, así que caso-modal.js las mide al
+  abrir y corrige los tiempos (con los mismos pasos, en `coreografiar`).
+*/
+const PASO = { palabra: 100, linea: 200, fila: 130, pausa: 170, rotulo: 280 };
+const palabras = (texto) => (texto ?? '').split(/\s+/).filter(Boolean);
+const titular = palabras(caso.titular);
+const bajada = palabras(caso.bajada);
+const enBajada = titular.length * PASO.palabra + PASO.pausa;
+const enFicha = enBajada + (bajada.length ? 2 * PASO.linea + PASO.pausa : 0);
+const enRotulo = enFicha + caso.ficha.length * PASO.fila + PASO.pausa;
+const enProceso = enRotulo + PASO.rotulo;
+const t = (ms) => `--t:${ms}ms`;
+const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+---
+
+<Raiz
+  class:list={['caso', pagina && 'caso--pagina', pagina && 'is-abierto']}
+  id={pagina ? undefined : id}
+  data-caso={pagina ? undefined : slug}
+  aria-labelledby={`${id}-titulo`}
+>
+  <div class="caso__fondo"></div>
+
+  <div class="caso__lado">
+    <div class="caso__info">
+      {/* La marca no se apila: llega deslizándose desde la de la home
+          (caso-modal.js), así que tiene que estar quieta en su lugar. */}
+      <div class="caso__barra">
+        <span class="caso__marca" data-caso-marca><Wordmark tono="crema" /></span>
+        {
+          liveUrl && (
+            <a class="caso__ver apila" style={t(0)} href={liveUrl} target="_blank" rel="noopener noreferrer">
+              Ver sitio <span aria-hidden="true">↗</span>
+              <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
+            </a>
+          )
+        }
+      </div>
+
+      {/* Cada palabra es su propia pieza; el título completo queda en
+          aria-label para que se lea de corrido. */}
+      <Titulo class="caso__titular" id={`${id}-titulo`} aria-label={caso.titular}>
+        {titular.map((palabra, i) => (
+          <>
+            <span class="palabra apila" aria-hidden="true" data-coro="titular" style={t(i * PASO.palabra)}>{palabra}</span>{' '}
+          </>
+        ))}
+      </Titulo>
+      {
+        caso.bajada && (
+          <p class="caso__bajada" aria-label={caso.bajada}>
+            {bajada.map((palabra) => (
+              <>
+                <span class="palabra apila" aria-hidden="true" data-coro="bajada" style={t(enBajada)}>{palabra}</span>{' '}
+              </>
+            ))}
+          </p>
+        )
+      }
+
+      {
+        caso.ficha.length > 0 && (
+          <dl class="caso__ficha">
+            {caso.ficha.map((fila, i) => (
+              <div class="fila apila" data-coro="fila" style={t(enFicha + i * PASO.fila)}>
+                <dt class="fila__etiqueta">{fila.etiqueta}</dt>
+                <dd class="fila__valor">{fila.valor}</dd>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      {
+        caso.proceso.length > 0 && (
+          <>
+            <h3 class="caso__rotulo apila" data-coro="rotulo" style={t(enRotulo)}>¿Cómo se hizo?</h3>
+            <ol class="caso__proceso apila" data-coro="proceso" style={t(enProceso)}>
+              {caso.proceso.map((paso, i) => (
+                <li class="fila fila--paso">
+                  <span class="fila__etiqueta">
+                    {numero(i)} {paso.nombre}
+                  </span>
+                  {paso.texto && <p class="fila__valor">{paso.texto}</p>}
+                </li>
+              ))}
+            </ol>
+          </>
+        )
+      }
+    </div>
+  </div>
+
+  <div class="caso__panel">
+    <a class="pildora pildora--x caso__cerrar" href="/" data-cierra-caso aria-label="Cerrar el caso">
+      <span class="pildora__etiqueta"><Cruz /></span>
+    </a>
+
+    <div class="caso__contenido" data-caso-contenido>
+      {/* La pista es lo que mide Lenis para saber cuánto hay que desplazar. */}
+      <div class="caso__pista" data-caso-pista>
+        {
+          caso.bloques.map((b) =>
+            b.tipo === 'medio' ? (
+              <div class="bloque">
+                <CaseMedia medio={b.medio} />
+              </div>
+            ) : b.tipo === 'seccion' ? (
+              <section class="bloque seccion">
+                <div class:list={['seccion__texto', `seccion__texto--${b.disposicion}`]}>
+                  <h3 class="seccion__titulo">{b.titulo}</h3>
+                  {parrafos(b.texto).length > 0 && (
+                    <div class="seccion__parrafos">
+                      {parrafos(b.texto).map((p) => (
+                        <p>{p}</p>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {b.medios.length > 0 && (
+                  <div class="seccion__medios">
+                    {b.medios.map((m) => (
+                      <CaseMedia medio={m} />
+                    ))}
+                  </div>
+                )}
+              </section>
+            ) : (
+              <figure class="bloque cita">
+                <blockquote class="cita__texto">
+                  <p>{b.cita}</p>
+                </blockquote>
+                {b.autor && <figcaption class="cita__autor">{b.autor}</figcaption>}
+              </figure>
+            )
+          )
+        }
+
+        {/* El pie: quién más participó, el siguiente proyecto y una invitación
+            a escribir. Cada columna aparece solo si tiene algo. */}
+        <footer class="pie">
+          {
+            (caso.creditos.length > 0 || liveUrl) && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Créditos</h3>
+                {caso.creditos.length > 0 && (
+                  <ul class="pie__creditos">
+                    {caso.creditos.map((c) => (
+                      <li>
+                        {c.etiqueta}: {c.valor}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {liveUrl && (
+                  <a class="pie__enlace" href={liveUrl} target="_blank" rel="noopener noreferrer">
+                    Ver sitio en vivo <span aria-hidden="true">↗</span>
+                    <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
+                  </a>
+                )}
+              </div>
+            )
+          }
+
+          {
+            caso.siguiente && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Siguiente proyecto</h3>
+                <a
+                  class="pie__siguiente"
+                  href={caso.siguiente.href}
+                  target={caso.siguiente.externo ? '_blank' : undefined}
+                  rel={caso.siguiente.externo ? 'noopener noreferrer' : undefined}
+                >
+                  <span class="pie__miniatura">
+                    {caso.siguiente.coverSrc && <img src={caso.siguiente.coverSrc} alt="" loading="lazy" decoding="async" />}
+                  </span>
+                  <span class="pie__nombre">
+                    {caso.siguiente.title}
+                    {caso.siguiente.lema && ` - ${caso.siguiente.lema}`} <span aria-hidden="true">→</span>
+                  </span>
+                  {caso.siguiente.externo && <span class="visualmente-oculto">(abre en una pestaña nueva)</span>}
+                </a>
+              </div>
+            )
+          }
+
+          {
+            caso.pregunta && (
+              <div class="pie__columna">
+                <h3 class="pie__rotulo">Contacto</h3>
+                <p class="pie__pregunta">{caso.pregunta}</p>
+                <a class="pie__boton" href="/conversemos/">{caso.boton ?? 'Escríbenos'}</a>
+              </div>
+            )
+          }
+        </footer>
+      </div>
+    </div>
+
+    <div class="caso__brandmark">
+      <Brandmark />
+    </div>
+  </div>
+</Raiz>
+
+<style>
+  /*
+    Transparente, como el contacto: la home queda detrás.
+
+    El recorrido tiene tres tiempos, y los tres salen de --entrada (así con
+    movimiento reducido todo vale 0):
+    1. --sale: se apaga lo que hay encima del azul y del crema de la home,
+       una pieza después de otra (global.css, `html.is-caso`). Mientras
+       tanto el diálogo es invisible.
+    2. --corre: el diálogo aparece de golpe —es idéntico a lo que quedó: azul
+       hasta el 51.91% y crema después— y el crema avanza hasta el 33.218%,
+       donde termina la columna azul del caso (574 / 1728).
+    3. --espera: una pausa, y entra la información. Entre que empieza a
+       correrse el borde y que aparece la información pasa un segundo.
+  */
+  .caso {
+    /* --apaga y --escalon viven en tokens.css: los usa también la home. */
+    --sale: calc(var(--apaga) + var(--escalon) * 2);
+    --corre: calc(var(--entrada) * 1.7);
+    --espera: calc(var(--entrada) * 0.7);
+    --llega: calc(var(--sale) + var(--corre) + var(--espera));
+    width: 100vw;
+    max-width: 100vw;
+    height: 100svh;
+    max-height: 100svh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--navy);
+    overflow: hidden;
+  }
+
+  .caso[open],
+  .caso--pagina {
+    display: grid;
+    grid-template-columns: 33.218% 1fr; /* 574 / 1728 */
+    /* La fila mide la pantalla y no el contenido: si no, la columna de la
+       derecha crece entera y no tiene dentro de qué desplazarse. */
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .caso::backdrop {
+    background: none;
+  }
+
+  /* Entrando directo no hubo recorrido: la columna se apila de una. */
+  .caso--pagina {
+    --llega: 0s;
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+  }
+
+  /* Columna azul */
+
+  .caso__lado {
+    isolation: isolate;
+    position: relative;
+    min-width: 0;
+    color: var(--crema);
+  }
+
+  /* El azul ocupa lo mismo que el escenario de la home (897 / 1728), y el
+     panel crema se le monta encima al correrse. Al cerrar se esconde recién
+     cuando el crema terminó de volver. */
+  .caso__fondo {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 51.91%;
+    z-index: 0;
+    background: var(--azul);
+    opacity: 0;
+    transition: opacity 0s linear calc(var(--apaga) + var(--corre));
+  }
+
+  .caso__info {
+    position: relative;
+    z-index: 1;
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(27 * var(--k)) calc(22 * var(--k)) calc(48 * var(--k)) calc(23 * var(--k));
+    opacity: 0;
+    transition: opacity var(--apaga) var(--ease) 0s;
+  }
+
+  .caso__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+  }
+
+  /* Si el escenario de la home ya se borró, la marca no entra animada: llega
+     con el resto de la columna. */
+  .caso:not(.caso--pagina) :global(.wordmark__punto) {
+    animation: none;
+  }
+
+  .caso__ver {
+    font-family: var(--tipo-rotulo);
+    font-weight: 500;
+    font-size: calc(18 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.72 * var(--k));
+    color: var(--crema);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  @media (hover: hover) {
+    .caso__ver:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+  }
+
+  /* La barra mide lo que la marca: 1.5 × 35.745 = 53.618. El titular arranca
+     44 más abajo, a 124.618 del borde, y ahí mismo arranca el contenido de la
+     derecha, para que las dos columnas empiecen a la misma altura. */
+  .caso__titular {
+    margin-top: calc(44 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 400;
+    font-size: calc(52 * var(--k));
+    line-height: 0.96;
+    letter-spacing: calc(-4.16 * var(--k));
+  }
+
+  .caso__bajada {
+    max-width: calc(529 * var(--k));
+    margin-top: calc(20 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-size: calc(23 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-0.92 * var(--k));
+  }
+
+  .caso__ficha {
+    display: flex;
+    flex-direction: column;
+    margin: calc(23 * var(--k)) 0 0;
+    padding: calc(24 * var(--k)) 0;
+  }
+
+  .caso__rotulo {
+    margin-top: calc(19 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 400;
+    font-size: calc(23 * var(--k));
+    line-height: 1.4;
+    letter-spacing: calc(-1.38 * var(--k));
+  }
+
+  .caso__proceso {
+    margin-top: calc(18 * var(--k));
+  }
+
+  /* Una fila de la ficha o del proceso: etiqueta a la izquierda, valor a la
+     derecha. En la ficha la línea va debajo de cada fila; en el proceso,
+     solo entre filas. */
+  .fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(24 * var(--k));
+    padding: calc(2 * var(--k)) 0 calc(4 * var(--k));
+    border-bottom: calc(1 * var(--k)) solid var(--crema);
+  }
+
+  .fila + .fila {
+    padding-top: calc(4 * var(--k));
+  }
+
+  .fila--paso {
+    align-items: flex-start;
+    padding: calc(6 * var(--k)) 0;
+  }
+
+  .fila--paso:first-child {
+    padding-top: 0;
+  }
+
+  .fila--paso:last-child {
+    border-bottom: 0;
+  }
+
+  .fila__etiqueta {
+    flex: none;
+    font-family: var(--tipo-titulo);
+    font-size: calc(17 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.68 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .fila__valor {
+    max-width: calc(360 * var(--k));
+    margin: 0;
+    font-family: var(--tipo-rotulo);
+    font-size: calc(18 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-0.72 * var(--k));
+    text-align: right;
+  }
+
+  .fila--paso .fila__valor {
+    max-width: calc(370 * var(--k));
+    font-size: calc(19 * var(--k));
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  /* Panel crema */
+
+  /* Parte donde empieza el panel de la home, (51.91 − 33.218) / 66.782, y
+     avanza sobre el azul. Al cerrar espera a que se apague la información. */
+  .caso__panel {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    background: var(--crema);
+    opacity: 0;
+    clip-path: inset(0 0 0 27.99%);
+    transition:
+      clip-path var(--corre) var(--ease) var(--apaga),
+      opacity 0s linear calc(var(--apaga) + var(--corre));
+  }
+
+  /* Centrada con la fila de la marca (27 + 53.618 / 2 − 76.684 / 2) y con
+     su borde derecho alineado con el del contenido. */
+  .caso__cerrar {
+    position: absolute;
+    z-index: 3;
+    top: calc(15.467 * var(--k));
+    right: calc(46 * var(--k));
+    color: var(--azul);
+    background: transparent;
+    opacity: 0;
+    transition:
+      opacity var(--apaga) var(--ease) 0s,
+      background-color var(--swap) var(--ease),
+      border-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
+  }
+
+  @media (hover: hover) {
+    .caso__cerrar:hover {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: var(--crema);
+    }
+  }
+
+  .caso__contenido {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: calc(124.618 * var(--k)) calc(46 * var(--k)) calc(40 * var(--k)) calc(69 * var(--k));
+    opacity: 0;
+    transform: translateY(calc(16 * var(--k)));
+    transition:
+      opacity var(--apaga) var(--ease) 0s,
+      transform var(--apaga) var(--ease) 0s;
+  }
+
+  /* La carita no se apaga: la copia del caso cae justo encima de la de la
+     home y aparece con el panel, así que se ve quieta todo el recorrido. */
+  .caso__brandmark {
+    position: absolute;
+    right: calc(30 * var(--k));
+    bottom: calc(38 * var(--k));
+    z-index: 3;
+  }
+
+  .caso:not(.caso--pagina) :global(.carita) {
+    animation: none;
+  }
+
+  /* Abierto */
+
+  /* Al abrir los retardos van al revés: el azul y el crema aparecen cuando
+     la home ya se apagó, y la información llega al final. */
+  .caso.is-abierto .caso__fondo {
+    opacity: 1;
+    transition-delay: var(--sale);
+  }
+
+  .caso.is-abierto .caso__panel {
+    opacity: 1;
+    clip-path: inset(0);
+    transition:
+      clip-path var(--corre) var(--ease) var(--sale),
+      opacity 0s linear var(--sale);
+  }
+
+  .caso.is-abierto .caso__info,
+  .caso.is-abierto .caso__contenido {
+    opacity: 1;
+    transform: none;
+    transition-delay: var(--llega);
+  }
+
+  /* Las palabras se mueven solas, así que tienen que ser cajas. */
+  .palabra {
+    display: inline-block;
+  }
+
+  /* La columna azul entra apilada, pieza por pieza, con la misma animación
+     que los proyectos de la home (`entra`, global.css), cada una en su `--t`.
+     Al quitar `is-abierto` la animación se va, así que cada apertura la
+     repite. Con movimiento reducido no hay apilado: la columna aparece
+     entera. */
+  @media (prefers-reduced-motion: no-preference) {
+    .caso.is-abierto .apila {
+      animation: entra 720ms var(--ease) both;
+      animation-delay: calc(var(--llega) + var(--t, 0ms));
+    }
+  }
+
+  /* La X espera solo para aparecer; el hover sigue siendo inmediato. */
+  .caso.is-abierto .caso__cerrar {
+    opacity: 1;
+    transition:
+      opacity var(--apaga) var(--ease) var(--llega),
+      background-color var(--swap) var(--ease),
+      border-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
+  }
+
+  /* Bloques de contenido */
+
+  .bloque + .bloque {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .seccion__texto {
+    display: grid;
+    gap: calc(24 * var(--k));
+    color: var(--navy);
+  }
+
+  .seccion__texto--lado {
+    grid-template-columns: calc(413 * var(--k)) 1fr;
+    align-items: start;
+  }
+
+  .seccion__texto--arriba .seccion__titulo {
+    max-width: calc(703 * var(--k));
+  }
+
+  .seccion__titulo {
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(40 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-1.6 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .seccion__parrafos {
+    display: grid;
+    gap: 1em;
+    font-family: var(--tipo-titulo);
+    font-size: calc(19 * var(--k));
+    line-height: 1.6;
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  .seccion__medios {
+    display: flex;
+    flex-direction: column;
+    gap: calc(26 * var(--k));
+    margin-top: calc(40 * var(--k));
+  }
+
+  /* La cita va a todo el ancho de la columna, de borde a borde. */
+  .cita {
+    margin-inline: calc(-69 * var(--k)) calc(-46 * var(--k));
+    padding: calc(64 * var(--k)) calc(62 * var(--k));
+    background: var(--azul);
+    color: var(--crema);
+  }
+
+  .bloque + .cita,
+  .cita + .bloque {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .cita__texto {
+    margin: 0;
+    font-family: var(--tipo-rotulo);
+    font-size: calc(40 * var(--k));
+    line-height: 1.2;
+    letter-spacing: calc(-3.2 * var(--k));
+    white-space: pre-line;
+  }
+
+  .cita__autor {
+    margin-top: calc(24 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-size: calc(19 * var(--k));
+    line-height: 1.6;
+    letter-spacing: calc(-0.76 * var(--k));
+  }
+
+  /*
+    Pie del caso, con los mismos márgenes que el resto del contenido. Los
+    créditos son cortos y miden lo que su texto, para no dejar un hueco al
+    lado; el siguiente proyecto y el contacto se reparten el resto.
+  */
+  .pie {
+    display: grid;
+    grid-template-columns: max-content repeat(2, minmax(0, 1fr));
+    gap: calc(48 * var(--k));
+    padding-top: calc(54 * var(--k));
+    color: var(--navy);
+  }
+
+  /* Después de una cita, el pie va pegado a ella, como en el Figma. */
+  .bloque + .pie {
+    margin-top: calc(60 * var(--k));
+  }
+
+  .cita + .pie {
+    margin-top: 0;
+  }
+
+  .pie__rotulo {
+    margin-bottom: calc(14 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-weight: 400;
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .pie__creditos {
+    font-family: var(--tipo-rotulo);
+    font-size: calc(16 * var(--k));
+    line-height: 1.5;
+  }
+
+  .pie__enlace {
+    display: inline-block;
+    margin-top: calc(16 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-weight: 500;
+    font-size: calc(16 * var(--k));
+    line-height: 1.5;
+    color: var(--navy);
+    text-decoration: none;
+  }
+
+  .pie__siguiente {
+    display: block;
+    width: 100%;
+    color: var(--navy);
+    text-decoration: none;
+  }
+
+  .pie__miniatura {
+    display: block;
+    aspect-ratio: 2 / 1;
+    overflow: hidden;
+    border-radius: calc(10 * var(--k));
+    background: color-mix(in srgb, var(--navy) 8%, var(--crema));
+  }
+
+  .pie__miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .pie__nombre {
+    display: block;
+    margin-top: calc(10 * var(--k));
+    font-family: var(--tipo-titulo);
+    font-size: calc(14 * var(--k));
+    line-height: 1.5;
+    letter-spacing: calc(-0.56 * var(--k));
+    text-transform: uppercase;
+  }
+
+  .pie__pregunta {
+    max-width: calc(300 * var(--k));
+    font-family: var(--tipo-rotulo);
+    font-size: calc(28 * var(--k));
+    line-height: 1.15;
+    letter-spacing: calc(-1.12 * var(--k));
+  }
+
+  /* Píldora chica y rellena. Lleva a /conversemos como página: dentro del
+     caso no se abre el modal del contacto encima. */
+  .pie__boton {
+    display: inline-block;
+    margin-top: calc(22 * var(--k));
+    padding: calc(12 * var(--k)) calc(24 * var(--k));
+    border: calc(2 * var(--k)) solid var(--azul);
+    border-radius: calc(40 * var(--k));
+    background: var(--azul);
+    color: var(--crema);
+    font-family: var(--tipo-titulo);
+    font-size: calc(16 * var(--k));
+    line-height: 1;
+    letter-spacing: calc(-0.32 * var(--k));
+    text-transform: uppercase;
+    text-decoration: none;
+    transition:
+      background-color var(--swap) var(--ease),
+      color 0s linear calc(var(--swap) * 0.5);
+  }
+
+  @media (hover: hover) {
+    .pie__boton:hover {
+      background: var(--crema);
+      color: var(--azul);
+    }
+
+    .pie__enlace:hover,
+    .pie__siguiente:hover .pie__nombre {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+
+    .pie__miniatura img {
+      transition: transform var(--swap) var(--ease);
+    }
+
+    .pie__siguiente:hover .pie__miniatura img {
+      transform: scale(1.03);
+    }
+  }
+
+  /*
+    Móvil: la hoja sube desde abajo y se desplaza entera, como el contacto.
+    Adentro no se mueve nada: el movimiento es la hoja.
+  */
+  @media (max-width: 1024px) {
+    /* La columna se apila cuando la hoja ya va llegando arriba. */
+    .caso {
+      --llega: calc(var(--entrada) * 0.6);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      transform: translateY(100%);
+      transition: transform var(--entrada) var(--ease);
+    }
+
+    .caso.is-abierto {
+      transform: none;
+    }
+
+    .caso[open],
+    .caso--pagina {
+      display: block;
+    }
+
+    /* El azul es el fondo de su propio bloque, no una capa del ancho del
+       escenario. */
+    .caso__fondo {
+      display: none;
+    }
+
+    .caso__lado {
+      background: var(--azul);
+    }
+
+    .caso__panel,
+    .caso.is-abierto .caso__panel {
+      opacity: 1;
+      clip-path: none;
+      transition: none;
+    }
+
+    .caso__cerrar,
+    .caso.is-abierto .caso__cerrar {
+      opacity: 1;
+      transition:
+        background-color var(--swap) var(--ease),
+        border-color var(--swap) var(--ease),
+        color 0s linear calc(var(--swap) * 0.5);
+    }
+
+    .caso__info,
+    .caso__contenido,
+    .caso.is-abierto .caso__info,
+    .caso.is-abierto .caso__contenido {
+      height: auto;
+      overflow: visible;
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .caso__info {
+      padding: calc(19 * var(--k)) calc(16 * var(--k)) calc(32 * var(--k));
+    }
+
+    /* La X sube a la barra azul, al lado del «Ver sitio». */
+    .caso__barra {
+      padding-right: calc(48 * var(--k));
+    }
+
+    .caso__panel {
+      position: static;
+    }
+
+    .caso__cerrar {
+      top: calc(19 * var(--k));
+      right: calc(16 * var(--k));
+      color: var(--crema);
+      background: transparent;
+    }
+
+    @media (hover: hover) {
+      .caso__cerrar:hover {
+        background: var(--crema);
+        border-color: var(--crema);
+        color: var(--azul);
+      }
+    }
+
+    .caso__titular {
+      margin-top: calc(28 * var(--k));
+      font-size: calc(32 * var(--k));
+      letter-spacing: calc(-2.4 * var(--k));
+    }
+
+    .caso__bajada {
+      margin-top: calc(14 * var(--k));
+      font-size: calc(16 * var(--k));
+      line-height: 1.25;
+      letter-spacing: calc(-0.64 * var(--k));
+    }
+
+    .caso__ficha {
+      margin-top: calc(12 * var(--k));
+      padding: calc(16 * var(--k)) 0;
+    }
+
+    .caso__rotulo {
+      margin-top: calc(8 * var(--k));
+      font-size: calc(16 * var(--k));
+      letter-spacing: calc(-0.8 * var(--k));
+    }
+
+    .caso__proceso {
+      margin-top: calc(12 * var(--k));
+    }
+
+    .fila {
+      gap: calc(16 * var(--k));
+    }
+
+    .fila__etiqueta {
+      font-size: calc(12.5 * var(--k));
+      letter-spacing: calc(-0.5 * var(--k));
+    }
+
+    .fila__valor,
+    .fila--paso .fila__valor {
+      max-width: calc(230 * var(--k));
+      font-size: calc(14 * var(--k));
+      letter-spacing: calc(-0.56 * var(--k));
+    }
+
+    .caso__contenido {
+      padding: calc(24 * var(--k)) calc(16 * var(--k)) 0;
+    }
+
+    .caso__brandmark {
+      position: static;
+      display: flex;
+      justify-content: flex-end;
+      padding: calc(32 * var(--k)) calc(16 * var(--k)) calc(40 * var(--k));
+    }
+
+    .bloque + .bloque,
+    .bloque + .cita,
+    .cita + .bloque {
+      margin-top: calc(40 * var(--k));
+    }
+
+    .seccion__texto,
+    .seccion__texto--lado {
+      grid-template-columns: 1fr;
+      gap: calc(12 * var(--k));
+    }
+
+    .seccion__titulo {
+      font-size: calc(24 * var(--k));
+      letter-spacing: calc(-0.96 * var(--k));
+    }
+
+    .seccion__parrafos {
+      font-size: calc(15 * var(--k));
+      line-height: 1.55;
+      letter-spacing: calc(-0.45 * var(--k));
+    }
+
+    .seccion__medios {
+      gap: calc(20 * var(--k));
+      margin-top: calc(20 * var(--k));
+    }
+
+    .cita {
+      margin-inline: calc(-16 * var(--k));
+      padding: calc(32 * var(--k)) calc(16 * var(--k));
+    }
+
+    .cita__texto {
+      font-size: calc(24 * var(--k));
+      letter-spacing: calc(-1.6 * var(--k));
+    }
+
+    .pie {
+      grid-template-columns: 1fr;
+      gap: calc(32 * var(--k));
+      padding-top: calc(32 * var(--k));
+    }
+
+    .bloque + .pie {
+      margin-top: calc(40 * var(--k));
+    }
+
+    .cita + .pie {
+      margin-top: 0;
+    }
+
+    .pie__rotulo {
+      margin-bottom: calc(10 * var(--k));
+      font-size: calc(12.5 * var(--k));
+      letter-spacing: calc(-0.5 * var(--k));
+    }
+
+    .pie__creditos,
+    .pie__enlace {
+      font-size: calc(14 * var(--k));
+    }
+
+    .pie__siguiente {
+      width: 100%;
+    }
+
+    .pie__nombre {
+      font-size: calc(12.5 * var(--k));
+    }
+
+    .pie__pregunta {
+      max-width: none;
+      font-size: calc(22 * var(--k));
+      letter-spacing: calc(-0.88 * var(--k));
+    }
+
+    .pie__boton {
+      margin-top: calc(16 * var(--k));
+      padding: calc(10 * var(--k)) calc(20 * var(--k));
+      font-size: calc(14 * var(--k));
+    }
+
+    .cita__autor {
+      margin-top: calc(14 * var(--k));
+      font-size: calc(13 * var(--k));
+      line-height: 1.4;
+      letter-spacing: calc(-0.52 * var(--k));
+    }
+  }
+</style>

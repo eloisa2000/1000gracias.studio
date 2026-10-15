@@ -17,6 +17,18 @@ export const sanity = projectId
     })
   : null;
 
+// Lo mismo para una imagen o video del caso, esté suelto o dentro de una sección.
+const MEDIO = /* groq */ `
+  _type,
+  tipo,
+  alt,
+  rotulo,
+  leyenda,
+  imagen{ asset, hotspot, crop },
+  "dimensiones": imagen.asset->metadata.dimensions{ width, height },
+  "videoUrl": video.asset->url
+`;
+
 export const PROYECTOS_QUERY = /* groq */ `
   *[_type == "project" && !(_id in path("drafts.**"))] | order(order asc, title asc) {
     "id": _id,
@@ -28,10 +40,30 @@ export const PROYECTOS_QUERY = /* groq */ `
     excerpt,
     tools,
     liveUrl,
+    lema,
     credits,
     hoverImage,
     coverImage,
-    hoverVideo{ asset->{ url } }
+    hoverVideo{ asset->{ url } },
+    caso{
+      titular,
+      bajada,
+      ficha[]{ etiqueta, valor },
+      proceso[]{ nombre, texto },
+      bloques[]{
+        ${MEDIO},
+        titulo,
+        texto,
+        disposicion,
+        cita,
+        autor,
+        medios[]{ ${MEDIO} }
+      },
+      creditos[]{ etiqueta, valor },
+      "siguiente": siguiente->slug.current,
+      pregunta,
+      boton
+    }
   }
 `;
 

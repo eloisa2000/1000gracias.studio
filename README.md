@@ -44,6 +44,23 @@ sobre el ítem, y se queda hasta que toques otro proyecto o fuera de la lista.
 La lista no cambia de aspecto — la imagen es toda la respuesta. Los dos
 comportamientos viven en [`src/scripts/hover-stage.js`](src/scripts/hover-stage.js).
 
+## Las páginas de caso
+
+Un proyecto con caso tiene su página en `/caso/<slug>/`. En la home, tocar el
+proyecto abre el caso como modal y cambia la URL sin recargar
+([`src/scripts/caso-modal.js`](src/scripts/caso-modal.js)); entrando directo,
+la página existe de verdad. En escritorio la columna azul queda fija y la de la
+derecha se desplaza; en móvil la hoja sube desde abajo, como el contacto.
+
+El contenido vive en Sanity, en la pestaña «Caso» de cada proyecto: titular,
+bajada, ficha, proceso y una lista de bloques (imagen o video suelto, sección
+con título y texto, cita). Cada imagen puede ser una imagen, un video o una
+captura larga que se desplaza sola. Un proyecto sin titular de caso no tiene
+página y sigue enlazando a su sitio publicado.
+
+Mientras no haya Sanity, el caso de Casona sale de `src/data/fallback.js`, con
+las imágenes en `public/img/casos/casona-compania/`.
+
 ```bash
 npm install
 npm run dev
@@ -56,13 +73,13 @@ sitio se construye con los datos de prueba de `src/data/fallback.js`.
 
 ```
 src/
-  components/  Hero, ProjectList, ProjectItem, ContactModal, Nav,
-               Wordmark, Titular, Star, Brandmark
+  components/  Hero, ProjectList, ProjectItem, ContactModal, CaseModal,
+               CaseMedia, Nav, Wordmark, Titular, Star, Brandmark, Cruz
   layouts/     Base.astro
-  pages/       index.astro, contacto.astro
+  pages/       index.astro, conversemos.astro, caso/[slug].astro
   styles/      tokens.css, global.css
   lib/         sanity.js (cliente + queries), image.js (urlFor), content.js
-  scripts/     hover-stage.js, contact-modal.js
+  scripts/     hover-stage.js, contact-modal.js, caso-modal.js
   data/        fallback.js — datos de prueba
 public/
   img/         imágenes de archivo del Figma
@@ -112,7 +129,8 @@ npx sanity --cwd ./sanity dev
 Documentos:
 
 - `project` — un proyecto de la home. `order` define el orden, `hoverImage` es
-  la que reemplaza la imagen del escenario al pasar el mouse.
+  la que reemplaza la imagen del escenario al pasar el mouse. La pestaña
+  «Caso» arma su página de caso (tipos en `sanity/schemaTypes/caso.js`).
 - `siteSettings` — singleton: imagen del hero, imagen del contacto, correo,
   Instagram y folio.
 
