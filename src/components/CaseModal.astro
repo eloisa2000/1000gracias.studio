@@ -27,11 +27,25 @@ const Raiz = pagina ? 'section' : 'dialog';
 const Titulo = pagina ? 'h1' : 'h2';
 const numero = (i) => `${String(i + 1).padStart(2, '0')}.`;
 
-/* Turno de cada pieza de la columna azul en el apilado de entrada: la barra,
-   el titular, la bajada, cada fila de la ficha, el rótulo y cada paso. */
-const turnoFicha = caso.bajada ? 3 : 2;
-const turnoRotulo = turnoFicha + caso.ficha.length;
-const turno = (n) => `--i:${n}`;
+/*
+  La columna azul entra en un orden que guía la lectura: el titular palabra
+  por palabra, la bajada línea por línea, la ficha fila por fila, el rótulo
+  del proceso y el proceso entero de una vez. `--t` es cuándo entra cada
+  pieza, en milisegundos desde que empieza el apilado.
+
+  Lo que se calcula acá supone que la bajada ocupa dos líneas. Las líneas
+  reales dependen del ancho de la pantalla, así que caso-modal.js las mide al
+  abrir y corrige los tiempos (con los mismos pasos, en `coreografiar`).
+*/
+const PASO = { palabra: 70, linea: 140, fila: 90, pausa: 120, rotulo: 200 };
+const palabras = (texto) => (texto ?? '').split(/\s+/).filter(Boolean);
+const titular = palabras(caso.titular);
+const bajada = palabras(caso.bajada);
+const enBajada = titular.length * PASO.palabra + PASO.pausa;
+const enFicha = enBajada + (bajada.length ? 2 * PASO.linea + PASO.pausa : 0);
+const enRotulo = enFicha + caso.ficha.length * PASO.fila + PASO.pausa;
+const enProceso = enRotulo + PASO.rotulo;
+const t = (ms) => `--t:${ms}ms`;
 const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 ---
 
@@ -51,7 +65,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
         <span class="caso__marca" data-caso-marca><Wordmark tono="crema" /></span>
         {
           liveUrl && (
-            <a class="caso__ver apila" style={turno(0)} href={liveUrl} target="_blank" rel="noopener noreferrer">
+            <a class="caso__ver apila" style={t(0)} href={liveUrl} target="_blank" rel="noopener noreferrer">
               Ver sitio <span aria-hidden="true">↗</span>
               <span class="visualmente-oculto">(abre en una pestaña nueva)</span>
             </a>
@@ -59,14 +73,32 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
         }
       </div>
 
-      <Titulo class="caso__titular apila" id={`${id}-titulo`} style={turno(1)}>{caso.titular}</Titulo>
-      {caso.bajada && <p class="caso__bajada apila" style={turno(2)}>{caso.bajada}</p>}
+      {/* Cada palabra es su propia pieza; el título completo queda en
+          aria-label para que se lea de corrido. */}
+      <Titulo class="caso__titular" id={`${id}-titulo`} aria-label={caso.titular}>
+        {titular.map((palabra, i) => (
+          <>
+            <span class="palabra apila" aria-hidden="true" data-coro="titular" style={t(i * PASO.palabra)}>{palabra}</span>{' '}
+          </>
+        ))}
+      </Titulo>
+      {
+        caso.bajada && (
+          <p class="caso__bajada" aria-label={caso.bajada}>
+            {bajada.map((palabra) => (
+              <>
+                <span class="palabra apila" aria-hidden="true" data-coro="bajada" style={t(enBajada)}>{palabra}</span>{' '}
+              </>
+            ))}
+          </p>
+        )
+      }
 
       {
         caso.ficha.length > 0 && (
           <dl class="caso__ficha">
             {caso.ficha.map((fila, i) => (
-              <div class="fila apila" style={turno(turnoFicha + i)}>
+              <div class="fila apila" data-coro="fila" style={t(enFicha + i * PASO.fila)}>
                 <dt class="fila__etiqueta">{fila.etiqueta}</dt>
                 <dd class="fila__valor">{fila.valor}</dd>
               </div>
@@ -78,10 +110,10 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
       {
         caso.proceso.length > 0 && (
           <>
-            <h3 class="caso__rotulo apila" style={turno(turnoRotulo)}>¿Cómo se hizo?</h3>
-            <ol class="caso__proceso">
+            <h3 class="caso__rotulo apila" data-coro="rotulo" style={t(enRotulo)}>¿Cómo se hizo?</h3>
+            <ol class="caso__proceso apila" data-coro="proceso" style={t(enProceso)}>
               {caso.proceso.map((paso, i) => (
-                <li class="fila fila--paso apila" style={turno(turnoRotulo + 1 + i)}>
+                <li class="fila fila--paso">
                   <span class="fila__etiqueta">
                     {numero(i)} {paso.nombre}
                   </span>
@@ -511,14 +543,20 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
     transition-delay: var(--llega);
   }
 
-  /* La columna azul entra apilada, pieza por pieza, como los proyectos de la
-     home: misma animación (`entra`, global.css) y mismo paso de 90 ms. Al
-     quitar `is-abierto` la animación se va, así que cada apertura la repite.
-     Con movimiento reducido no hay apilado: la columna aparece entera. */
+  /* Las palabras se mueven solas, así que tienen que ser cajas. */
+  .palabra {
+    display: inline-block;
+  }
+
+  /* La columna azul entra apilada, pieza por pieza, con la misma animación
+     que los proyectos de la home (`entra`, global.css), cada una en su `--t`.
+     Al quitar `is-abierto` la animación se va, así que cada apertura la
+     repite. Con movimiento reducido no hay apilado: la columna aparece
+     entera. */
   @media (prefers-reduced-motion: no-preference) {
     .caso.is-abierto .apila {
       animation: entra 520ms var(--ease) both;
-      animation-delay: calc(var(--llega) + var(--i) * 90ms);
+      animation-delay: calc(var(--llega) + var(--t, 0ms));
     }
   }
 

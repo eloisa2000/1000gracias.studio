@@ -48,9 +48,49 @@ const soltar = (raiz) => {
   suaves.delete(contenido);
 };
 
+/*
+  El orden de entrada de la columna azul (ver CaseModal.astro): el titular
+  palabra por palabra, la bajada línea por línea, la ficha fila por fila, el
+  rótulo y el proceso. El HTML trae los tiempos suponiendo una bajada de dos
+  líneas; acá se cuentan las líneas de verdad —las palabras que comparten
+  altura son una línea— y se corrige todo lo que viene después. Tiene que
+  correr con la columna ya en pantalla, antes de que arranque el apilado.
+*/
+const PASO = { palabra: 70, linea: 140, fila: 90, pausa: 120, rotulo: 200 };
+
+const coreografiar = (raiz) => {
+  const piezas = (nombre) => [...raiz.querySelectorAll(`[data-coro="${nombre}"]`)];
+  const marcar = (el, ms) => el.style.setProperty('--t', `${Math.round(ms)}ms`);
+
+  let t = piezas('titular').length * PASO.palabra + PASO.pausa;
+
+  const bajada = piezas('bajada');
+  let linea = -1;
+  let altura = null;
+  for (const palabra of bajada) {
+    if (palabra.offsetTop !== altura) {
+      altura = palabra.offsetTop;
+      linea += 1;
+    }
+    marcar(palabra, t + linea * PASO.linea);
+  }
+  if (bajada.length) t += (linea + 1) * PASO.linea + PASO.pausa;
+
+  const filas = piezas('fila');
+  filas.forEach((fila, i) => marcar(fila, t + i * PASO.fila));
+  t += filas.length * PASO.fila + PASO.pausa;
+
+  for (const rotulo of piezas('rotulo')) marcar(rotulo, t);
+  t += PASO.rotulo;
+  for (const proceso of piezas('proceso')) marcar(proceso, t);
+};
+
 // En /caso/<slug>/ la columna ya está abierta desde el principio.
 const pagina = document.querySelector('.caso--pagina');
-if (pagina) suavizar(pagina);
+if (pagina) {
+  coreografiar(pagina);
+  suavizar(pagina);
+}
 
 /* Videos: suenan solo mientras se ven. Con movimiento reducido se queda el
    póster. Dentro de un diálogo cerrado no se ven nunca, así que no cargan. */
@@ -185,6 +225,7 @@ if (dialogos.size) {
       const contenido = dialogo.querySelector('[data-caso-contenido]');
       if (contenido) contenido.scrollTop = 0;
       suavizar(dialogo);
+      coreografiar(dialogo);
     }
 
     if (empujar) {
