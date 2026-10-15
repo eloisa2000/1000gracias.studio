@@ -609,12 +609,13 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
   }
 
   /*
-    Pie del caso: tres columnas iguales, con los mismos márgenes que el resto
-    del contenido, así no se carga hacia la izquierda.
+    Pie del caso, con los mismos márgenes que el resto del contenido. Los
+    créditos son cortos y miden lo que su texto, para no dejar un hueco al
+    lado; el siguiente proyecto y el contacto se reparten el resto.
   */
   .pie {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: max-content repeat(2, minmax(0, 1fr));
     gap: calc(48 * var(--k));
     padding-top: calc(54 * var(--k));
     color: var(--navy);
