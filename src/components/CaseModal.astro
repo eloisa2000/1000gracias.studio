@@ -37,7 +37,7 @@ const numero = (i) => `${String(i + 1).padStart(2, '0')}.`;
   reales dependen del ancho de la pantalla, así que caso-modal.js las mide al
   abrir y corrige los tiempos (con los mismos pasos, en `coreografiar`).
 */
-const PASO = { palabra: 70, linea: 140, fila: 90, pausa: 120, rotulo: 200 };
+const PASO = { palabra: 100, linea: 200, fila: 130, pausa: 170, rotulo: 280 };
 const palabras = (texto) => (texto ?? '').split(/\s+/).filter(Boolean);
 const titular = palabras(caso.titular);
 const bajada = palabras(caso.bajada);
@@ -555,7 +555,7 @@ const parrafos = (texto) => (texto ?? '').split(/\n\s*\n/).map((p) => p.trim()).
      entera. */
   @media (prefers-reduced-motion: no-preference) {
     .caso.is-abierto .apila {
-      animation: entra 520ms var(--ease) both;
+      animation: entra 720ms var(--ease) both;
       animation-delay: calc(var(--llega) + var(--t, 0ms));
     }
   }

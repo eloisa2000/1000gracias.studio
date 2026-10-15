@@ -56,7 +56,7 @@ const soltar = (raiz) => {
   altura son una línea— y se corrige todo lo que viene después. Tiene que
   correr con la columna ya en pantalla, antes de que arranque el apilado.
 */
-const PASO = { palabra: 70, linea: 140, fila: 90, pausa: 120, rotulo: 200 };
+const PASO = { palabra: 100, linea: 200, fila: 130, pausa: 170, rotulo: 280 };
 
 const coreografiar = (raiz) => {
   const piezas = (nombre) => [...raiz.querySelectorAll(`[data-coro="${nombre}"]`)];
