@@ -122,7 +122,34 @@ if (dialogos.size) {
   /* Lo que tarda en cerrarse antes de poder sacar el diálogo: en escritorio
      se apaga la información (--sale) y vuelve el crema (--corre); en móvil
      baja la hoja. Las proporciones son las de CaseModal.astro. */
-  const cierre = () => (enMovil.matches ? duracion() : duracion() * (0.7 + 1.7));
+  const corre = () => duracion() * 1.7;
+
+  /*
+    Al cerrar, la columna azul se desarma al revés de como entró: primero el
+    proceso, al final la primera palabra del titular. Cada pieza sale en el
+    orden inverso de su `--t`, en un cuarto del tiempo que tardó en entrar,
+    y recién cuando salió la última se corre el borde (`--deshace`). Devuelve
+    cuánto tarda en desarmarse.
+  */
+  const COMPRIME = 0.25;
+  const SALE = 360;
+  const desarmar = (dialogo) => {
+    const piezas = [...dialogo.querySelectorAll('.caso__info .apila')];
+    const tiempos = piezas.map((p) => parseFloat(p.style.getPropertyValue('--t')) || 0);
+    const ultimo = Math.max(0, ...tiempos);
+    piezas.forEach((p, i) =>
+      p.style.setProperty('--t-sale', `${Math.round((ultimo - tiempos[i]) * COMPRIME)}ms`)
+    );
+    const deshace = Math.round(ultimo * COMPRIME + SALE);
+    dialogo.style.setProperty('--deshace', `${deshace}ms`);
+    dialogo.classList.add('is-cerrando');
+    return deshace;
+  };
+
+  const rearmar = (dialogo) => {
+    dialogo.classList.remove('is-cerrando');
+    dialogo.style.removeProperty('--deshace');
+  };
   // Lo que tarda la home en volver a encenderse, pieza por pieza (tokens.css).
   const vuelta = () => duracion() * (0.7 + 0.2 * 2);
 
@@ -213,6 +240,7 @@ if (dialogos.size) {
     if (cerrando && abierto === dialogo) {
       window.clearTimeout(cierreProgramado);
       cerrando = false;
+      rearmar(dialogo);
     } else if (abierto) {
       return true;
     }
@@ -265,10 +293,24 @@ if (dialogos.size) {
     return true;
   };
 
-  const cerrar = ({ volver = true } = {}) => {
+  /*
+    `alContacto`: «Escríbenos», al final del caso. El caso se cierra igual
+    —la columna se desarma, el borde y la marca vuelven—, pero donde iba a
+    reaparecer la home se abre el contacto, que barre su rojo sobre el azul
+    que quedó. Recién cuando el contacto cubrió todo se saca el caso de abajo.
+    La URL del caso se cambia por la de la home antes de empezar: así el
+    contacto empuja /conversemos encima y «atrás» vuelve a la home.
+  */
+  const cerrar = ({ volver = true, alContacto = false } = {}) => {
     const dialogo = abierto;
     if (!dialogo || cerrando) return;
     cerrando = true;
+
+    if (alContacto) {
+      history.replaceState({}, '', '/');
+      empujado = false;
+      volver = false;
+    }
 
     /* La home vuelve a encenderse recién cuando el crema terminó de volver:
        `is-caso` se saca al final, junto con el diálogo. */
@@ -281,6 +323,7 @@ if (dialogos.size) {
       }
       empujado = false;
       dialogo.close();
+      rearmar(dialogo);
       soltar(dialogo);
       html.classList.remove('is-caso');
       regreso = window.setTimeout(() => html.classList.remove('con-caso'), vuelta() + 60);
@@ -289,26 +332,39 @@ if (dialogos.size) {
       reapilar();
     };
 
+    // En móvil baja la hoja entera; en escritorio primero se desarma la columna.
+    const conMovimiento = duracion() > 0 && !enMovil.matches;
+    const deshace = conMovimiento ? desarmar(dialogo) : 0;
     dialogo.classList.remove('is-abierto');
 
-    /* Vuelta: la copia parte de la marca del caso cuando la información ya
-       se apagó (--apaga) y llega a la de la home junto con el crema. */
+    /* Vuelta: la copia parte de la marca del caso cuando la columna ya se
+       desarmó y llega a la de la home junto con el crema. */
     const marcaCaso = marcaDe(dialogo);
     if (viajaMarca() && marcaCaso) {
-      const e = duracion();
       const desde = viajero ?? marcaCaso;
       marcaHome.style.visibility = 'hidden';
       viajar(dialogo, desde, marcaHome, {
-        retardo: viajero ? 0 : e * 0.7,
-        dura: e * 1.7,
+        retardo: viajero ? 0 : deshace,
+        dura: corre(),
         tono: ['--crema', '--azul'],
       });
       marcaCaso.style.visibility = 'hidden';
     }
 
-    const espera = cierre();
-    if (espera === 0) terminar();
-    else cierreProgramado = window.setTimeout(terminar, espera + 60);
+    const alFinal = alContacto
+      ? () => {
+          const conversemos = [...document.querySelectorAll('.pildora[data-contacto="abrir"]')].find(
+            (p) => p.offsetWidth > 0
+          );
+          conversemos?.click();
+          // El contacto tarda su --entrada en barrer y un poco más en asentarse.
+          window.setTimeout(terminar, conMovimiento ? duracion() + 260 : 0);
+        }
+      : terminar;
+
+    const espera = enMovil.matches ? duracion() : conMovimiento ? deshace + corre() : 0;
+    if (espera === 0) alFinal();
+    else cierreProgramado = window.setTimeout(alFinal, espera + 60);
   };
 
   document.addEventListener('click', (evento) => {
@@ -325,6 +381,11 @@ if (dialogos.size) {
     if (evento.target.closest('[data-cierra-caso]')) {
       evento.preventDefault();
       cerrar();
+      return;
+    }
+    if (evento.target.closest('[data-caso-contacto]') && abierto) {
+      evento.preventDefault();
+      cerrar({ alContacto: true });
     }
   });
 
