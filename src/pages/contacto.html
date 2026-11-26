@@ -132,8 +132,8 @@
   .cerrar{
     position:fixed;top:calc(28 * var(--k));right:calc(30 * var(--k));z-index:50;
     display:inline-flex;align-items:center;justify-content:center;
-    padding:calc(17.671 * var(--k)) calc(23.561 * var(--k));
-    border:calc(3.927 * var(--k)) solid currentColor;
+    width:calc(76.684 * var(--k));height:calc(76.684 * var(--k));padding:0;
+    border:calc(3 * var(--k)) solid currentColor;
     border-radius:calc(43.195 * var(--k));
     background:none;color:var(--azul);
     font-family:var(--archivo);font-weight:400;
@@ -151,6 +151,7 @@
   @media (hover:hover){
     .cerrar:hover{background:var(--azul);border-color:var(--azul);color:var(--crema)}
   }
+  .cerrar svg{display:block;width:calc(26 * var(--k));height:calc(26 * var(--k));transform:rotate(45deg)}
   html.en-marco .cerrar{display:none}
   @media (max-width:1024px){
     .cerrar{top:calc(19 * var(--k));right:calc(16 * var(--k))}
@@ -501,7 +502,7 @@
 </head>
 <body>
 
-<a class="cerrar" href="/" data-cerrar-muro aria-label="Volver al inicio">X</a>
+<a class="cerrar" href="/" data-cerrar-muro aria-label="Volver al inicio"><svg viewBox="0 0 20.0407 20.0408" fill="none" aria-hidden="true"><line x1="1.11339" y1="10.0203" x2="18.9273" y2="10.0203" stroke="currentColor" stroke-width="2.22674" stroke-linecap="round"/><line x1="10.0203" y1="1.11346" x2="10.0203" y2="18.9274" stroke="currentColor" stroke-width="2.22674" stroke-linecap="round"/></svg></a>
 
 <h1 class="visualmente-oculto">Diseño web — 1000gracias</h1>
 <p class="visualmente-oculto">

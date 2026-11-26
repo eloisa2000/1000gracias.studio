@@ -109,7 +109,7 @@ const Raiz = pagina ? 'section' : 'dialog';
                 <option value="">Elige una opción</option>
                 {servicios.map((s) => <option value={s}>{s}</option>)}
               </select>
-              <img class="campo__flecha" src="/svg/flecha.svg" alt="" aria-hidden="true" />
+              <img class="campo__mas" src="/svg/mas.svg" alt="" aria-hidden="true" />
             </span>
           </p>
         </div>
@@ -302,13 +302,13 @@ const Raiz = pagina ? 'section' : 'dialog';
     transform: none;
   }
 
-  /* Foco: en vez de sumar un anillo, el contorno que ya tiene el campo cambia
-     de azul a amarillo y engorda un poco. */
+  /* Foco: en vez de sumar un anillo, la línea que ya tiene el campo cambia
+     de azul a amarillo y engorda. */
   .campo__control:focus-visible,
   .campo__select select:focus-visible {
     outline: none;
     border-color: var(--amarillo);
-    border-width: calc(4.6 * var(--k));
+    border-bottom-width: calc(3 * var(--k));
   }
 
   .contacto__festoneado img {
@@ -437,9 +437,10 @@ const Raiz = pagina ? 'section' : 'dialog';
     display: block;
     width: 100%;
     height: calc(46.5 * var(--k));
-    padding: 0 calc(18.352 * var(--k));
-    border: calc(3.059 * var(--k)) solid var(--azul);
-    border-radius: calc(16.931 * var(--k));
+    padding: 0;
+    border: 0;
+    border-bottom: calc(1 * var(--k)) solid var(--azul);
+    border-radius: 0;
     background: none;
     color: var(--azul);
     font-family: var(--tipo-rotulo);
@@ -452,8 +453,7 @@ const Raiz = pagina ? 'section' : 'dialog';
 
   .campo__control--area {
     height: calc(203 * var(--k));
-    padding: calc(13.764 * var(--k)) calc(18.352 * var(--k));
-    border-radius: calc(33.644 * var(--k));
+    padding: calc(13.764 * var(--k)) 0;
     line-height: 1.3;
     resize: vertical;
   }
@@ -469,13 +469,13 @@ const Raiz = pagina ? 'section' : 'dialog';
     cursor: pointer;
   }
 
-  .campo__flecha {
+  .campo__mas {
     position: absolute;
     right: calc(18.352 * var(--k));
     top: 50%;
-    width: calc(12.8 * var(--k));
-    height: calc(11.75 * var(--k));
-    transform: translateY(-50%) rotate(180deg);
+    width: calc(13.044 * var(--k));
+    height: calc(14.122 * var(--k));
+    transform: translateY(-50%);
     pointer-events: none;
   }
 
@@ -585,7 +585,7 @@ const Raiz = pagina ? 'section' : 'dialog';
 
     .campo__control:focus-visible,
     .campo__select select:focus-visible {
-      border-width: calc(2.2 * var(--k));
+      border-bottom-width: calc(1.4 * var(--k));
     }
 
     .contacto__panel {
@@ -635,26 +635,23 @@ const Raiz = pagina ? 'section' : 'dialog';
 
     .campo__control {
       height: calc(21.6 * var(--k));
-      padding: 0 calc(8.5 * var(--k));
-      border-width: calc(1.423 * var(--k));
-      border-radius: calc(7.876 * var(--k));
+      border-bottom-width: calc(0.465 * var(--k));
       font-size: calc(11 * var(--k));
     }
 
     .campo__control--area {
       height: calc(94.43 * var(--k));
-      padding: calc(6 * var(--k)) calc(8.5 * var(--k));
-      border-radius: calc(15.651 * var(--k));
+      padding: calc(6 * var(--k)) 0;
     }
 
     .campo__select select {
       padding-right: calc(21 * var(--k));
     }
 
-    .campo__flecha {
+    .campo__mas {
       right: calc(8.5 * var(--k));
-      width: calc(6.5 * var(--k));
-      height: calc(6 * var(--k));
+      width: calc(6.62 * var(--k));
+      height: calc(7.17 * var(--k));
     }
 
     .form__envio {

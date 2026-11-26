@@ -1,5 +1,6 @@
 ---
 import Wordmark from './Wordmark.astro';
+import Cruz from './Cruz.astro';
 
 /*
   tono: color del wordmark y de la píldora.
@@ -15,13 +16,13 @@ const abre = accion === 'abrir';
 <Tag class:list={['nav', `nav--${tono}`]}>
   <Wordmark tono={tono} />
   <a
-    class="pildora"
+    class:list={['pildora', { 'pildora--x': !abre }]}
     href={abre ? '/conversemos' : '/'}
     data-contacto={abre ? 'abrir' : 'cerrar'}
     aria-label={abre ? 'Abrir el formulario de contacto' : 'Cerrar el formulario de contacto'}
     aria-haspopup={abre ? 'dialog' : undefined}
   >
-    <span class="pildora__etiqueta">{abre ? 'Conversemos' : 'X'}</span>
+    <span class="pildora__etiqueta">{abre ? 'Conversemos' : <Cruz />}</span>
   </a>
 </Tag>
 

@@ -1,5 +1,6 @@
 ---
 import Brandmark from './Brandmark.astro';
+import Cruz from './Cruz.astro';
 
 /*
   Las tres estrellas de la animación de carga: el destello de cinco puntas, el
@@ -77,8 +78,8 @@ const C =
     <Brandmark accion="Reponer los papelitos" texto="reponer papelitos" />
   </div>
 
-  <button class="pildora muro__cerrar" type="button" data-muro="cerrar" aria-label="Cerrar el muro">
-    <span class="pildora__etiqueta">X</span>
+  <button class="pildora pildora--x muro__cerrar" type="button" data-muro="cerrar" aria-label="Cerrar el muro">
+    <span class="pildora__etiqueta"><Cruz /></span>
   </button>
 </dialog>
 

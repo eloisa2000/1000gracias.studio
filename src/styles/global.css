@@ -77,7 +77,7 @@ a {
   align-items: center;
   justify-content: center;
   padding: calc(17.671 * var(--k)) calc(23.561 * var(--k));
-  border: calc(3.927 * var(--k)) solid currentColor;
+  border: calc(3 * var(--k)) solid currentColor;
   border-radius: calc(43.195 * var(--k));
   background: none;
   font-family: var(--tipo-titulo);
@@ -114,6 +114,24 @@ a {
   transition: width var(--entrada) var(--ease);
 }
 
+/*
+  La de cerrar es un círculo con la cruz centrada, del mismo alto que
+  «Conversemos». El alto sale igual que el de cualquier píldora —padding
+  vertical, una línea de texto y el borde—, así que coinciden aunque cambie
+  una medida; el ancho es ese mismo alto: 35.342 + 2 × 17.671 + 2 × 3.
+*/
+.pildora--x {
+  width: calc(76.684 * var(--k));
+  padding-inline: 0;
+}
+
+.pildora--x .pildora__etiqueta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1em;
+}
+
 .pildora__etiqueta {
   transition: opacity calc(var(--entrada) * 0.5) var(--ease);
 }
@@ -135,6 +153,47 @@ a {
    del modal parten justo encima de ellas y se van moviendo solas. */
 html.is-contacto .escenario .estrella {
   opacity: 0;
+}
+
+/*
+  Al abrir un caso en escritorio, lo primero es que la home se vacíe: se
+  apagan, una después de otra, las estrellas, la imagen y el titular del
+  escenario; y en el panel, «Conversemos» y después los proyectos (la marca
+  no se apaga: viaja hasta el caso, ver caso-modal.js). Quedan solo el
+  azul y el crema, que es justo donde arranca el caso (ver CaseModal.astro).
+  La carita se queda: el caso tiene una copia en el mismo lugar. Al volver se
+  encienden en el mismo orden.
+
+  Las transiciones viven en `con-caso`, que caso-modal.js pone al abrir y
+  saca cuando la home terminó de volver: fuera de eso no estorban ni al
+  fundido del marco al cargar ni a las estrellas del contacto, que se apagan
+  de golpe.
+*/
+@media (min-width: 1025px) {
+  html.con-caso .escenario .estrella,
+  html.con-caso .escenario .escenario__marco,
+  html.con-caso .escenario .titular,
+  html.con-caso .panel .nav .pildora,
+  html.con-caso .panel .panel__proyectos {
+    transition: opacity var(--apaga) var(--ease) var(--retardo-caso, 0s);
+  }
+
+  html.con-caso .escenario .escenario__marco,
+  html.con-caso .panel .panel__proyectos {
+    --retardo-caso: var(--escalon);
+  }
+
+  html.con-caso .escenario .titular {
+    --retardo-caso: calc(var(--escalon) * 2);
+  }
+
+  html.is-caso .escenario .estrella,
+  html.is-caso .escenario .escenario__marco,
+  html.is-caso .escenario .titular,
+  html.is-caso .panel .nav .pildora,
+  html.is-caso .panel .panel__proyectos {
+    opacity: 0;
+  }
 }
 
 /* Lo mismo con la carita mientras el muro está abierto: la copia del modal
@@ -160,9 +219,15 @@ html.is-muro .carita--enlace {
 @media (max-width: 1024px) {
   .pildora {
     padding: calc(8.318 * var(--k)) calc(11.091 * var(--k));
-    border-width: calc(1.848 * var(--k));
+    border-width: calc(1.412 * var(--k));
     border-radius: calc(20.333 * var(--k));
     font-size: calc(16.636 * var(--k));
     letter-spacing: calc(-0.8318 * var(--k));
+  }
+
+  /* 16.636 + 2 × 8.318 + 2 × 1.412 */
+  .pildora--x {
+    width: calc(36.096 * var(--k));
+    padding-inline: 0;
   }
 }
