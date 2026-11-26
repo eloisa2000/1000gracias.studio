@@ -45,8 +45,9 @@ const movimiento = (hay('movimiento.mp4') || hay('movimiento.jpg')) && {
   tipo: hay('movimiento.mp4') ? 'video' : 'imagen',
   src: hay('movimiento.mp4') ? `${CASONA}/movimiento.mp4` : `${CASONA}/movimiento.jpg`,
   poster: hay('movimiento.mp4') && hay('movimiento.jpg') ? `${CASONA}/movimiento.jpg` : null,
-  ancho: 1042,
-  alto: 691,
+  // El video (y su primer cuadro, movimiento.jpg) es de 1280 × 720.
+  ancho: 1280,
+  alto: 720,
   alt: 'Un notebook sobre baldosas al sol con el inicio del sitio: «Un espacio para las Industrias Creativas en el corazón del Barrio Yungay».',
   rotulo: 'Movimiento',
   leyenda: 'Movimiento sutil que acompaña sin quitarle protagonismo al contenido.',
@@ -235,6 +236,8 @@ export const proyectos = [
     title: 'Graz',
     slug: 'graz',
     lema: 'Zapatillas hechas en Chile',
+    // Portada del portafolio: es la que se ve como «Siguiente proyecto».
+    coverSrc: '/img/proyectos/graz-portada.jpg',
     order: 4,
     year: '2023',
     type: 'Oficio',
@@ -242,7 +245,6 @@ export const proyectos = [
     tools: ['Figma', 'GSAP'],
     liveUrl: 'https://graz.cl/',
     hoverSrc: cuadrado('#1A1937'),
-    coverSrc: cuadrado('#1A1937'),
     videoSrc: '/videos/graz.mp4',
     caso: null,
   },

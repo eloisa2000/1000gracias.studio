@@ -187,6 +187,22 @@ html.is-contacto .escenario .estrella {
     --retardo-caso: calc(var(--escalon) * 2);
   }
 
+  /* Al volver se encienden al revés de como se apagaron: el titular, la
+     imagen y las estrellas; los proyectos y después «Conversemos». La vuelta
+     es justo cuando queda `con-caso` sin `is-caso`. */
+  html.con-caso:not(.is-caso) .escenario .titular,
+  html.con-caso:not(.is-caso) .panel .panel__proyectos {
+    --retardo-caso: 0s;
+  }
+
+  html.con-caso:not(.is-caso) .escenario .estrella {
+    --retardo-caso: calc(var(--escalon) * 2);
+  }
+
+  html.con-caso:not(.is-caso) .panel .nav .pildora {
+    --retardo-caso: var(--escalon);
+  }
+
   html.is-caso .escenario .estrella,
   html.is-caso .escenario .escenario__marco,
   html.is-caso .escenario .titular,
